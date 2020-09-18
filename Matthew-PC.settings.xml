@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p0:properties xmlns:p0="http://www.activecomponents.org/jadex-conf" __ID="0">
+	<p0:properties __ID="1" type="securityservice">
+		<p0:property __ID="2" type="validityduration">327680</p0:property>
+		<p0:property __ID="3" type="usepass">true</p0:property>
+		<p0:property __ID="4" type="password">04f0ba07-3bc</p0:property>
+		<p0:property __ID="5" type="selected_mechanism">0</p0:property>
+		<p0:property __ID="6" type="trustedlan">false</p0:property>
+		<p0:property __ID="7" type="storepath">./keystore</p0:property>
+		<p0:property __ID="8" type="storepass">keystore</p0:property>
+		<p0:property __ID="9" type="keypass">keystore</p0:property>
+		<p0:property __ID="10" type="selmech">0</p0:property>
+		<p0:properties __ID="11" type="DecentralizedAcquisitionMechanism">
+			<p0:property __ID="12" type="responses">1</p0:property>
+		</p0:properties>
+		<p0:properties __ID="13" type="TTPAcquisitionMechanism">
+			<p0:property __ID="14" type="verify">true</p0:property>
+		</p0:properties>
+	</p0:properties>
+	<p0:properties __ID="15" type="StarterServicePanel">
+		<p0:properties __ID="16" type="mpanel">
+			<p0:property __ID="17" type="tree"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<p0:TreeProperties xmlns:p0="typeinfo:jadex.base.gui.filetree" __ID="0">
+	<selectedNode>
+		<p0:NodePath __ID="1" entry="2">
+			<path>
+				<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="2" __len="2">
+					<entries>
+						<p1:String __ID="3">main</p1:String>
+						<p1:String __ID="4">resources</p1:String>
+					</entries>
+				</p1:String__1>
+			</path>
+		</p0:NodePath>
+	</selectedNode>
+	<expandedNodes>
+		<p0:NodePath__1 __ID="5" __len="4">
+			<entries>
+				<p0:NodePath __ID="6" entry="2">
+					<path>
+						<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="7" __len="2">
+							<entries>
+								<p1:String __ID="8">main</p1:String>
+								<p1:String __ID="9">java</p1:String>
+							</entries>
+						</p1:String__1>
+					</path>
+				</p0:NodePath>
+				<p0:NodePath __ID="10" entry="2">
+					<path>
+						<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="11" __len="0"></p1:String__1>
+					</path>
+				</p0:NodePath>
+				<p0:NodePath __ID="12" entry="2">
+					<path>
+						<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="13" __len="1">
+							<entries>
+								<p1:String __ID="14">test</p1:String>
+							</entries>
+						</p1:String__1>
+					</path>
+				</p0:NodePath>
+				<p0:NodePath __ID="15" entry="2">
+					<path>
+						<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="16" __len="1">
+							<entries>
+								<p1:String __ID="17">main</p1:String>
+							</entries>
+						</p1:String__1>
+					</path>
+				</p0:NodePath>
+			</entries>
+		</p0:NodePath__1>
+	</expandedNodes>
+	<rootPathEntries>
+		<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="18" __len="3">
+			<entries>
+				<p1:String __ID="19">src\main\java\dcopsolver\ArgumentsAgent.java</p1:String>
+				<p1:String __ID="20">src\main\java\dcopsolver\SimpleAgent.java</p1:String>
+				<p1:String __ID="21">src</p1:String>
+			</entries>
+		</p1:String__1>
+	</rootPathEntries>
+</p0:TreeProperties>
+]]></p0:property>
+			<p0:properties __ID="18" type="mic">
+				<p0:property __ID="19" type="Micro Agent">true</p0:property>
+			</p0:properties>
+		</p0:properties>
+		<p0:properties __ID="20" type="spanel">
+			<p0:property __ID="21" type="startsuspended">false</p0:property>
+			<p0:property __ID="22" type="autogenerate">false</p0:property>
+			<p0:property __ID="23" type="number">1</p0:property>
+			<p0:property __ID="24" type="name"></p0:property>
+		</p0:properties>
+	</p0:properties>
+	<p0:properties __ID="25" type="clockservice">
+		<p0:property __ID="26" type="type">system</p0:property>
+		<p0:property __ID="27" type="delta">100</p0:property>
+		<p0:property __ID="28" type="dilation">1.0</p0:property>
+	</p0:properties>
+</p0:properties>
