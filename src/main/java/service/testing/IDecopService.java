@@ -5,25 +5,24 @@ import jadex.commons.future.ISubscriptionIntermediateFuture;
 
 
 /**
- *  Simple service to publish the local system time.
- *  As the service does not change the local system
- *  and provides no sensitive information, no security
- *  restrictions are required.
+ *  This service is the WIP Decop service that
+ *  each agent has and is able to call on other Decop Components on the network.
+ *  It is currently without any security but will probably need one eventually.
  */
 @Security(Security.UNRESTRICTED)
-public interface ITimeService
+public interface IDecopService
 {
     /**
-     *  Subscribe to the time service.
-     *  Every couple of seconds, a string with the current time
-     *  will be sent to the subscriber.
+     *  Subscribe to the Decop service.
+     *  Currently every couple of seconds,
+     *  a placeholder string will be sent to the subscriber.
      */
     public ISubscriptionIntermediateFuture<String>  subscribe();
 
     /**
-     *  Get the location of the platform, where the time service runs.
+     *  Get the location of the platform, where the Decop service runs.
      *  The location is a constant value for each service, therefore it can be cached
-     *  and no future is needed.
+     *  and no future is needed. (Thanks Charles)
      */
     public String   getLocation();
 }

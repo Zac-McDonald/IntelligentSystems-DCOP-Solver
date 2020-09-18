@@ -32,13 +32,19 @@
 		<p0:property __ID="15" type="leftsplit_location">0.13209606986899564</p0:property>
 		<p0:property __ID="16" type="mainsplit_location">0.709643605870021</p0:property>
 	</p0:properties>
-	<p0:properties __ID="17" type="window">
-		<p0:property __ID="18" type="width">1936</p0:property>
-		<p0:property __ID="19" type="height">1056</p0:property>
-		<p0:property __ID="20" type="x">-8</p0:property>
-		<p0:property __ID="21" type="y">-8</p0:property>
-		<p0:property __ID="22" type="extendedState">6</p0:property>
-		<p0:property __ID="23" type="jccexit">ask</p0:property>
-		<p0:property __ID="24" type="saveonexit">true</p0:property>
+	<p0:properties __ID="17" type="Chat">
+		<p0:properties __ID="18" type="panelproperties">
+			<p0:property __ID="19" type="autorefresh">true</p0:property>
+			<p0:property __ID="20" type="sound">true</p0:property>
+		</p0:properties>
+	</p0:properties>
+	<p0:properties __ID="21" type="window">
+		<p0:property __ID="22" type="width">1936</p0:property>
+		<p0:property __ID="23" type="height">1056</p0:property>
+		<p0:property __ID="24" type="x">-8</p0:property>
+		<p0:property __ID="25" type="y">-8</p0:property>
+		<p0:property __ID="26" type="extendedState">6</p0:property>
+		<p0:property __ID="27" type="jccexit">ask</p0:property>
+		<p0:property __ID="28" type="saveonexit">true</p0:property>
 	</p0:properties>
 </p0:properties>

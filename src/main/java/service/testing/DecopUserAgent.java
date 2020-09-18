@@ -16,7 +16,7 @@ import jadex.micro.annotation.*;
                 multiple=true,
                 binding=@Binding(scope=Binding.SCOPE_GLOBAL))
 )
-public class TimeUserAgent {
+public class DecopUserAgent {
     /**
      *  The time services are searched and added at agent startup.
      */
@@ -36,7 +36,7 @@ public class TimeUserAgent {
         PlatformConfiguration config = PlatformConfiguration.getDefault();
         config.setNetworkName("yourStudentNumber");
         config.setNetworkPass("yourStudentNumber");
-        config.addComponent(TimeUserAgent.class);
+        config.addComponent(DecopUserAgent.class);
         config.setAwareness(true);
         config.setGui(false);
         Starter.createPlatform(config).get();

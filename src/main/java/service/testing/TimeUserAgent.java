@@ -1,4 +1,4 @@
-package jadex.tutorials.week4.time;
+package service.testing;
 
 import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;

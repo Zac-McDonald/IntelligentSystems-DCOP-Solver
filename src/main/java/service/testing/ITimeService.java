@@ -11,7 +11,7 @@ import jadex.commons.future.ISubscriptionIntermediateFuture;
  *  restrictions are required.
  */
 @Security(Security.UNRESTRICTED)
-public interface IDecopService
+public interface ITimeService
 {
     /**
      *  Subscribe to the time service.

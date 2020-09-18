@@ -36,12 +36,15 @@ public class ArgumentsAgent {
      * specific input arguments.
      * @param args The main arguments are not used.
      */
+
     public static void main (String [] args) {
         PlatformConfiguration conf = PlatformConfiguration.getDefault();
         //sets up debug features on the platform
         conf.setDebugFutures(true);
+
         //add and agent with default args
         conf.addComponent(ArgumentsAgent.class);
+
         //gui please
         conf.setGui(true);
         
