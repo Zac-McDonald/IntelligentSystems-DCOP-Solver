@@ -1,4 +1,4 @@
-package dcopsolver;
+package simple.agents;
 
 import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;

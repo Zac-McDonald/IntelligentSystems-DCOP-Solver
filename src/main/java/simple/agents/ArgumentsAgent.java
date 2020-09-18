@@ -1,4 +1,4 @@
-package dcopsolver;
+package simple.agents;
 
 import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;
@@ -7,7 +7,6 @@ import jadex.bridge.service.search.SServiceProvider;
 import jadex.bridge.service.types.cms.CreationInfo;
 import jadex.bridge.service.types.cms.IComponentManagementService;
 import jadex.commons.SUtil;
-import jadex.commons.future.IFuture;
 import jadex.micro.annotation.*;
 
 /**

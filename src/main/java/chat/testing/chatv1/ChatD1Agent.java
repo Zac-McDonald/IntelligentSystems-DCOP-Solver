@@ -10,6 +10,7 @@ import jadex.commons.future.ITerminableIntermediateFuture;
 import jadex.micro.annotation.*;
 import chat.testing.IChatService;
 
+
 /**
  * A simple agent looks for all other IChatService providing components
  * and says "Hey" to them.
