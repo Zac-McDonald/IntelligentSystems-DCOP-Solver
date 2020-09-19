@@ -8,3 +8,7 @@ Having them all in one project makes it a lot easier for me to copy/referecne/mo
     <li>Service testing is pretty much week 4 stuff</li> 
     <li>Variable Grabbers is where i'm working on my variable negotiation service and agents (Will be working on it tomorrow more.)</li> 
 </ol>
+
+19/09/2020
+I'm having trouble understanding how to encapsulate both the negotiation and the collecting of the strings that the agents are arguing over
+for now Im going to make a List provider agent and a list user agent and then ill try and combine the two...

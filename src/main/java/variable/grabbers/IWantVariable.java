@@ -11,17 +11,12 @@ import java.util.List;
 */
 public interface IWantVariable {
   /**
-   * it needs to send a future that contains the list of variables being shared on the platform
-   * Im not sure if the sender needs to be sent... but it seems like a useful thing
+   * agent is sends a request for a variable with its name as a part of the request
    */
-    Future<Void> variables (String sender, List<String> variables);
 
-    /**
-     *  Subscribe to the want variable service.
-     *  Every couple of seconds, a string with the current variable the agent wants
-     *  will be sent to the subscriber.
-     */
+    Future<Void> negotiate (String sender, String want);
 
-    public ISubscriptionIntermediateFuture<String> subscribe();
+
+
 
 }

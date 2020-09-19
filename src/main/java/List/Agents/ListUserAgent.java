@@ -1,42 +1,48 @@
-package service.testing;
+package List.Agents;
 
 import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;
 import jadex.bridge.service.IService;
 import jadex.commons.future.ISubscriptionIntermediateFuture;
+import jadex.commons.future.SubscriptionIntermediateFuture;
 import jadex.micro.annotation.*;
+import service.testing.ITimeService;
+
+import java.util.List;
 
 /**
  *  Simple agent that uses globally available time services.
  */
 @Agent
 @RequiredServices(
-        @RequiredService(name="timeservices",
-                type= ITimeService.class,
+        @RequiredService(name="listservices",
+                type= IListService.class,
                 multiple=true,
                 binding=@Binding(scope=Binding.SCOPE_GLOBAL))
 )
-public class DecopUserAgent {
+public class ListUserAgent {
     /**
-     *  The time services are searched and added at agent startup.
+     *  The list services are searched and added at agent startup.
      */
     @AgentService
-    public void addTimeService(ITimeService timeservice) {
-        ISubscriptionIntermediateFuture<String> subscription = timeservice.subscribe();
+    public void addTimeService(IListService listservice) {
+        List<String> list;
+        ISubscriptionIntermediateFuture<List<String>> subscription = listservice.subscribe();
         while(subscription.hasNextIntermediateResult()) {
-            String  time    = subscription.getNextIntermediateResult();
-            String  platform    = ((IService)timeservice).getServiceIdentifier().getProviderId().getPlatformName();
-            System.out.println("New time received from "+platform+" at "+timeservice.getLocation()+": "+time);
+            list = subscription.getNextIntermediateResult();
+            for (String str : list){
+                System.out.println(str.toString());
+            }
         }
     }
     /**
-     *  Start a Jadex platform and the TimeUserAgent.
+     *  Start a Jadex platform and the ListUserAgent.
      */
     public static void  main(String[] args) {
         PlatformConfiguration config = PlatformConfiguration.getDefault();
         config.setNetworkName("yourStudentNumber");
         config.setNetworkPass("yourStudentNumber");
-        config.addComponent(DecopUserAgent.class);
+        config.addComponent(ListUserAgent.class);
         config.setAwareness(true);
         config.setGui(false);
         Starter.createPlatform(config).get();
