@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <p0:properties xmlns:p0="http://www.activecomponents.org/jadex-conf" __ID="0">
-	<p0:properties __ID="1" type="Chat">
-		<p0:properties __ID="2" type="panelproperties">
-			<p0:property __ID="3" type="autorefresh">true</p0:property>
-			<p0:property __ID="4" type="sound">true</p0:property>
-		</p0:properties>
+	<p0:properties __ID="1" type="vis">
+		<p0:property __ID="2" type="Starter" name="jadex.tools.starter.StarterPlugin">true</p0:property>
+		<p0:property __ID="3" type="Chat" name="jadex.tools.chat.ChatPlugin">true</p0:property>
+		<p0:property __ID="4" type="Test Center" name="jadex.tools.testcenter.TestCenterPlugin">true</p0:property>
+		<p0:property __ID="5" type="ISimulationService" name="jadex.tools.simcenter.SimulationServicePlugin">true</p0:property>
+		<p0:property __ID="6" type="Debugger" name="jadex.tools.debugger.DebuggerPlugin">true</p0:property>
+		<p0:property __ID="7" type="IAwarenessManagementService" name="jadex.tools.awareness.AwarenessServicePlugin">true</p0:property>
+		<p0:property __ID="8" type="Component Viewer" name="jadex.base.gui.componentviewer.ComponentViewerPlugin">true</p0:property>
+		<p0:property __ID="9" type="ISecurityService" name="jadex.tools.security.SecurityServicePlugin">true</p0:property>
 	</p0:properties>
-	<p0:properties __ID="5" type="vis">
-		<p0:property __ID="6" name="jadex.tools.starter.StarterPlugin" type="Starter">true</p0:property>
-		<p0:property __ID="7" name="jadex.tools.chat.ChatPlugin" type="Chat">true</p0:property>
-		<p0:property __ID="8" name="jadex.tools.testcenter.TestCenterPlugin" type="Test Center">true</p0:property>
-		<p0:property __ID="9" name="jadex.tools.simcenter.SimulationServicePlugin" type="ISimulationService">true</p0:property>
-		<p0:property __ID="10" name="jadex.tools.debugger.DebuggerPlugin" type="Debugger">true</p0:property>
-		<p0:property __ID="11" name="jadex.tools.awareness.AwarenessServicePlugin" type="IAwarenessManagementService">true</p0:property>
-		<p0:property __ID="12" name="jadex.base.gui.componentviewer.ComponentViewerPlugin" type="Component Viewer">true</p0:property>
-		<p0:property __ID="13" name="jadex.tools.security.SecurityServicePlugin" type="ISecurityService">true</p0:property>
-	</p0:properties>
-	<p0:properties __ID="14" type="controlcenter">
-		<p0:property __ID="15" type="perspective">Starter</p0:property>
-		<p0:property __ID="16" type="consoleenabled">false</p0:property>
-		<p0:property __ID="17" type="consoleheights"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+	<p0:properties __ID="10" type="controlcenter">
+		<p0:property __ID="11" type="perspective">Starter</p0:property>
+		<p0:property __ID="12" type="consoleenabled">false</p0:property>
+		<p0:property __ID="13" type="consoleheights"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <p0:HashMap xmlns:p0="typeinfo:java.util" __ID="0">
 	<entries>
 		<entry __ID="1">
@@ -27,16 +21,22 @@
 				<p1:String xmlns:p1="typeinfo:java.lang" __ID="2">Starter.console.height</p1:String>
 			</key>
 			<value>
-				<p1:Double xmlns:p1="typeinfo:java.lang" __ID="3" content="0.9989247311827957"></p1:Double>
+				<p1:Double xmlns:p1="typeinfo:java.lang" __ID="3" content="0.001075268817204301"></p1:Double>
 			</value>
 		</entry>
 	</entries>
 </p0:HashMap>
 ]]></p0:property>
 	</p0:properties>
-	<p0:properties __ID="18" type="Starter">
-		<p0:property __ID="19" type="leftsplit_location">0.3089519650655022</p0:property>
-		<p0:property __ID="20" type="mainsplit_location">0.709643605870021</p0:property>
+	<p0:properties __ID="14" type="Starter">
+		<p0:property __ID="15" type="leftsplit_location">0.0</p0:property>
+		<p0:property __ID="16" type="mainsplit_location">-5.241090146750524E-4</p0:property>
+	</p0:properties>
+	<p0:properties __ID="17" type="Chat">
+		<p0:properties __ID="18" type="panelproperties">
+			<p0:property __ID="19" type="autorefresh">true</p0:property>
+			<p0:property __ID="20" type="sound">true</p0:property>
+		</p0:properties>
 	</p0:properties>
 	<p0:properties __ID="21" type="window">
 		<p0:property __ID="22" type="width">1936</p0:property>

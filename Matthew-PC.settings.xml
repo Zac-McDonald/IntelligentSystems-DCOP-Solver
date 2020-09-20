@@ -1,79 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <p0:properties xmlns:p0="http://www.activecomponents.org/jadex-conf" __ID="0">
-	<p0:properties __ID="1" type="simulationservice">
-		<p0:property __ID="2" type="executing">true</p0:property>
+	<p0:properties __ID="1" type="awa@Matthew-PC_b68">
+		<p0:property __ID="2" type="fast">false</p0:property>
+		<p0:property __ID="3" type="autocreate">true</p0:property>
+		<p0:property __ID="4" type="autodelete">true</p0:property>
 	</p0:properties>
-	<p0:properties __ID="3" type="chat">
-		<p0:property __ID="4" type="nickname">user_97d</p0:property>
-	</p0:properties>
-	<p0:properties __ID="5" type="awa@Matthew-PC_b68">
+	<p0:properties __ID="5" type="awa@Matthew-PC_719">
 		<p0:property __ID="6" type="fast">false</p0:property>
 		<p0:property __ID="7" type="autocreate">true</p0:property>
 		<p0:property __ID="8" type="autodelete">true</p0:property>
 	</p0:properties>
-	<p0:properties __ID="9" type="securityservice">
-		<p0:property __ID="10" type="validityduration">327680</p0:property>
-		<p0:property __ID="11" type="usepass">true</p0:property>
-		<p0:property __ID="12" type="password">04f0ba07-3bc</p0:property>
-		<p0:property __ID="13" type="selected_mechanism">0</p0:property>
-		<p0:property __ID="14" type="trustedlan">false</p0:property>
-		<p0:property __ID="15" type="storepath">./keystore</p0:property>
-		<p0:property __ID="16" type="storepass">keystore</p0:property>
-		<p0:property __ID="17" type="keypass">keystore</p0:property>
-		<p0:property __ID="18" type="selmech">0</p0:property>
-		<p0:properties __ID="19" type="DecentralizedAcquisitionMechanism">
-			<p0:property __ID="20" type="responses">1</p0:property>
-		</p0:properties>
-		<p0:properties __ID="21" type="TTPAcquisitionMechanism">
-			<p0:property __ID="22" type="verify">true</p0:property>
-		</p0:properties>
+	<p0:properties __ID="9" type="awa@Matthew-PC_e75">
+		<p0:property __ID="10" type="fast">false</p0:property>
+		<p0:property __ID="11" type="autocreate">true</p0:property>
+		<p0:property __ID="12" type="autodelete">true</p0:property>
 	</p0:properties>
-	<p0:properties __ID="23" type="StarterServicePanel">
-		<p0:properties __ID="24" type="mpanel">
-			<p0:property __ID="25" type="tree"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+	<p0:properties __ID="13" type="awa@Matthew-PC_713">
+		<p0:property __ID="14" type="fast">false</p0:property>
+		<p0:property __ID="15" type="autocreate">true</p0:property>
+		<p0:property __ID="16" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="17" type="awa@Matthew-PC_df1">
+		<p0:property __ID="18" type="fast">false</p0:property>
+		<p0:property __ID="19" type="autocreate">true</p0:property>
+		<p0:property __ID="20" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="21" type="awa@Matthew-PC_10b">
+		<p0:property __ID="22" type="fast">false</p0:property>
+		<p0:property __ID="23" type="autocreate">true</p0:property>
+		<p0:property __ID="24" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="25" type="awa@Matthew-PC_340">
+		<p0:property __ID="26" type="fast">false</p0:property>
+		<p0:property __ID="27" type="autocreate">true</p0:property>
+		<p0:property __ID="28" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="29" type="StarterServicePanel">
+		<p0:properties __ID="30" type="mpanel">
+			<p0:property __ID="31" type="tree"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <p0:TreeProperties xmlns:p0="typeinfo:jadex.base.gui.filetree" __ID="0">
 	<expandedNodes>
-		<p0:NodePath__1 __ID="1" __len="1">
-			<entries>
-				<p0:NodePath __ID="2" entry="1">
-					<path>
-						<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="3" __len="0"></p1:String__1>
-					</path>
-				</p0:NodePath>
-			</entries>
-		</p0:NodePath__1>
+		<p0:NodePath__1 __ID="1" __len="0"></p0:NodePath__1>
 	</expandedNodes>
-	<selectedNode>
-		<p0:NodePath __ID="4" entry="0">
-			<path>
-				<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="5" __len="0"></p1:String__1>
-			</path>
-		</p0:NodePath>
-	</selectedNode>
 	<rootPathEntries>
-		<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="6" __len="2">
-			<entries>
-				<p1:String __ID="7">src</p1:String>
-				<p1:String __ID="8">bin\.settings</p1:String>
-			</entries>
-		</p1:String__1>
+		<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="2" __len="0"></p1:String__1>
 	</rootPathEntries>
 </p0:TreeProperties>
 ]]></p0:property>
-			<p0:properties __ID="26" type="mic">
-				<p0:property __ID="27" type="Micro Agent">true</p0:property>
+			<p0:properties __ID="32" type="mic">
+				<p0:property __ID="33" type="Micro Agent">true</p0:property>
 			</p0:properties>
 		</p0:properties>
-		<p0:properties __ID="28" type="spanel">
-			<p0:property __ID="29" type="startsuspended">false</p0:property>
-			<p0:property __ID="30" type="autogenerate">true</p0:property>
-			<p0:property __ID="31" type="number">1</p0:property>
-			<p0:property __ID="32" type="name"></p0:property>
+		<p0:properties __ID="34" type="spanel">
+			<p0:property __ID="35" type="startsuspended">false</p0:property>
+			<p0:property __ID="36" type="autogenerate">false</p0:property>
+			<p0:property __ID="37" type="number">1</p0:property>
+			<p0:property __ID="38" type="name"></p0:property>
 		</p0:properties>
 	</p0:properties>
-	<p0:properties __ID="33" type="clockservice">
-		<p0:property __ID="34" type="type">system</p0:property>
-		<p0:property __ID="35" type="delta">100</p0:property>
-		<p0:property __ID="36" type="dilation">1.0</p0:property>
+	<p0:properties __ID="39" type="clockservice">
+		<p0:property __ID="40" type="type">system</p0:property>
+		<p0:property __ID="41" type="delta">100</p0:property>
+		<p0:property __ID="42" type="dilation">1.0</p0:property>
+	</p0:properties>
+	<p0:properties __ID="43" type="simulationservice">
+		<p0:property __ID="44" type="executing">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="45" type="chat">
+		<p0:property __ID="46" type="nickname">user_97d</p0:property>
+	</p0:properties>
+	<p0:properties __ID="47" type="awa@Matthew-PC_d62">
+		<p0:property __ID="48" type="fast">false</p0:property>
+		<p0:property __ID="49" type="autocreate">true</p0:property>
+		<p0:property __ID="50" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="51" type="securityservice">
+		<p0:property __ID="52" type="validityduration">327680</p0:property>
+		<p0:property __ID="53" type="usepass">true</p0:property>
+		<p0:property __ID="54" type="password">04f0ba07-3bc</p0:property>
+		<p0:property __ID="55" type="selected_mechanism">0</p0:property>
+		<p0:property __ID="56" type="networks" name="yourStudentNumber">yourStudentNumber</p0:property>
+		<p0:property __ID="57" type="trustedlan">false</p0:property>
+		<p0:property __ID="58" type="storepath">./keystore</p0:property>
+		<p0:property __ID="59" type="storepass">keystore</p0:property>
+		<p0:property __ID="60" type="keypass">keystore</p0:property>
+		<p0:property __ID="61" type="selmech">0</p0:property>
+		<p0:properties __ID="62" type="DecentralizedAcquisitionMechanism">
+			<p0:property __ID="63" type="responses">1</p0:property>
+		</p0:properties>
+		<p0:properties __ID="64" type="TTPAcquisitionMechanism">
+			<p0:property __ID="65" type="verify">true</p0:property>
+		</p0:properties>
 	</p0:properties>
 </p0:properties>
