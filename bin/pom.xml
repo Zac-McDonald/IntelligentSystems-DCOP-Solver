@@ -27,10 +27,10 @@
             <artifactId>jadex-distribution-standard</artifactId>
             <version>3.0.117</version>
         </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.26-SNAPSHOT</version>
+		<dependency>
+            <groupId>com.eclipsesource.j2v8</groupId>
+            <artifactId>j2v8_win32_x86_64</artifactId>
+            <version>2.2.1</version>
         </dependency>
     </dependencies>
 </project>
