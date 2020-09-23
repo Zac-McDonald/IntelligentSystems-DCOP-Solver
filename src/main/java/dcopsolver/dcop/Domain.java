@@ -1,63 +1,30 @@
 package dcopsolver.dcop;
 
-import java.util.Arrays;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.Objects;
 
 public class Domain {
     String name;
     String semanticType;
+    Set<Integer> values;
 
-    Boolean isIntegerDomain;
-    ArrayList<Integer> integerValues;
-    ArrayList<String> stringValues;
-
-    // Initialiser for Integer domains
-    public Domain (String name, String semanticType, Integer[] values) {
+    public Domain (String name, String semanticType, Set<Integer> values) {
         this.name = name;
         this.semanticType = semanticType;
-
-        this.isIntegerDomain = true;
-        this.integerValues = new ArrayList<Integer>(Arrays.asList(values));
-        this.stringValues = new ArrayList<String>();
-    }
-
-    // Initialiser for String domains
-    public Domain (String name, String semanticType, String[] values) {
-        this.name = name;
-        this.semanticType = semanticType;
-
-        this.isIntegerDomain = false;
-        this.stringValues = new ArrayList<String>(Arrays.asList(values));;
-        this.integerValues = new ArrayList<Integer>();
+        this.values = values;
     }
 
     public Integer size () {
-        return integerValues.size() + stringValues.size();
+        return values.size();
     }
 
     public Boolean contains (Integer value) {
-        return (isIntegerDomain && integerValues.contains(value));
+        return values.contains(value);
     }
 
-    public Boolean contains (String value) {
-        return (!isIntegerDomain && stringValues.contains(value));
-    }
-
-    public Integer indexOf (Integer value) {
-        if (isIntegerDomain) {
-            return integerValues.indexOf(value);
-        } else {
-            return -1;
-        }
-    }
-
-    public Integer indexOf (String value) {
-        if (!isIntegerDomain) {
-            return stringValues.indexOf(value);
-        } else {
-            return -1;
-        }
+    public Iterator<Integer> iterator () {
+        return values.iterator();
     }
 
     @Override
@@ -67,14 +34,12 @@ public class Domain {
         Domain domain = (Domain) o;
         return Objects.equals(name, domain.name) &&
                 Objects.equals(semanticType, domain.semanticType) &&
-                Objects.equals(isIntegerDomain, domain.isIntegerDomain) &&
-                Objects.equals(integerValues, domain.integerValues) &&
-                Objects.equals(stringValues, domain.stringValues);
+                Objects.equals(values, domain.values);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, semanticType, isIntegerDomain, integerValues, stringValues);
+        return Objects.hash(name, semanticType, values);
     }
 
     @Override
@@ -82,9 +47,7 @@ public class Domain {
         return "Domain{" +
                 "name='" + name + '\'' +
                 ", semanticType='" + semanticType + '\'' +
-                ", isIntegerDomain=" + isIntegerDomain +
-                ", integerValues=" + integerValues +
-                ", stringValues=" + stringValues +
+                ", values=" + values +
                 '}';
     }
 }
