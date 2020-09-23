@@ -22,23 +22,15 @@
     </repositories>
 
     <dependencies>
-        <!--For JadeX-->
         <dependency>
             <groupId>org.activecomponents.jadex</groupId>
             <artifactId>jadex-distribution-standard</artifactId>
             <version>3.0.117</version>
         </dependency>
-        <!--For J2V8-->
-        <dependency>
+		<dependency>
             <groupId>com.eclipsesource.j2v8</groupId>
             <artifactId>j2v8_win32_x86_64</artifactId>
             <version>2.2.1</version>
-        </dependency>
-        <!--For SnakeYAML-->
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.27</version>
         </dependency>
     </dependencies>
 </project>
