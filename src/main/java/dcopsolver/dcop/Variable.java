@@ -19,8 +19,12 @@ public class Variable {
         }
     }
 
+    public Float evaluate (Integer value) {
+        return 0f;
+    }
+
     @Override
-    public boolean equals(Object o) {
+    public boolean equals (Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Variable variable = (Variable) o;
@@ -30,12 +34,12 @@ public class Variable {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode () {
         return Objects.hash(name, domain, initialValue);
     }
 
     @Override
-    public String toString() {
+    public String toString () {
         return "Variable{" +
                 "name='" + name + '\'' +
                 ", domain=" + domain +

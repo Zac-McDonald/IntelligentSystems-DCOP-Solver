@@ -1,8 +1,8 @@
 package dcopsolver.dcop;
 
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Objects;
+import java.util.Set;
 
 public class Domain {
     String name;
@@ -28,7 +28,7 @@ public class Domain {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals (Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Domain domain = (Domain) o;
@@ -38,12 +38,12 @@ public class Domain {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode () {
         return Objects.hash(name, semanticType, values);
     }
 
     @Override
-    public String toString() {
+    public String toString () {
         return "Domain{" +
                 "name='" + name + '\'' +
                 ", semanticType='" + semanticType + '\'' +
