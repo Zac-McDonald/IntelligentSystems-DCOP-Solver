@@ -6,6 +6,7 @@ import dcopsolver.dcop.Variable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 //constraint builder
 public class ConstraintB {
@@ -21,9 +22,13 @@ public class ConstraintB {
 
         //for functional constraint
         if(this.type.equals("functional")) {
-            //TODO: search for needed variables
-            //gives all variables to list
-            ArrayList<Variable> variables = new ArrayList<>(v.values());
+            ArrayList<Variable> variables = new ArrayList<>();
+
+            //searches for variables in expression
+            for (Map.Entry<String, Variable> variable: v.entrySet()){
+                if(this.expression.contains(variable.getKey()))
+                    variables.add(variable.getValue());
+            }
 
             c = new FunctionConstraint(this.name, variables, this.expression);
         }
