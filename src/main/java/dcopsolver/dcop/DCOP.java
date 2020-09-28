@@ -18,10 +18,11 @@ public class DCOP {
         this.description = description;
         this.objectiveIsMin = objectiveIsMin;
 
-        this.domains = new HashMap<String, Domain>();
-        this.variables = new HashMap<String, Variable>();
-        this.constraints = new HashMap<String, Constraint>();
+        this.domains = new HashMap<>();
+        this.variables = new HashMap<>();
+        this.constraints = new HashMap<>();
     }
+
 
     public DCOP (String name, String description, Boolean objectiveIsMin, HashMap<String, Domain> domains,
                  HashMap<String, Variable> variables, HashMap<String, Constraint> constraints)
