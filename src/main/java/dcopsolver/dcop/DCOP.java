@@ -1,6 +1,7 @@
 package dcopsolver.dcop;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class DCOP {
@@ -18,10 +19,11 @@ public class DCOP {
         this.description = description;
         this.objectiveIsMin = objectiveIsMin;
 
-        this.domains = new HashMap<String, Domain>();
-        this.variables = new HashMap<String, Variable>();
-        this.constraints = new HashMap<String, Constraint>();
+        this.domains = new HashMap<>();
+        this.variables = new HashMap<>();
+        this.constraints = new HashMap<>();
     }
+
 
     public DCOP (String name, String description, Boolean objectiveIsMin, HashMap<String, Domain> domains,
                  HashMap<String, Variable> variables, HashMap<String, Constraint> constraints)
@@ -111,5 +113,53 @@ public class DCOP {
                 ", variables=" + variables +
                 ", constraints=" + constraints +
                 '}';
+    }
+
+    //prints all dcop information to terminal in easy to read format
+    public void print () {
+
+        System.out.println(
+            "DCOP \n\n" +
+            "Name= " + name + "\n\n" +
+            "Description= " + description + "\n\n" +
+            "ObjectiveIsMin= " + objectiveIsMin + "\n\n" +
+            "Domains= \n"
+        );
+
+        //prints domains
+        for (Map.Entry<String, Domain> entry: domains.entrySet()) {
+            Domain d = entry.getValue();
+            System.out.println(
+                "\tName= " + d.name + "\n" +
+                "\tType= " + d.semanticType + "\n" +
+                "\tValues= " + d.values + "\n"
+            );
+        }
+
+        //prints variables
+        System.out.println("Variables= \n");
+        for (Map.Entry<String, Variable> entry: variables.entrySet()) {
+            Variable v = entry.getValue();
+            System.out.println(
+                "\tName= " + v.name + "\n" +
+                "\tDomain= " + v.domain.name + "\n" +
+                "\tInitial Value= " + v.initialValue + "\n"
+            );
+        }
+
+        //prints constraints
+        System.out.println("Constraints= \n");
+        for (Map.Entry<String, Constraint> entry: constraints.entrySet()) {
+            Constraint c = entry.getValue();
+            System.out.println(
+                "\tName= " + c.name + "\n" +
+                "\tVariables= "
+            );
+
+            for (Variable v: c.variables){
+                System.out.println("\t\t" + v.name);
+            }
+            System.out.println();
+        }
     }
 }
