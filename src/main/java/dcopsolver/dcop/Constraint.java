@@ -1,6 +1,7 @@
 package dcopsolver.dcop;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public abstract class Constraint {
 
     // TODO: Slice function
 
-    public abstract Float evaluate ();
+    public abstract Float evaluate (HashMap<String, Integer> variableAssignments);
 
     @Override
     public boolean equals (Object o) {

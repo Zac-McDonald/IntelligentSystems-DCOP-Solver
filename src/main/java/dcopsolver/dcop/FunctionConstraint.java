@@ -1,9 +1,11 @@
 package dcopsolver.dcop;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class FunctionConstraint extends Constraint {
+    // TODO: Expression validation
     String expression;
 
     public FunctionConstraint (String name, ArrayList<Variable> variables, String expression) {
@@ -13,7 +15,7 @@ public class FunctionConstraint extends Constraint {
     }
 
     @Override
-    public Float evaluate () {
+    public Float evaluate (HashMap<String, Integer> variableAssignments) {
         // TODO: Runs J2V8 -- Will need to call to a J2V8 engine (ideally as a JadeX service)
         return 0f;
     }

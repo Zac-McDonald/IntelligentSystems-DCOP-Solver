@@ -3,7 +3,6 @@ package dcopsolver.dcop;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.locks.Condition;
 
 public class DCOP {
     String name;
@@ -12,6 +11,7 @@ public class DCOP {
     HashMap<String, Domain> domains;
     HashMap<String, Variable> variables;
     HashMap<String, Constraint> constraints;
+    // TODO: External Javascript sources + how to use them
     // TODO: Consider adding a metainfo HashMap or similar
     //       Example usage: Displaying String variable that has been enumerated
 
@@ -81,9 +81,27 @@ public class DCOP {
         }
     }
 
-    public Float solutionCost () {
-        // TODO: Relies on a partial solution representation
-        return 0f;
+    public Float solutionCost (HashMap<String, Integer> variableAssignments) {
+        // Requires a complete assignment
+        if (variableAssignments.keySet() != variables.keySet())
+        {
+            throw new IllegalArgumentException("Cannot calculate a solution from an incomplete assignment");
+        }
+        Float total = 0f;
+
+        for (String vName : variableAssignments.keySet())
+        {
+            // Add variable costs
+            total += variables.get(vName).evaluate(variableAssignments.get(vName));
+        }
+
+        for (Constraint c : constraints.values())
+        {
+            // Add constraint costs
+            total += c.evaluate(variableAssignments);
+        }
+
+        return total;
     }
 
     @Override
