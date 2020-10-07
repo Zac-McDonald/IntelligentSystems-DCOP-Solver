@@ -51,4 +51,11 @@ public class Domain {
                 '}';
     }
 
+    public String prettyPrint () {
+        return "Domain{\n" +
+                "\tname='" + name + "' (#" + hashCode() + "),\n" +
+                "\tsemanticType='" + semanticType + "',\n" +
+                "\tvalues=" + values + "\n" +
+                '}';
+    }
 }

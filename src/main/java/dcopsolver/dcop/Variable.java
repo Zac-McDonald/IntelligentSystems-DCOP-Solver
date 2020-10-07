@@ -46,4 +46,12 @@ public class Variable {
                 ", initialValue=" + initialValue +
                 '}';
     }
+
+    public String prettyPrint () {
+        return "Variable{\n" +
+                "\tname='" + name + "' (#" + hashCode() + "),\n" +
+                "\tdomain=" + domain.name + " (#" + domain.hashCode() + "),\n" +
+                "\tinitialValue=" + initialValue + "\n" +
+                '}';
+    }
 }

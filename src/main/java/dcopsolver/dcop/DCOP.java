@@ -3,6 +3,7 @@ package dcopsolver.dcop;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.Condition;
 
 public class DCOP {
     String name;
@@ -19,9 +20,9 @@ public class DCOP {
         this.description = description;
         this.objectiveIsMin = objectiveIsMin;
 
-        this.domains = new HashMap<>();
-        this.variables = new HashMap<>();
-        this.constraints = new HashMap<>();
+        this.domains = new HashMap<String, Domain>();
+        this.variables = new HashMap<String, Variable>();
+        this.constraints = new HashMap<String, Constraint>();
     }
 
 
@@ -113,6 +114,38 @@ public class DCOP {
                 ", variables=" + variables +
                 ", constraints=" + constraints +
                 '}';
+    }
+
+    public String prettyPrint () {
+        StringBuilder pretty = new StringBuilder(
+                "DCOP{\n" +
+                "\tname='" + name + "' (#" + hashCode() + "),\n" +
+                "\tdescription='" + description + "',\n" +
+                "\tobjectiveIsMin=" + objectiveIsMin + ",\n"
+        );
+
+        pretty.append("\tdomains=[");
+        for (Domain d : domains.values())
+        {
+            pretty.append("\n\t\t").append(d.prettyPrint().replace("\n", "\n\t\t"));
+        }
+        pretty.append("\n\t],\n");
+
+        pretty.append("\tvariables=[");
+        for (Variable v : variables.values())
+        {
+            pretty.append("\n\t\t").append(v.prettyPrint().replace("\n", "\n\t\t"));
+        }
+        pretty.append("\n\t],\n");
+
+        pretty.append("\tconstraints=[");
+        for (Constraint c : constraints.values())
+        {
+            pretty.append("\n\t\t").append(c.prettyPrint().replace("\n", "\n\t\t"));
+        }
+        pretty.append("\n\t]\n}");
+
+        return pretty.toString();
     }
 
     //prints all dcop information to terminal in easy to read format

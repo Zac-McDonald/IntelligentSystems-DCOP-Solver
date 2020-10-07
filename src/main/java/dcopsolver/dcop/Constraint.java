@@ -49,4 +49,20 @@ public abstract class Constraint {
                 ", variables=" + variables +
                 '}';
     }
+
+    public String prettyPrint () {
+        StringBuilder pretty = new StringBuilder(
+                "Constraint{\n" +
+                "\tname='" + name + "' (#" + hashCode() + "),\n"
+        );
+
+        pretty.append("\tvariables=[\n");
+        for (Variable v : variables)
+        {
+            pretty.append("\t\t").append(v.name).append(" (#").append(v.hashCode()).append(")\n");
+        }
+        pretty.append("\t]\n}");
+
+        return pretty.toString();
+    }
 }

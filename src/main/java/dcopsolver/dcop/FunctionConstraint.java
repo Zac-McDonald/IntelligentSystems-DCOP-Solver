@@ -35,9 +35,28 @@ public class FunctionConstraint extends Constraint {
     @Override
     public String toString () {
         return "FunctionConstraint{" +
-                "expression='" + expression + '\'' +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", variables=" + variables +
+                ", expression='" + expression + '\'' +
                 '}';
+    }
+
+    @Override
+    public String prettyPrint () {
+        StringBuilder pretty = new StringBuilder(
+                "FunctionConstraint{\n" +
+                "\tname='" + name + "' (#" + hashCode() + "),\n"
+        );
+
+        pretty.append("\tvariables=[\n");
+        for (Variable v : variables)
+        {
+            pretty.append("\t\t").append(v.name).append(" (#").append(v.hashCode()).append(")\n");
+        }
+        pretty.append("\t],\n");
+        pretty.append("\texpression='").append(expression).append("'\n");
+        pretty.append("}");
+
+        return pretty.toString();
     }
 }
