@@ -6,12 +6,27 @@ import java.util.Objects;
 
 public class FunctionConstraint extends Constraint {
     // TODO: Expression validation
+    //       Regex for variables/functions is: ^[\p{L}\p{Nl}$_][\p{L}\p{Nl}$\p{Mn}\p{Mc}\p{Nd}\p{Pc}]*$
+    //       Uses Unicode Properties (supported as of JDK7)
     String expression;
 
     public FunctionConstraint (String name, ArrayList<Variable> variables, String expression) {
         this.name = name;
         this.variables = variables;
         this.expression = expression;
+    }
+
+    @Override
+    public Constraint slice (HashMap<String, Integer> variableAssignments) {
+        // TODO: Slice function
+        // Check that assignment only contains associated variables
+
+        // Get remaining variables
+
+        // Replace used variables with their values
+
+        // Return new FunctionConstraint
+        return null;
     }
 
     @Override

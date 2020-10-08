@@ -15,7 +15,7 @@ public class VariableWithCostFnc extends Variable {
     @Override
     public Float evaluate (Integer value) {
         // TODO: Call J2V8 Service
-        return super.evaluate(value);
+        return 0f;
     }
 
     @Override

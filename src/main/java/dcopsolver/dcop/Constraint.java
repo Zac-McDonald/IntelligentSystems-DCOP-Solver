@@ -25,8 +25,10 @@ public abstract class Constraint {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    // TODO: Slice function
+    // Uses partial assignment
+    public abstract Constraint slice (HashMap<String, Integer> variableAssignments);
 
+    // Needs complete assignment
     public abstract Float evaluate (HashMap<String, Integer> variableAssignments);
 
     @Override

@@ -25,7 +25,6 @@ public class DCOP {
         this.constraints = new HashMap<String, Constraint>();
     }
 
-
     public DCOP (String name, String description, Boolean objectiveIsMin, HashMap<String, Domain> domains,
                  HashMap<String, Variable> variables, HashMap<String, Constraint> constraints)
     {

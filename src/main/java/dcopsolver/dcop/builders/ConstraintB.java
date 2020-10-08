@@ -3,10 +3,12 @@ package dcopsolver.dcop.builders;
 import dcopsolver.dcop.Constraint;
 import dcopsolver.dcop.FunctionConstraint;
 import dcopsolver.dcop.Variable;
+import dcopsolver.jadex.JavascriptAgent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 //constraint builder
 public class ConstraintB {
@@ -21,13 +23,21 @@ public class ConstraintB {
         Constraint c = null;
 
         //for functional constraint
-        if(this.type.equals("functional")) {
+        if (this.type.equals("functional")) {
             ArrayList<Variable> variables = new ArrayList<>();
 
-            //searches for variables in expression
-            for (Map.Entry<String, Variable> variable: v.entrySet()){
-                if(this.expression.contains(variable.getKey()))
+            // Searches for variables in expression -- uses Regex to match complete Javascript tokens
+            for (Map.Entry<String, Variable> variable: v.entrySet()) {
+                // Use the precompiled Regex to get a Set of matched Strings
+                Set<String> stringTokens = new HashSet<String>();
+                Matcher matcher = JavascriptAgent.tokenPattern.matcher(expression);
+                while (matcher.find()) {
+                    stringTokens.add(matcher.group());
+                }
+
+                if (stringTokens.contains(variable.getKey())) {
                     variables.add(variable.getValue());
+                }
             }
 
             c = new FunctionConstraint(this.name, variables, this.expression);

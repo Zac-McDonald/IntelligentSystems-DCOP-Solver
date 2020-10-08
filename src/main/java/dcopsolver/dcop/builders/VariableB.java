@@ -20,8 +20,16 @@ public class VariableB {
         Domain domain = domains.get(this.domain);
 
         //checks if domain was found and throws exception if not
-        if(domain == null)
+        if (domain == null) {
             throw new Exception("Domain not found: " + this.domain);
+        }
+
+        // Catch no initial value - default to first value in domain
+        if (initialValue == null) {
+            initialValue = domain.iterator().next();
+        }
+
+        // TODO: Should we add a banned variable name list -- banning Javascript reserved words (i.e. if, function)
 
         //creates variable
         return new Variable(name, domain, initialValue);
