@@ -9,8 +9,8 @@ public class DCOP {
     String description;
     Boolean objectiveIsMin;
     HashMap<String, Domain> domains;
-    HashMap<String, Variable> variables;
-    HashMap<String, Constraint> constraints;
+    public HashMap<String, Variable> variables;
+    public HashMap<String, Constraint> constraints;
     // TODO: Consider adding a metainfo HashMap or similar
     //       Example usage: Displaying String variable that has been enumerated
 
