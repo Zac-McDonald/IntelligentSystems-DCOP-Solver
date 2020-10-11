@@ -45,10 +45,12 @@ public class UserAgent
 	@AgentBody
 	public void body()
 	{
+
+		//get a future from the message queue agent subscription
 		final ISubscriptionIntermediateFuture<Event> fut = mq.subscribe(topic);
 		fut.addResultListener(new IntermediateDefaultResultListener<Event>()
 		{
-			public void intermediateResultAvailable(Event event)
+			public void intermediateResultAvailable(Event event)//when the result is available print a recieved message
 			{
 				System.out.println("Received: "+agent.getComponentIdentifier()+" "+event);
 			}

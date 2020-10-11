@@ -44,9 +44,6 @@ public class ArgumentsAgent {
         //add and agent with default args
         conf.addComponent(ArgumentsAgent.class);
 
-        //gui please
-        conf.setGui(true);
-        
         //get return a future from the platform...
         IExternalAccess platform = Starter.createPlatform(conf).get();
 
@@ -55,6 +52,9 @@ public class ArgumentsAgent {
                 .getService(platform, IComponentManagementService.class).get();
         CreationInfo ci = new CreationInfo(
                 SUtil.createHashMap(new String[]{"myName"}, new Object[]{"Bobby"}));
-        cms.createComponent("NotBobby","dcopsolver.ArgumentsAgent.class", ci);
+        cms.createComponent("NotBobby","simple.agents.ArgumentsAgent.class", ci);
+
+        //gui please
+        conf.setGui(true);
     }
 }

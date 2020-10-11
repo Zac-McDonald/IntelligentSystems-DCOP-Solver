@@ -14,8 +14,6 @@ public class StartOnSamePlatform {
      */
     public static void main(String[] args) {
         PlatformConfiguration config = PlatformConfiguration.getDefault();
-        config.setNetworkName("yourStudentNumber");
-        config.setNetworkPass("yourStudentNumber");
         config.setGui(true);
         config.addComponent(MessageQueueAgent.class);
         config.addComponent(UserAgent.class);

@@ -54,7 +54,7 @@ public class MessageQueueAgent implements IMessageQueueService
 	 */
 	public ISubscriptionIntermediateFuture<Event> subscribe(String topic)
 	{
-//		SubscriptionIntermediateFuture<Event> ret = new SubscriptionIntermediateFuture<Event>();
+		//first we get the subs
 		final SubscriptionIntermediateFuture<Event>	ret	= (SubscriptionIntermediateFuture<Event>)SFuture.getNoTimeoutFuture(SubscriptionIntermediateFuture.class, agent);
 
 		List<SubscriptionIntermediateFuture<Event>> subs = subscribers.get(topic);
@@ -75,7 +75,7 @@ public class MessageQueueAgent implements IMessageQueueService
 	 */
 	public IFuture<Void> publish(String topic, Event event)
 	{
-//		System.out.println("pub: "+topic+" "+event);
+		System.out.println("pub: "+topic+" "+event);
 		List<SubscriptionIntermediateFuture<Event>> subs = subscribers.get(topic);
 		if(subs!=null)
 		{

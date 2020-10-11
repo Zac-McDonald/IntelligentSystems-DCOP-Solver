@@ -54,7 +54,7 @@ public class TimeProviderAgent  implements ITimeService {
      */
     public ISubscriptionIntermediateFuture<String>  subscribe() {
         // Add a subscription to the set of subscriptions.
-        SubscriptionIntermediateFuture<String> ret = new SubscriptionIntermediateFuture<String>();
+        SubscriptionIntermediateFuture<String> ret = new SubscriptionIntermediateFuture<>();
         subscriptions.add(ret);
         ret.setTerminationCommand(new TerminationCommand() {
             /**
