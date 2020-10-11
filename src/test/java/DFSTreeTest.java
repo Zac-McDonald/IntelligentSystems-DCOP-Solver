@@ -1,6 +1,7 @@
 import dcopsolver.computations_graph.DFSEdge;
 import dcopsolver.computations_graph.DFSNode;
 import dcopsolver.computations_graph.DFSTree;
+import dcopsolver.computations_graph.HostDivider;
 import dcopsolver.dcop.DCOP;
 import fileInput.YamlLoader;
 import graphviz.Graph;
@@ -13,5 +14,7 @@ public class DFSTreeTest {
         DFSTree tree = new DFSTree(dcop.variables, dcop.constraints);
 
         tree.OutputGraph();
+        HostDivider h = new HostDivider(tree.nodes, 4);
+        h.Print();
     }
 }
