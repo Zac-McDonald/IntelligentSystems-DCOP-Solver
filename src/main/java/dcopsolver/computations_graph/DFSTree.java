@@ -96,6 +96,7 @@ public class DFSTree {
         }
     }
 
+    // creates a dot file to visualise the graph
     public void OutputGraph(){
         Graph graph = new Graph(true);
         graph.setDefaults("", "shape = circle", "arrowhead = normal");
