@@ -60,9 +60,21 @@ public class DFSTree {
 
         //starts DFS tree algorithm
         assert nodes != null;
+
+        //check for node with most adjacent nodes
+        DFSNode temp = null;
+        for (DFSNode n: nodes) {
+            if (temp == null)
+                temp = n;
+            if (n.adjacent.size() > temp.adjacent.size())
+                temp = n;
+        }
+        if (temp != null)
+            Visit(temp);
+
+        //check for seperated networks
         for (DFSNode n: nodes)
-            //to catch if there is more than one network of variables
-            if (!n.visited)
+            if(!n.visited)
                 Visit(n);
     }
 

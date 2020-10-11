@@ -16,13 +16,13 @@ variables:
   - { name: "v7", domain: "domain2", initialValue: 8}
   - { name: "v8", domain: "domain2", initialValue: 8}
   - { name: "v9", domain: "domain2", initialValue: 8}
-  - { name: "v10", domain: "domain2", initialValue: 8}
-  - { name: "v11", domain: "domain2", initialValue: 8}
-  - { name: "v12", domain: "domain2", initialValue: 8}
+  - { name: "va", domain: "domain2", initialValue: 8}
+  - { name: "vb", domain: "domain2", initialValue: 8}
+  - { name: "vc", domain: "domain2", initialValue: 8}
   
 
 constraints:
-  - { name: "diff1", type: "functional", expression: "v9 v11 v12"}
+  - { name: "diff1", type: "functional", expression: "v9 vb vc"}
   - { name: "diff2", type: "functional", expression: "v1 v9"}
   - { name: "diff3", type: "functional", expression: "v1 v5 v3"}
   - { name: "diff4", type: "functional", expression: "v7 v5 v3"}
@@ -31,4 +31,4 @@ constraints:
   - { name: "diff7", type: "functional", expression: "v6 v2"}
   - { name: "diff8", type: "functional", expression: "v2 v8"}
   - { name: "diff9", type: "functional", expression: "v2 v4"}
-  - { name: "diff10", type: "functional", expression: "v4 v10"}
+  - { name: "diff10", type: "functional", expression: "v4 va"}
