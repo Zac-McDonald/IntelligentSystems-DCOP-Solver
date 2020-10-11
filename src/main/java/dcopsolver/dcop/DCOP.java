@@ -14,6 +14,7 @@ public class DCOP {
     // TODO: External Javascript sources + how to use them
     // TODO: Consider adding a metainfo HashMap or similar
     //       Example usage: Displaying String variable that has been enumerated
+    // TODO: getters
 
     public DCOP (String name, String description, Boolean objectiveIsMin) {
         this.name = name;
@@ -35,6 +36,30 @@ public class DCOP {
         this.domains = domains;
         this.variables = variables;
         this.constraints = constraints;
+    }
+
+    public String getName () {
+        return name;
+    }
+
+    public String getDescription () {
+        return description;
+    }
+
+    public Boolean getObjectiveIsMin () {
+        return objectiveIsMin;
+    }
+
+    public HashMap<String, Domain> getDomains () {
+        return domains;
+    }
+
+    public HashMap<String, Variable> getVariables () {
+        return variables;
+    }
+
+    public HashMap<String, Constraint> getConstraints () {
+        return constraints;
     }
 
     public void addVariable (Variable variable) {
@@ -82,7 +107,7 @@ public class DCOP {
 
     public Float solutionCost (HashMap<String, Integer> variableAssignments) {
         // Requires a complete assignment
-        if (variableAssignments.keySet() != variables.keySet())
+        if (!variableAssignments.keySet().equals(variables.keySet()))
         {
             throw new IllegalArgumentException("Cannot calculate a solution from an incomplete assignment");
         }

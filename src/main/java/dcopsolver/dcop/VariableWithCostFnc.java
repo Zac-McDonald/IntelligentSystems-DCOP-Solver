@@ -10,12 +10,21 @@ public class VariableWithCostFnc extends Variable {
     public VariableWithCostFnc (String name, Domain domain, Integer initialValue, String expression) {
         super(name, domain, initialValue);
         this.expression = expression;
+
+        // Validate expression
+        if (!JavascriptEngine.getInstance().validFloatExpression(expression)) {
+            throw new IllegalArgumentException("Expression \"" + expression + "\" does not return float.");
+        }
+    }
+
+    public String getExpression () {
+        return expression;
     }
 
     @Override
     public Float evaluate (Integer value) {
-        // TODO: Call J2V8 Service
-        return 0f;
+        // Evaluate expression using J2V8
+        return JavascriptEngine.getInstance().evaluateFloatExpression(name + "=" + value + ";" + expression);
     }
 
     @Override

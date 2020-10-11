@@ -15,6 +15,14 @@ public abstract class Constraint {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public String getName () {
+        return name;
+    }
+
+    public ArrayList<Variable> getVariables () {
+        return variables;
+    }
+
     public int arity () {
         return variables.size();
     }

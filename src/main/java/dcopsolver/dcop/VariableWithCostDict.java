@@ -22,6 +22,14 @@ public class VariableWithCostDict extends Variable {
         }
     }
 
+    public HashMap<Integer, Float> getCosts () {
+        return costs;
+    }
+
+    public Float getDefaultCost () {
+        return defaultCost;
+    }
+
     @Override
     public Float evaluate (Integer value) {
         return costs.getOrDefault(value, defaultCost);

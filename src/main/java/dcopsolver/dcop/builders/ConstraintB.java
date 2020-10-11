@@ -2,13 +2,11 @@ package dcopsolver.dcop.builders;
 
 import dcopsolver.dcop.Constraint;
 import dcopsolver.dcop.FunctionConstraint;
+import dcopsolver.dcop.JavascriptEngine;
 import dcopsolver.dcop.Variable;
-import dcopsolver.jadex.JavascriptAgent;
 
 import java.util.*;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 
 //constraint builder
 public class ConstraintB {
@@ -30,7 +28,7 @@ public class ConstraintB {
             for (Map.Entry<String, Variable> variable: v.entrySet()) {
                 // Use the precompiled Regex to get a Set of matched Strings
                 Set<String> stringTokens = new HashSet<String>();
-                Matcher matcher = JavascriptAgent.tokenPattern.matcher(expression);
+                Matcher matcher = JavascriptEngine.tokenPattern.matcher(expression);
                 while (matcher.find()) {
                     stringTokens.add(matcher.group());
                 }

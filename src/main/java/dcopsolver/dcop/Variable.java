@@ -19,6 +19,18 @@ public class Variable {
         }
     }
 
+    public String getName () {
+        return name;
+    }
+
+    public Domain getDomain () {
+        return domain;
+    }
+
+    public Integer getInitialValue () {
+        return initialValue;
+    }
+
     public Float evaluate (Integer value) {
         return 0f;
     }

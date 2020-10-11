@@ -15,6 +15,14 @@ public class Domain {
         this.values = values;
     }
 
+    public String getName () {
+        return name;
+    }
+
+    public String getSemanticType () {
+        return semanticType;
+    }
+
     public Integer size () {
         return values.size();
     }

@@ -14,6 +14,21 @@ public class FunctionConstraint extends Constraint {
         this.name = name;
         this.variables = variables;
         this.expression = expression;
+
+        // Validate expression
+        HashMap<String, Integer> variableAssignments = new HashMap<String, Integer>();
+        for (Variable v : variables) {
+            variableAssignments.put(v.getName(), v.getDomain().iterator().next());
+        }
+        String assign = JavascriptEngine.getAssignment(variableAssignments);
+
+        if (!JavascriptEngine.getInstance().validFloatExpression(assign + expression)) {
+            throw new IllegalArgumentException("Expression \"" + expression + "\" does not return float.");
+        }
+    }
+
+    public String getExpression () {
+        return expression;
     }
 
     @Override
@@ -31,8 +46,9 @@ public class FunctionConstraint extends Constraint {
 
     @Override
     public Float evaluate (HashMap<String, Integer> variableAssignments) {
-        // TODO: Runs J2V8 -- Will need to call to a J2V8 engine (ideally as a JadeX service)
-        return 0f;
+        // Evaluate expression using J2V8
+        String assign = JavascriptEngine.getAssignment(variableAssignments);
+        return JavascriptEngine.getInstance().evaluateFloatExpression(assign + expression);
     }
 
     @Override
