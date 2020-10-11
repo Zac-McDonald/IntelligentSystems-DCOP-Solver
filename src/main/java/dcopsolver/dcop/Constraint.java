@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public abstract class Constraint {
     String name;
-    ArrayList<Variable> variables;
+    public ArrayList<Variable> variables;
 
     public ArrayList<String> variable_names () {
         return variables.stream()
