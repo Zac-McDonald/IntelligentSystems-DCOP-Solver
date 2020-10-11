@@ -22,26 +22,23 @@
     </repositories>
 
     <dependencies>
+        <!--For JadeX-->
         <dependency>
             <groupId>org.activecomponents.jadex</groupId>
             <artifactId>jadex-distribution-standard</artifactId>
             <version>3.0.117</version>
         </dependency>
-
-<!--        added Choco just to check out the nQueensSolver example-->
-        <dependency>
-            <groupId>org.choco-solver</groupId>
-            <artifactId>choco-solver</artifactId>
-            <version>4.0.4</version>
-            <classifier>with-dependencies</classifier>
-        </dependency>
-
-        <!--j2v8 for parsing function arguments from strings to javascript to java?-->
+        <!--For J2V8-->
         <dependency>
             <groupId>com.eclipsesource.j2v8</groupId>
-            <artifactId>j2v8</artifactId>
-            <version>6.2.0</version>
-            <type>aar.asc</type>
+            <artifactId>j2v8_win32_x86_64</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <!--For SnakeYAML-->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.27</version>
         </dependency>
 
     </dependencies>
