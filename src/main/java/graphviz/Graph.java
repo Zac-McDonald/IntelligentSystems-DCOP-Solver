@@ -30,8 +30,8 @@ public class Graph {
         nodeFormat = "";
         edgeFormat = "";
 
-        this.nodes = new HashMap<String, Node>();
-        this.edges = new ArrayList<Edge>();
+        this.nodes = new HashMap<>();
+        this.edges = new ArrayList<>();
     }
 
     public void setDefaults (String graph, String node, String edge) {
@@ -69,10 +69,6 @@ public class Graph {
     }
 
     public void addEdgeFormatted (String from, String to) {
-        addEdge(from, to, edgeFormat);
-    }
-
-    public void addEdgeFormatted (String from, String to, Boolean directed) {
         addEdge(from, to, edgeFormat);
     }
 
@@ -117,7 +113,7 @@ public class Graph {
         }
     }
 
-    public enum RankDir { TB, BT, LR, RL };
+    public enum RankDir { TB, BT, LR, RL }
 
     private class Node {
         public String name;

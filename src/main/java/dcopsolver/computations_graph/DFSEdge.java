@@ -7,9 +7,9 @@ public class DFSEdge {
     // parent - Parent node
     // child - Child node
 
-    Boolean span;
-    DFSNode parent;
-    DFSNode child;
+    public Boolean span;
+    public DFSNode parent;
+    public DFSNode child;
 
     public DFSEdge(DFSNode a, DFSNode b){
         parent = a;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DFSNode {
-    String name;
+    public String name;
     Variable v;
     Boolean visited;
     List<DFSEdge> adjacent = new ArrayList<>();

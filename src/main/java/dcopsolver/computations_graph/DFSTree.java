@@ -2,11 +2,9 @@ package dcopsolver.computations_graph;
 
 import dcopsolver.dcop.Constraint;
 import dcopsolver.dcop.Variable;
+import graphviz.Graph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class DFSTree {
 
@@ -14,8 +12,8 @@ public class DFSTree {
     // nodes - All nodes in the graph
     // edges - All edges in the graph
 
-    List<DFSNode> nodes = new ArrayList<>();
-    List<DFSEdge> edges = new ArrayList<>();
+    public List<DFSNode> nodes = new ArrayList<>();
+    public List<DFSEdge> edges = new ArrayList<>();
 
     public DFSTree(HashMap<String, Variable> variables, HashMap<String, Constraint> constraints){
 
@@ -39,14 +37,13 @@ public class DFSTree {
             }
 
             //Iterator to keep location in Node list
-            Iterator<DFSNode> iterA = temp.iterator();
+            ListIterator<DFSNode> iterA = temp.listIterator();
 
             while(iterA.hasNext()){
                 DFSNode a = iterA.next();
 
                 //creates second iterator to establish edges with first, starting at current position
-                Iterator<DFSNode> iterB;
-                iterB = iterA;
+                ListIterator<DFSNode> iterB = temp.listIterator(iterA.nextIndex());
                 while(iterB.hasNext()){
                     DFSNode b = iterB.next();
 
@@ -97,5 +94,22 @@ public class DFSTree {
                     e.SwapParent();
             }
         }
+    }
+
+    public void OutputGraph(){
+        Graph graph = new Graph(true);
+        graph.setDefaults("", "shape = circle", "arrowhead = normal");
+
+        for (DFSNode n: nodes)
+            graph.addNode(n.name);
+
+        for (DFSEdge e: edges){
+            if (e.span)
+                graph.addEdge(e.parent.name, e.child.name, "");
+            else
+                graph.addEdge(e.parent.name, e.child.name, "style = dotted, arrowhead = none, dir=back");
+        }
+
+        graph.outputToFile("DFSTreeGraph.dot");
     }
 }

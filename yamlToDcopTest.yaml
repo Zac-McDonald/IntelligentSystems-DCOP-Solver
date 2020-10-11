@@ -13,4 +13,4 @@ variables:
 
 constraints:
   - { name: "diff_1_2", type: "functional", expression: "10 if v1 == v2 else 0"}
-  - { name: "diff_2_3", type: "functional", expression: "10 if v3 == v2 else 0"}
+  - { name: "diff_2_3", type: "functional", expression: "10 if v3 == v2 + v1 else 0"}
