@@ -7,8 +7,6 @@ import jadex.bridge.service.search.SServiceProvider;
 import jadex.bridge.service.types.cms.CreationInfo;
 import jadex.bridge.service.types.cms.IComponentManagementService;
 import jadex.commons.SUtil;
-import service.testing.TimeProviderAgent;
-import service.testing.TimeUserAgent;
 
 import java.util.HashMap;
 
@@ -18,7 +16,6 @@ public class TestMain {
         PlatformConfiguration config = PlatformConfiguration.getDefault();
         config.setGui(true);
 
-        //get return a future from the platform...
         IExternalAccess platform = Starter.createPlatform(config).get();
 
         //make a hashmap
@@ -29,9 +26,17 @@ public class TestMain {
         // -- Adding a new agent to the platform with some input arguments.
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
+
         CreationInfo ci = new CreationInfo(
                 SUtil.createHashMap(new String[]{"dcop"}, new Object[]{map}));
-        cms.createComponent("Messenger","message.MessageAgent.class", ci);
+        cms.createComponent("Agent 1","message.MessageAgent.class", ci);
 
+        ci = new CreationInfo(
+                SUtil.createHashMap(new String[]{"dcop"}, new Object[]{map}));
+        cms.createComponent("Agent 2","message.MessageAgent.class", ci);
+
+        ci = new CreationInfo(
+                SUtil.createHashMap(new String[]{"dcop"}, new Object[]{map}));
+        cms.createComponent("Agent 3","message.MessageAgent.class", ci);
     }
 }
