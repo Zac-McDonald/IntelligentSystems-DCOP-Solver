@@ -72,7 +72,7 @@ public class DFSTree {
         if (temp != null)
             Visit(temp);
 
-        //check for seperated networks
+        //check for separated networks
         for (DFSNode n: nodes)
             if(!n.visited)
                 Visit(n);
