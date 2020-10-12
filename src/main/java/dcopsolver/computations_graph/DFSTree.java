@@ -14,9 +14,12 @@ public class DFSTree {
 
     public List<DFSNode> nodes = new ArrayList<>();
     public List<DFSEdge> edges = new ArrayList<>();
+    public HostDivider hD;
+    public int hosts;
 
-    public DFSTree(HashMap<String, Variable> variables, HashMap<String, Constraint> constraints){
+    public DFSTree(HashMap<String, Variable> variables, HashMap<String, Constraint> constraints, int hosts){
 
+        this.hosts = hosts;
         //populate variables
         for (Variable v : variables.values()){
             nodes.add(new DFSNode(v));
@@ -73,9 +76,11 @@ public class DFSTree {
             Visit(temp);
 
         //check for separated networks
-        for (DFSNode n: nodes)
-            if(!n.visited)
+        for (DFSNode n: nodes) {
+            if (!n.visited)
                 Visit(n);
+        }
+        DivideHosts();
     }
 
     //checks if edge between 2 nodes exists
@@ -108,13 +113,31 @@ public class DFSTree {
         }
     }
 
+    public void DivideHosts(){
+        hD = new HostDivider(nodes, hosts);
+    }
+
     // creates a dot file to visualise the graph
     public void OutputGraph(){
         Graph graph = new Graph(true);
         graph.setDefaults("", "shape = circle", "arrowhead = normal");
+        String[] colors = {
+                "red",
+                "blue",
+                "green",
+                "purple",
+                "orange",
+                "yellow",
+                "cyan"
+        };
 
-        for (DFSNode n: nodes)
-            graph.addNode(n.name);
+        int i = 0;
+        for (List<DFSNode> list: hD.hostNodes){
+            for (DFSNode n: list){
+                graph.addNode(n.name, "color = " + colors[i]);
+            }
+            i++;
+        }
 
         for (DFSEdge e: edges){
             if (e.span)

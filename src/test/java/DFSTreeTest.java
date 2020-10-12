@@ -8,10 +8,9 @@ public class DFSTreeTest {
     public static void main(String[] args) throws Exception {
         YamlLoader loader = new YamlLoader();
         DCOP dcop = loader.loadYAML("DFSTreeTest.yaml");
-        DFSTree tree = new DFSTree(dcop.variables, dcop.constraints);
+        DFSTree tree = new DFSTree(dcop.variables, dcop.constraints, 5);
 
         tree.OutputGraph();
-        HostDivider h = new HostDivider(tree.nodes, 5);
-        h.Print();
+        tree.hD.Print();
     }
 }
