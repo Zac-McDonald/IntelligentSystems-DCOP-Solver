@@ -18,8 +18,10 @@ public class TestMain {
         PlatformConfiguration config = PlatformConfiguration.getDefault();
         config.setGui(true);
 
+        config.addComponent(MessageAgent.class);
         //get return a future from the platform...
         IExternalAccess platform = Starter.createPlatform(config).get();
+
 
         //make a hashmap
         HashMap<String, Integer> map = new HashMap<String, Integer>();

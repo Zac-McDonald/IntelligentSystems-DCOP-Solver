@@ -70,7 +70,6 @@ public class MessageAgent implements IMessageService{
         Integer x=10;
         //the solving loop
         while (x > 0){
-            agent.getComponentFeature(IExecutionFeature.class).waitForDelay(1000);
             IComponentIdentifier target = getRandomTargetAgent();
             //get the message content
             Data content = getMessageContent();
