@@ -11,10 +11,10 @@ public class DCOP {
     HashMap<String, Domain> domains;
     HashMap<String, Variable> variables;
     HashMap<String, Constraint> constraints;
-    // TODO: External Javascript sources + how to use them
+    // TODO: External Javascript sources + how to use them -- here or per function
+    //HashMap<String, String> sources;
     // TODO: Consider adding a metainfo HashMap or similar
     //       Example usage: Displaying String variable that has been enumerated
-    // TODO: getters
 
     public DCOP (String name, String description, Boolean objectiveIsMin) {
         this.name = name;

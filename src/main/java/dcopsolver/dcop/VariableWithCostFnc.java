@@ -1,18 +1,20 @@
 package dcopsolver.dcop;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 
 public class VariableWithCostFnc extends Variable {
-    // TODO: Expression validation
     String expression;      // Maps the variable values (integer) to a floating point cost
+    String source;
 
-    public VariableWithCostFnc (String name, Domain domain, Integer initialValue, String expression) {
+    public VariableWithCostFnc (String name, Domain domain, Integer initialValue, String expression, String source) {
         super(name, domain, initialValue);
         this.expression = expression;
+        this.source = source;
 
         // Validate expression
-        if (!JavascriptEngine.getInstance().validFloatExpression(expression)) {
+        if (!JavascriptEngine.getInstance().validFloatExpression(name + "=" + initialValue + ";" + expression, source)) {
             throw new IllegalArgumentException("Expression \"" + expression + "\" does not return float.");
         }
     }
@@ -21,10 +23,14 @@ public class VariableWithCostFnc extends Variable {
         return expression;
     }
 
+    public String getSource () {
+        return source;
+    }
+
     @Override
     public Float evaluate (Integer value) {
         // Evaluate expression using J2V8
-        return JavascriptEngine.getInstance().evaluateFloatExpression(name + "=" + value + ";" + expression);
+        return JavascriptEngine.getInstance().evaluateFloatExpression(name + "=" + value + ";" + expression, source);
     }
 
     @Override
@@ -33,12 +39,13 @@ public class VariableWithCostFnc extends Variable {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         VariableWithCostFnc that = (VariableWithCostFnc) o;
-        return Objects.equals(expression, that.expression);
+        return Objects.equals(expression, that.expression) &&
+                Objects.equals(source, that.source);
     }
 
     @Override
     public int hashCode () {
-        return Objects.hash(super.hashCode(), expression);
+        return Objects.hash(super.hashCode(), expression, source);
     }
 
     @Override
@@ -48,6 +55,7 @@ public class VariableWithCostFnc extends Variable {
                 ", domain=" + domain +
                 ", initialValue=" + initialValue +
                 ", expression='" + expression + '\'' +
+                ", source='" + source + '\'' +
                 '}';
     }
 
@@ -58,6 +66,7 @@ public class VariableWithCostFnc extends Variable {
                 "\tdomain=" + domain.name + " (#" + domain.hashCode() + "),\n" +
                 "\tinitialValue=" + initialValue + ",\n" +
                 "\texpression='" + expression + "'\n" +
+                "\tsource='" + source + "'\n" +
                 '}';
     }
 
@@ -70,8 +79,8 @@ public class VariableWithCostFnc extends Variable {
         Domain d = new Domain("Test domain", "Integers", dValues);
 
         Variable regularVar = new Variable("Var", d, 0);
-        VariableWithCostFnc fncVar1 = new VariableWithCostFnc("Var", d, 0, "value * 2");
-        VariableWithCostFnc fncVar2 = new VariableWithCostFnc("Var", d, 0, "value * 2");
+        VariableWithCostFnc fncVar1 = new VariableWithCostFnc("Var", d, 0, "value * 2", "");
+        VariableWithCostFnc fncVar2 = new VariableWithCostFnc("Var", d, 0, "value * 2", "");
 
         System.out.println("reg == fnc -> " + regularVar.equals(fncVar1));
         System.out.println("fnc == reg -> " + fncVar1.equals(regularVar));

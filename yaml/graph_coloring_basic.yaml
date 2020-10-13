@@ -10,6 +10,9 @@ domains:
 variables:
   - name: "v0"
     domain: "colours"
+    initialValue: 1
+    source: "./test_functions.js"
+    expression: "timesTwo(v0)"
 
   - name: "v1"
     domain: "colours"
@@ -20,7 +23,8 @@ variables:
 constraints:
   - name: "diff_v0_v1"
     type: "functional"
-    expression: "(v0 == v1) ? 10 : 0"
+    source: "./test_functions.js"
+    expression: "diff(v0, v1, 10, 0)"
 
   - name: "diff_v1_v2"
     type: "functional"

@@ -8,6 +8,7 @@ import dcopsolver.dcop.builders.VariableB;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
 import java.io.FileInputStream;
 
 public class YamlLoader {
@@ -33,6 +34,6 @@ public class YamlLoader {
         FileInputStream input = new FileInputStream(fileName);
         DCOPB dcopB = yaml.load(input);
 
-        return dcopB.build();
+        return dcopB.build(new File(fileName).getParent());
     }
 }

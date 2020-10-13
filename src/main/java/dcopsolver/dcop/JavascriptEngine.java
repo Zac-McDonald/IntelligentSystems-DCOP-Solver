@@ -38,24 +38,34 @@ public class JavascriptEngine {
         return sb.toString();
     }
 
-    public Float evaluateFloatExpression (String expression)
-    {
+    public Float evaluateFloatExpression (String expression, String sources) {
         V8 runtime = V8.createV8Runtime();
 
-        // Setup variables
+        // Execute sources first - if they exist
+        if (!sources.isEmpty()) {
+            runtime.executeVoidScript(sources);
+        }
+
         Float result = ((Double)runtime.executeDoubleScript(expression)).floatValue();
 
         runtime.release();
         return result;
     }
 
-    public Boolean validFloatExpression (String expression)
-    {
+    public Float evaluateFloatExpression (String expression) {
+        return evaluateFloatExpression(expression, "");
+    }
+
+    public Boolean validFloatExpression (String expression, String sources) {
         V8 runtime = V8.createV8Runtime();
         boolean result = true;
 
         try {
-            // Setup variables
+            // Execute sources first - if they exist
+            if (!sources.isEmpty()) {
+                runtime.executeVoidScript(sources);
+            }
+
             Object obj = runtime.executeDoubleScript(expression);
         } catch (V8ResultUndefined e) {
             result = false;
@@ -63,5 +73,9 @@ public class JavascriptEngine {
 
         runtime.release();
         return result;
+    }
+
+    public Boolean validFloatExpression (String expression) {
+        return validFloatExpression(expression, "");
     }
 }

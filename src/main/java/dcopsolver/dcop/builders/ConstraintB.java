@@ -5,6 +5,10 @@ import dcopsolver.dcop.FunctionConstraint;
 import dcopsolver.dcop.JavascriptEngine;
 import dcopsolver.dcop.Variable;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -13,11 +17,12 @@ public class ConstraintB {
     String name;
     String type;
     String expression;
+    String source;
 
     public ConstraintB(){}
 
     //converts builder to actual constraint
-    public Constraint build(HashMap<String, Variable> v) throws Exception {
+    public Constraint build(String dcopDir, HashMap<String, Variable> v) throws Exception {
         Constraint c = null;
 
         //for functional constraint
@@ -38,7 +43,20 @@ public class ConstraintB {
                 }
             }
 
-            c = new FunctionConstraint(this.name, variables, this.expression);
+            if (source == null) {
+                source = "";
+            } else {
+                // Parse source file as a string
+                try {
+                    StringBuilder sb = new StringBuilder();
+                    Files.readAllLines(Paths.get(dcopDir, source)).forEach(sb::append);
+                    source = sb.toString();
+                } catch (IOException e) {
+                    throw new FileNotFoundException("Could not find source file: " + source);
+                }
+            }
+
+            c = new FunctionConstraint(this.name, variables, this.expression, this.source);
         }
 
         //if constraint can't be found, throw exception
@@ -56,5 +74,9 @@ public class ConstraintB {
 
     public void setExpression(String expression) {
         this.expression = expression;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

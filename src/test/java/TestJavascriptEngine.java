@@ -33,5 +33,23 @@ public class TestJavascriptEngine {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        try {
+            int n = 1000;
+            System.out.println("Press enter to begin stress test (n=" + n + "): ");
+            System.in.read();
+
+            System.out.println("Starting");
+            long startTime = System.nanoTime();
+            for (float x = 1; n > 0; n--) {
+                String fnc = "x=" + x + ";Math.sin(x)*2";
+                x += JavascriptEngine.getInstance().evaluateFloatExpression(fnc);
+                //System.out.println("\t" + n + ": " + x);
+            }
+            long endTime = System.nanoTime();
+            System.out.println("Finished in " + ((endTime - startTime) / 1000000) + "ms");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
