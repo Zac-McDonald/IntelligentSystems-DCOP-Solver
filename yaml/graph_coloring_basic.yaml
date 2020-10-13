@@ -1,0 +1,31 @@
+name: Graph Colouring
+description: A basic graph colouring problem with only 3 vertices
+objectiveIsMin: true
+
+domains:
+  - name: "colours"
+    semanticType: "colours => R: 0, G: 1"
+    values: [0, 1]
+
+variables:
+  - name: "v0"
+    domain: "colours"
+    initialValue: 1
+    source: "./test_functions.js"
+    expression: "timesTwo(v0)"
+
+  - name: "v1"
+    domain: "colours"
+
+  - name: "v2"
+    domain: "colours"
+
+constraints:
+  - name: "diff_v0_v1"
+    type: "functional"
+    source: "./test_functions.js"
+    expression: "diff(v0, v1, 10, 0)"
+
+  - name: "diff_v1_v2"
+    type: "functional"
+    expression: "(v1 == v2) ? 10 : 0"

@@ -19,6 +19,18 @@ public class Variable {
         }
     }
 
+    public String getName () {
+        return name;
+    }
+
+    public Domain getDomain () {
+        return domain;
+    }
+
+    public Integer getInitialValue () {
+        return initialValue;
+    }
+
     public Float evaluate (Integer value) {
         return 0f;
     }
@@ -44,6 +56,14 @@ public class Variable {
                 "name='" + name + '\'' +
                 ", domain=" + domain +
                 ", initialValue=" + initialValue +
+                '}';
+    }
+
+    public String prettyPrint () {
+        return "Variable{\n" +
+                "\tname='" + name + "' (#" + hashCode() + "),\n" +
+                "\tdomain=" + domain.name + " (#" + domain.hashCode() + "),\n" +
+                "\tinitialValue=" + initialValue + "\n" +
                 '}';
     }
 }

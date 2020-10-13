@@ -17,24 +17,24 @@ public class DCOPB {
     public DCOPB() { }
 
     //converts builder to real DCOP object
-    public DCOP build() throws Exception {
+    public DCOP build(String dcopDir) throws Exception {
 
         //creates domain hashMap
         HashMap<String, Domain> domains = new HashMap<>();
         for (DomainB domainB : domainsB) {
-            domains.put(domainB.name, domainB.build());
+            domains.put(domainB.name, domainB.build(dcopDir));
         }
 
         //creates variables hashMap
         HashMap<String, Variable> variables = new HashMap<>();
         for (VariableB variableB : variablesB) {
-            variables.put(variableB.name, variableB.build(domains));
+            variables.put(variableB.name, variableB.build(dcopDir, domains));
         }
 
         //creates constraints hashMap
         HashMap<String, Constraint> constraints = new HashMap<>();
         for (ConstraintB constraintB : constraintsB) {
-            constraints.put(constraintB.name, constraintB.build(variables));
+            constraints.put(constraintB.name, constraintB.build(dcopDir, variables));
         }
 
         //creates the DCOP object

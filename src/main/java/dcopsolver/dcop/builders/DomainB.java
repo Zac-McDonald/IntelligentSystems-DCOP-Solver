@@ -13,7 +13,7 @@ public class DomainB {
     public DomainB() { }
 
     //creates domain object
-    public Domain build() {
+    public Domain build(String dcopDir) {
         return new Domain(name, semanticType, values);
     }
 
