@@ -11,6 +11,8 @@ public class DCOP {
     HashMap<String, Domain> domains;
     HashMap<String, Variable> variables;
     HashMap<String, Constraint> constraints;
+    // TODO: External Javascript sources + how to use them -- here or per function
+    //HashMap<String, String> sources;
     // TODO: Consider adding a metainfo HashMap or similar
     //       Example usage: Displaying String variable that has been enumerated
 
@@ -19,11 +21,10 @@ public class DCOP {
         this.description = description;
         this.objectiveIsMin = objectiveIsMin;
 
-        this.domains = new HashMap<>();
-        this.variables = new HashMap<>();
-        this.constraints = new HashMap<>();
+        this.domains = new HashMap<String, Domain>();
+        this.variables = new HashMap<String, Variable>();
+        this.constraints = new HashMap<String, Constraint>();
     }
-
 
     public DCOP (String name, String description, Boolean objectiveIsMin, HashMap<String, Domain> domains,
                  HashMap<String, Variable> variables, HashMap<String, Constraint> constraints)
@@ -35,6 +36,30 @@ public class DCOP {
         this.domains = domains;
         this.variables = variables;
         this.constraints = constraints;
+    }
+
+    public String getName () {
+        return name;
+    }
+
+    public String getDescription () {
+        return description;
+    }
+
+    public Boolean getObjectiveIsMin () {
+        return objectiveIsMin;
+    }
+
+    public HashMap<String, Domain> getDomains () {
+        return domains;
+    }
+
+    public HashMap<String, Variable> getVariables () {
+        return variables;
+    }
+
+    public HashMap<String, Constraint> getConstraints () {
+        return constraints;
     }
 
     public void addVariable (Variable variable) {
@@ -80,9 +105,27 @@ public class DCOP {
         }
     }
 
-    public Float solutionCost () {
-        // TODO: Relies on a partial solution representation
-        return 0f;
+    public Float solutionCost (HashMap<String, Integer> variableAssignments) {
+        // Requires a complete assignment
+        if (!variableAssignments.keySet().equals(variables.keySet()))
+        {
+            throw new IllegalArgumentException("Cannot calculate a solution from an incomplete assignment");
+        }
+        Float total = 0f;
+
+        for (String vName : variableAssignments.keySet())
+        {
+            // Add variable costs
+            total += variables.get(vName).evaluate(variableAssignments.get(vName));
+        }
+
+        for (Constraint c : constraints.values())
+        {
+            // Add constraint costs
+            total += c.evaluate(variableAssignments);
+        }
+
+        return total;
     }
 
     @Override
@@ -113,6 +156,38 @@ public class DCOP {
                 ", variables=" + variables +
                 ", constraints=" + constraints +
                 '}';
+    }
+
+    public String prettyPrint () {
+        StringBuilder pretty = new StringBuilder(
+                "DCOP{\n" +
+                "\tname='" + name + "' (#" + hashCode() + "),\n" +
+                "\tdescription='" + description + "',\n" +
+                "\tobjectiveIsMin=" + objectiveIsMin + ",\n"
+        );
+
+        pretty.append("\tdomains=[");
+        for (Domain d : domains.values())
+        {
+            pretty.append("\n\t\t").append(d.prettyPrint().replace("\n", "\n\t\t"));
+        }
+        pretty.append("\n\t],\n");
+
+        pretty.append("\tvariables=[");
+        for (Variable v : variables.values())
+        {
+            pretty.append("\n\t\t").append(v.prettyPrint().replace("\n", "\n\t\t"));
+        }
+        pretty.append("\n\t],\n");
+
+        pretty.append("\tconstraints=[");
+        for (Constraint c : constraints.values())
+        {
+            pretty.append("\n\t\t").append(c.prettyPrint().replace("\n", "\n\t\t"));
+        }
+        pretty.append("\n\t]\n}");
+
+        return pretty.toString();
     }
 
     //prints all dcop information to terminal in easy to read format
