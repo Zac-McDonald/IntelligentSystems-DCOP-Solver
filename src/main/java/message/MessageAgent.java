@@ -22,7 +22,7 @@ public class MessageAgent implements IMessageService{
     @AgentFeature
     IRequiredServicesFeature requiredServicesFeature;
 
-    // The subscriptions that will get messaged.
+    // The connections that can be messaged.
     protected HashMap<IComponentIdentifier, IMessageService> addressBook = new HashMap<>();
     // A record of everyone that is online
 
@@ -61,10 +61,9 @@ public class MessageAgent implements IMessageService{
     public void body (IInternalAccess agent) {
         updateAddressBook();
 
-        // Message all subscribers
+        // Message all connections
         for (IComponentIdentifier id : addressBook.keySet()) {
-            Data content = getMessageContent();
-            addressBook.get(id).message(content);
+            sendMessage(new Data("Debug", "Trace", agent.getComponentIdentifier()), id);
         }
 
         try {
@@ -74,21 +73,28 @@ public class MessageAgent implements IMessageService{
         }
     }
 
-    //TODO Replace this with a function that returns meaningful message content
-    private Data getMessageContent () {
-        return new Data("test", "test message", agent.getComponentIdentifier());
-    }
-
     @Override
     public Future<Void> message (Data content) {
-        String me = getAgent().toString();
-        me = me.substring(0, me.indexOf("@"));
+        if (content.type == "Debug" && content.value == "Trace") {
+            String me = getAgent().toString();
+            me = me.substring(0, me.indexOf("@"));
 
-        String them = content.source.toString();
-        them = them.substring(0, them.indexOf("@"));
+            String them = content.source.toString();
+            them = them.substring(0, them.indexOf("@"));
 
-        System.out.println(me + " messaged from " + them + ", content: " + content.value.toString());
+            System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
+        }
+
+        receiveMessage(content);
         return null;
     }
 
+    protected void sendMessage (Data content, IComponentIdentifier id) {
+        addressBook.get(id).message(content);
+    }
+
+    protected Boolean receiveMessage (Data content) {
+        // Handle lowest level messages here, otherwise return false and let higher agents handle them
+        return false;
+    }
 }

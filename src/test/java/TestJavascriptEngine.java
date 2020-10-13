@@ -34,6 +34,7 @@ public class TestJavascriptEngine {
             e.printStackTrace();
         }
 
+        // Stress test J2V8
         try {
             int n = 1000;
             System.out.println("Press enter to begin stress test (n=" + n + "): ");
