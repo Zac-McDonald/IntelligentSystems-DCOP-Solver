@@ -9,6 +9,8 @@ public class DCOP {
     String description;
     Boolean objectiveIsMin;
     HashMap<String, Domain> domains;
+
+
     HashMap<String, Variable> variables;
     HashMap<String, Constraint> constraints;
     // TODO: External Javascript sources + how to use them -- here or per function
@@ -236,5 +238,13 @@ public class DCOP {
             }
             System.out.println();
         }
+    }
+
+    public HashMap<String, Variable> getVariables() {
+        return variables;
+    }
+
+    public HashMap<String, Constraint> getConstraints() {
+        return constraints;
     }
 }

@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class Variable {
-    String name;
+    public String name;
     Domain domain;
     Integer initialValue;
 
