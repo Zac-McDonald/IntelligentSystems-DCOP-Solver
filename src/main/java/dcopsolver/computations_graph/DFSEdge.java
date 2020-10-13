@@ -7,19 +7,19 @@ public class DFSEdge {
     // parent - Parent node
     // child - Child node
 
-    public Boolean span;
-    public DFSNode parent;
-    public DFSNode child;
+    Boolean span;
+    DFSNode parent;
+    DFSNode child;
 
-    public DFSEdge(DFSNode a, DFSNode b){
-        parent = a;
-        child = b;
+    public DFSEdge(DFSNode parent, DFSNode child){
+        this.parent = parent;
+        this.child = child;
         span = false;
     }
 
     //returns opposite end of edge
-    public DFSNode EndNode(DFSNode a){
-        if (a == parent)
+    public DFSNode EndNode(DFSNode startEnd){
+        if (startEnd.equals(parent))
             return child;
         else
             return parent;

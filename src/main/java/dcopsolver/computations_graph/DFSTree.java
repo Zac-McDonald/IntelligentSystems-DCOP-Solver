@@ -12,10 +12,10 @@ public class DFSTree {
     // nodes - All nodes in the graph
     // edges - All edges in the graph
 
-    public List<DFSNode> nodes = new ArrayList<>();
-    public List<DFSEdge> edges = new ArrayList<>();
-    public HostDivider hD;
-    public int hosts;
+    List<DFSNode> nodes = new ArrayList<>();
+    List<DFSEdge> edges = new ArrayList<>();
+    HostDivider hD;
+    int hosts;
 
     public DFSTree(HashMap<String, Variable> variables, HashMap<String, Constraint> constraints, int hosts){
 
@@ -33,7 +33,7 @@ public class DFSTree {
             for (Variable v : c.variables){
                 assert nodes != null;
                 for (DFSNode n : nodes){
-                    if ((n.v == v) && !(temp.contains(n))){
+                    if ((n.var.equals(v)) && !(temp.contains(n))){
                         temp.add(n);
                     }
                 }
@@ -51,7 +51,7 @@ public class DFSTree {
                     DFSNode b = iterB.next();
 
                     //checks for existing edge
-                    if (!EdgeExists(a,b)) {
+                    if (!a.IsNeighboursWith(b)) {
                         DFSEdge e = new DFSEdge(a, b);
                         edges.add(e);
                         a.adjacent.add(e);
@@ -83,15 +83,6 @@ public class DFSTree {
         DivideHosts();
     }
 
-    //checks if edge between 2 nodes exists
-    public Boolean EdgeExists(DFSNode a, DFSNode b){
-        for (DFSEdge e: edges){
-            if(((e.parent == a) && (e.child == b)) || ((e.parent == b) && e.child == a))
-                return true;
-        }
-        return false;
-    }
-
     // recursive algorithm to create tree
     public void Visit(DFSNode u){
         u.visited = true;
@@ -111,6 +102,38 @@ public class DFSTree {
                     e.SwapParent();
             }
         }
+    }
+
+    public DFSNode GetNodeFromVariable(Variable var){
+        for (DFSNode n: nodes){
+            if (n.var.equals(var))
+                return n;
+        }
+        return null;
+    }
+
+    public List<Variable> GetNeighbours(Variable var, boolean withPseudo){
+        List<Variable> list =  new ArrayList<>();
+        DFSNode node = GetNodeFromVariable(var);
+        for (DFSNode neighbour: node.GetNeighbours(withPseudo))
+            list.add(neighbour.var);
+        return list;
+    }
+
+    public List<Variable> GetChildren(Variable var, boolean withPseudo){
+        List<Variable> list =  new ArrayList<>();
+        DFSNode node = GetNodeFromVariable(var);
+        for (DFSNode child: node.GetChildren(withPseudo))
+            list.add(child.var);
+        return list;
+    }
+
+    public List<Variable> GetParents(Variable var, boolean withPseudo){
+        List<Variable> list =  new ArrayList<>();
+        DFSNode node = GetNodeFromVariable(var);
+        for (DFSNode parent: node.GetNeighbours(withPseudo))
+            list.add(parent.var);
+        return list;
     }
 
     public void DivideHosts(){
@@ -147,5 +170,9 @@ public class DFSTree {
         }
 
         graph.outputToFile("DFSTreeGraph.dot");
+    }
+
+    public void PrintHosts(){
+        hD.Print();
     }
 }

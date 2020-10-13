@@ -44,7 +44,7 @@ public class HostDivider {
             //finds the next set of variables
             for (DFSNode n : nodes) {
                 //searches for a node at bottom of tree
-                if (!n.visited && IsBottomNode(n)) {
+                if (!n.visited && n.IsBottomNode()) {
                     List<DFSNode> l = FindBranch(n);
                     //checks if list is within range
                     if (Math.abs(aim-l.size()) < range) {
@@ -86,15 +86,6 @@ public class HostDivider {
         return false;
     }
 
-    //checks if node is at the bottom of tree
-    public Boolean IsBottomNode(DFSNode n){
-        for (DFSEdge e: n.adjacent){
-            if (e.span && (e.parent == n) && (!e.child.visited))
-                return false;
-        }
-        return true;
-    }
-
     //finds potential list of variables for new host
     public List<DFSNode> FindBranch(DFSNode n){
         List<DFSNode> list = new ArrayList<>();
@@ -123,19 +114,15 @@ public class HostDivider {
 
                 list.addAll(tempList);
 
-                //check if at top node
-                boolean topTest = true;
-                //adds nodes to current list
-                for (DFSEdge e: topNode.adjacent){
-                    //finds parent node of highest node in set
-                    if((e.child == topNode) && e.span){
-                        topNode = e.parent;
-                        AddNodes(tempList, topNode);
-                        topTest = false;
-                    }
-                }
-                if (topTest)
+                //move up tree one node
+                topNode = topNode.GetParent();
+
+                if (topNode == null)
+                    //current node has no parents
                     return tempList;
+                else
+                    //add nodes below new top node
+                    AddNodes(tempList, topNode);
             }
         }
     }
@@ -144,10 +131,10 @@ public class HostDivider {
     public void AddNodes(List<DFSNode> l, DFSNode n){
         l.add(n);
         //searches for child nodes
-        for (DFSEdge e : n.adjacent) {
-            if (e.span && (e.parent == n) && !e.child.visited && !l.contains(e.child)) {
-                AddNodes(l, e.child);
-            }
+
+        for (DFSNode child: n.GetChildren(false)){
+            if (!l.contains(child) && !child.visited)
+                AddNodes(l, child);
         }
     }
 
