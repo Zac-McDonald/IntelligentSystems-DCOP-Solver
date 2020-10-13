@@ -2,6 +2,7 @@ package message;
 
 import dcopsolver.dcop.DCOP;
 import fileInput.YamlLoader;
+import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IExternalAccess;
 import jadex.bridge.IInternalAccess;
 import jadex.bridge.service.search.SServiceProvider;
@@ -45,14 +46,12 @@ public class HostAgent extends MessageAgent {
             CreationInfo ci = new CreationInfo(
                     SUtil.createHashMap(new String[] { "dcop", "variable" }, new Object[] { dcop, name })
             );
-            cms.createComponent("Agent: " + name, "message.SolverAgent.class", ci);
+            cms.createComponent("Agent:" + name, "message.SolverAgent.class", ci);
         });
     }
 
     @Override
     public void body (IInternalAccess agent) {
-        System.out.println(agent.getComponentIdentifier().hashCode());
-
         //
 
         while (true) {
@@ -60,15 +59,13 @@ public class HostAgent extends MessageAgent {
         }
     }
 
-    // Send message
-    //@Override
-    protected void sendMessage () {
-        //
+    @Override
+    protected void sendMessage (Data content, IComponentIdentifier id) {
+        super.sendMessage(content, id);
     }
 
-    // Receive message
-    //@Override
-    protected void onReceiveMessage () {
-        //
+    @Override
+    protected Boolean receiveMessage (Data content) {
+        return super.receiveMessage(content);
     }
 }
