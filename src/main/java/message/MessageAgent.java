@@ -11,11 +11,14 @@ import jadex.micro.annotation.*;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Agent
 @RequiredServices({@RequiredService(name="messageServices", type = IMessageService.class, multiple = true,
         binding = @Binding(scope = RequiredServiceInfo.SCOPE_PLATFORM, dynamic = true))})
-@ProvidedServices(@ProvidedService(type= IMessageService.class))
+@ProvidedServices(@ProvidedService(name = "thisService", type= IMessageService.class))
 @Arguments(@Argument(name="dcop", clazz= Object.class, defaultvalue="\"HashMap<String, Integer> map = new HashMap<String, Integer>()\""))
 public class MessageAgent implements IMessageService{
     @Agent
@@ -25,9 +28,8 @@ public class MessageAgent implements IMessageService{
     IRequiredServicesFeature requiredServicesFeature;
 
     // The subscriptions that will get messaged.
-    protected HashMap<String, IMessageService> addressBook;
-    protected HashMap<IComponentIdentifier, SubscriptionIntermediateFuture<Data>> subscriptions
-            = new HashMap<IComponentIdentifier, SubscriptionIntermediateFuture<Data>>();
+    protected HashMap<IComponentIdentifier, IMessageService> addressBook = new HashMap<>();
+    // A record of who is online
 
     @AgentArgument
     private Object dcop;
@@ -36,71 +38,35 @@ public class MessageAgent implements IMessageService{
         return agent;
     }
 
-    public void updateAddressBookListener () {
-        ITerminableIntermediateFuture<IMessageService> services = requiredServicesFeature.getRequiredServices("messageServices");
-
-        final Future<IMessageService> ret = new Future();
-        services.addIntermediateResultListener(new IntermediateDefaultResultListener<IMessageService>() {
-            //@Override
-            public void intermediateResultAvailable (IMessageService iMessageService) {
-                addressBook.put(iMessageService.getAgent().getComponentIdentifier().toString(), iMessageService);
-            }
-
-            public void exceptionOccurred(Exception exception)
-            {
-                System.out.println("Ex: "+exception);
-            }
-        });
-    }
-
     public void updateAddressBookStream () {
+        //get a container of the IMessageService's provided by agents on the platform
         ITerminableIntermediateFuture<IMessageService> fut = requiredServicesFeature.getRequiredServices("messageServices");
-        fut.get().forEach((it) -> {
-            String me = getAgent().toString();
-            me = me.substring(0, me.indexOf("@"));
 
-            String them = it.getAgent().toString();
-            them = them.substring(0, them.indexOf("@"));
-
-            // TODO: Doesn't update old hosts, can't simple do "addressBook.get(them) != it" because 'it' is different
-            if (!addressBook.containsKey(them)) {
-                System.out.println(me + " - discovered -> " + them);
-                addressBook.put(them, it);
+        List<IComponentIdentifier> activeAgents = fut.get().stream().map((it) -> {
+            IComponentIdentifier id = it.getAgent().getComponentIdentifier();
+            //add each agent to the address book
+            if (!addressBook.keySet().contains(id)) {
+                //the agent appears in the stream but not on the list of active agents, add it.
+                addressBook.put(id, it);
+                System.out.println(agent.getComponentIdentifier().toString() + "Discovered:" + id);
             }
+            return id;
+        }).collect(Collectors.toList());
+
+        //Dropped agent detection
+        addressBook.keySet().removeIf(x -> {
+            if (!activeAgents.contains(x)) {
+                System.out.println("\tDropped " + x);
+                return true;
+            }
+            return false;
         });
     }
 
     @AgentBody
     public void body (IInternalAccess agent) {
-        addressBook = new HashMap<>();
-
-        try {
-            TimeUnit.SECONDS.sleep(3);
-        } catch (InterruptedException e) {
-            // Do fuck all
-        }
-
-        //updateAddressBookListener();
         updateAddressBookStream();
 
-/*
-
-        //set up a subscription to all(???) message service providers
-        ISubscriptionIntermediateFuture<Data> fut = requiredServicesFeature.subscribe(agent.getComponentIdentifier());
-
-        fut.addResultListener(new IntermediateDefaultResultListener<Data>()
-        {
-            public void intermediateResultAvailable(Data content)//when the result is available print a recieved message
-            {
-                System.out.println("Received: "+agent.getComponentIdentifier()+" "+content);
-            }
-
-            public void exceptionOccurred(Exception exception)
-            {
-                System.out.println("Ex: "+exception);
-            }
-        });
-*/
         while (true) {
             try {
                 TimeUnit.SECONDS.sleep(3);
@@ -108,32 +74,14 @@ public class MessageAgent implements IMessageService{
                 // Do fuck all
             }
 
-            String me = getAgent().toString();
-            me = me.substring(0, me.indexOf("@"));
-
-            System.out.println(me + ": " + addressBook);
-
             // Message all subscribers
-            for (IComponentIdentifier id : subscriptions.keySet()) {
+            for (IComponentIdentifier id : addressBook.keySet()) {
                 Data content = getMessageContent();
-                sendMessage(content, id);
+                addressBook.get(id).message(content);
             }
 
             updateAddressBookStream();
         }
-
-        /*
-        Integer x=10;
-        //the solving loop
-        while (x > 0){
-            IComponentIdentifier target = getRandomTargetAgent();
-            //get the message content
-            Data content = getMessageContent();
-            //send the message
-            sendMessage(content, target);
-            x--;
-        }
-        */
     }
 
     //TODO Replace this with a function that returns meaningful message content
@@ -141,36 +89,17 @@ public class MessageAgent implements IMessageService{
         return new Data("test",dcop, agent.getComponentIdentifier());
     }
 
-    //TODO Replace this function with one that actually selects a target
-    public IComponentIdentifier getRandomTargetAgent(){
-        for (IComponentIdentifier id:subscriptions.keySet()) {
-            return id;
-        }
+    @Override
+    public Future<Void> message(Data content) {
+        String me = getAgent().toString();
+        me = me.substring(0, me.indexOf("@"));
+
+        String them = content.source.toString();
+        them = them.substring(0, them.indexOf("@"));
+
+        System.out.println(me + " messaged from " + them);
         return null;
     }
 
-    // These methods make hard calls (they wait) for a return future from the requested agents
-    // Should ideally be replaced with a listener.
-    public void sendMessage(Data content, IComponentIdentifier target){
-        subscriptions.get(target).addIntermediateResult(content);
-    }
-
-    public ISubscriptionIntermediateFuture<Data> subscribe(IComponentIdentifier agentID) {
-        // Add a subscription to the set of subscriptions.
-        SubscriptionIntermediateFuture<Data> ret = new SubscriptionIntermediateFuture<>();
-        subscriptions.put(agentID,ret);
-        ret.setTerminationCommand(new TerminationCommand() {
-            /**
-             *  The termination command allows to be informed, when the subscription ends,
-             *  e.g. due to a communication error or when the service user explicitly
-             *  cancels the subscription.
-             */
-            public void terminated(Exception reason) {
-                System.out.println("removed " + agentID.toString() + " due to: " +reason);
-                subscriptions.remove(agentID);
-            }
-        });
-        return ret;
-    }
 
 }

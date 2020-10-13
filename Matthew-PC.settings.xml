@@ -40,32 +40,77 @@
 		<p0:property __ID="31" type="autocreate">true</p0:property>
 		<p0:property __ID="32" type="autodelete">true</p0:property>
 	</p0:properties>
-	<p0:properties __ID="33" type="StarterServicePanel">
-		<p0:properties __ID="34" type="mpanel">
-			<p0:property __ID="35" type="tree"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+	<p0:properties __ID="33" type="awa@Matthew-PC_d06">
+		<p0:property __ID="34" type="fast">false</p0:property>
+		<p0:property __ID="35" type="autocreate">true</p0:property>
+		<p0:property __ID="36" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="37" type="awa@Matthew-PC_36e">
+		<p0:property __ID="38" type="fast">false</p0:property>
+		<p0:property __ID="39" type="autocreate">true</p0:property>
+		<p0:property __ID="40" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="41" type="awa@Matthew-PC_1e1">
+		<p0:property __ID="42" type="fast">false</p0:property>
+		<p0:property __ID="43" type="autocreate">true</p0:property>
+		<p0:property __ID="44" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="45" type="awa@Matthew-PC_db2">
+		<p0:property __ID="46" type="fast">false</p0:property>
+		<p0:property __ID="47" type="autocreate">true</p0:property>
+		<p0:property __ID="48" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="49" type="awa@Matthew-PC_5cc">
+		<p0:property __ID="50" type="fast">false</p0:property>
+		<p0:property __ID="51" type="autocreate">true</p0:property>
+		<p0:property __ID="52" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="53" type="awa@Matthew-PC_91b">
+		<p0:property __ID="54" type="fast">false</p0:property>
+		<p0:property __ID="55" type="autocreate">true</p0:property>
+		<p0:property __ID="56" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="57" type="awa@Matthew-PC_35e">
+		<p0:property __ID="58" type="fast">false</p0:property>
+		<p0:property __ID="59" type="autocreate">true</p0:property>
+		<p0:property __ID="60" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="61" type="awa@Matthew-PC_fcc">
+		<p0:property __ID="62" type="fast">false</p0:property>
+		<p0:property __ID="63" type="autocreate">true</p0:property>
+		<p0:property __ID="64" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="65" type="awa@Matthew-PC_db6">
+		<p0:property __ID="66" type="fast">false</p0:property>
+		<p0:property __ID="67" type="autocreate">true</p0:property>
+		<p0:property __ID="68" type="autodelete">true</p0:property>
+	</p0:properties>
+	<p0:properties __ID="69" type="StarterServicePanel">
+		<p0:properties __ID="70" type="mpanel">
+			<p0:property __ID="71" type="tree"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <p0:TreeProperties xmlns:p0="typeinfo:jadex.base.gui.filetree" __ID="0">
-	<selectedNode>
-		<p0:NodePath __ID="1" entry="0">
-			<path>
-				<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="2" __len="1">
-					<entries>
-						<p1:String __ID="3">ChatD1Agent.class</p1:String>
-					</entries>
-				</p1:String__1>
-			</path>
-		</p0:NodePath>
-	</selectedNode>
 	<expandedNodes>
-		<p0:NodePath__1 __ID="4" __len="1">
+		<p0:NodePath__1 __ID="1" __len="1">
 			<entries>
-				<p0:NodePath __ID="5" entry="0">
+				<p0:NodePath __ID="2" entry="0">
 					<path>
-						<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="6" __len="0"></p1:String__1>
+						<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="3" __len="0"></p1:String__1>
 					</path>
 				</p0:NodePath>
 			</entries>
 		</p0:NodePath__1>
 	</expandedNodes>
+	<selectedNode>
+		<p0:NodePath __ID="4" entry="0">
+			<path>
+				<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="5" __len="1">
+					<entries>
+						<p1:String __ID="6">ChatD1Agent.class</p1:String>
+					</entries>
+				</p1:String__1>
+			</path>
+		</p0:NodePath>
+	</selectedNode>
 	<rootPathEntries>
 		<p1:String__1 xmlns:p1="typeinfo:java.lang" __ID="7" __len="1">
 			<entries>
@@ -75,52 +120,52 @@
 	</rootPathEntries>
 </p0:TreeProperties>
 ]]></p0:property>
-			<p0:properties __ID="36" type="mic">
-				<p0:property __ID="37" type="Micro Agent">true</p0:property>
+			<p0:properties __ID="72" type="mic">
+				<p0:property __ID="73" type="Micro Agent">true</p0:property>
 			</p0:properties>
 		</p0:properties>
-		<p0:properties __ID="38" type="spanel">
-			<p0:property __ID="39" type="model">target\classes\dcop\solvers\ChatD1Agent.class</p0:property>
-			<p0:property __ID="40" type="ridurl">file:target/classes/dcop/solvers</p0:property>
-			<p0:property __ID="41" type="globalrid"></p0:property>
-			<p0:property __ID="42" type="startsuspended">false</p0:property>
-			<p0:property __ID="43" type="autogenerate">false</p0:property>
-			<p0:property __ID="44" type="number">1</p0:property>
-			<p0:property __ID="45" type="name">ChatBoy</p0:property>
+		<p0:properties __ID="74" type="spanel">
+			<p0:property __ID="75" type="model">target\classes\dcop\solvers\ChatD1Agent.class</p0:property>
+			<p0:property __ID="76" type="ridurl">file:target/classes/dcop/solvers</p0:property>
+			<p0:property __ID="77" type="globalrid"></p0:property>
+			<p0:property __ID="78" type="startsuspended">false</p0:property>
+			<p0:property __ID="79" type="autogenerate">false</p0:property>
+			<p0:property __ID="80" type="number">1</p0:property>
+			<p0:property __ID="81" type="name">ChatBoy</p0:property>
 		</p0:properties>
 	</p0:properties>
-	<p0:properties __ID="46" type="clockservice">
-		<p0:property __ID="47" type="type">system</p0:property>
-		<p0:property __ID="48" type="delta">100</p0:property>
-		<p0:property __ID="49" type="dilation">1.0</p0:property>
+	<p0:properties __ID="82" type="clockservice">
+		<p0:property __ID="83" type="type">system</p0:property>
+		<p0:property __ID="84" type="delta">100</p0:property>
+		<p0:property __ID="85" type="dilation">1.0</p0:property>
 	</p0:properties>
-	<p0:properties __ID="50" type="simulationservice">
-		<p0:property __ID="51" type="executing">true</p0:property>
+	<p0:properties __ID="86" type="simulationservice">
+		<p0:property __ID="87" type="executing">true</p0:property>
 	</p0:properties>
-	<p0:properties __ID="52" type="chat">
-		<p0:property __ID="53" type="nickname">user_97d</p0:property>
+	<p0:properties __ID="88" type="chat">
+		<p0:property __ID="89" type="nickname">user_97d</p0:property>
 	</p0:properties>
-	<p0:properties __ID="54" type="awa@Matthew-PC_d06">
-		<p0:property __ID="55" type="fast">false</p0:property>
-		<p0:property __ID="56" type="autocreate">true</p0:property>
-		<p0:property __ID="57" type="autodelete">true</p0:property>
+	<p0:properties __ID="90" type="awa@Matthew-PC_83f">
+		<p0:property __ID="91" type="fast">false</p0:property>
+		<p0:property __ID="92" type="autocreate">true</p0:property>
+		<p0:property __ID="93" type="autodelete">true</p0:property>
 	</p0:properties>
-	<p0:properties __ID="58" type="securityservice">
-		<p0:property __ID="59" type="validityduration">327680</p0:property>
-		<p0:property __ID="60" type="usepass">true</p0:property>
-		<p0:property __ID="61" type="password">04f0ba07-3bc</p0:property>
-		<p0:property __ID="62" type="selected_mechanism">0</p0:property>
-		<p0:property __ID="63" type="networks" name="yourStudentNumber">yourStudentNumber</p0:property>
-		<p0:property __ID="64" type="trustedlan">false</p0:property>
-		<p0:property __ID="65" type="storepath">./keystore</p0:property>
-		<p0:property __ID="66" type="storepass">keystore</p0:property>
-		<p0:property __ID="67" type="keypass">keystore</p0:property>
-		<p0:property __ID="68" type="selmech">0</p0:property>
-		<p0:properties __ID="69" type="DecentralizedAcquisitionMechanism">
-			<p0:property __ID="70" type="responses">1</p0:property>
+	<p0:properties __ID="94" type="securityservice">
+		<p0:property __ID="95" type="validityduration">327680</p0:property>
+		<p0:property __ID="96" type="usepass">true</p0:property>
+		<p0:property __ID="97" type="password">04f0ba07-3bc</p0:property>
+		<p0:property __ID="98" type="selected_mechanism">0</p0:property>
+		<p0:property __ID="99" name="yourStudentNumber" type="networks">yourStudentNumber</p0:property>
+		<p0:property __ID="100" type="trustedlan">false</p0:property>
+		<p0:property __ID="101" type="storepath">./keystore</p0:property>
+		<p0:property __ID="102" type="storepass">keystore</p0:property>
+		<p0:property __ID="103" type="keypass">keystore</p0:property>
+		<p0:property __ID="104" type="selmech">0</p0:property>
+		<p0:properties __ID="105" type="DecentralizedAcquisitionMechanism">
+			<p0:property __ID="106" type="responses">1</p0:property>
 		</p0:properties>
-		<p0:properties __ID="71" type="TTPAcquisitionMechanism">
-			<p0:property __ID="72" type="verify">true</p0:property>
+		<p0:properties __ID="107" type="TTPAcquisitionMechanism">
+			<p0:property __ID="108" type="verify">true</p0:property>
 		</p0:properties>
 	</p0:properties>
 </p0:properties>

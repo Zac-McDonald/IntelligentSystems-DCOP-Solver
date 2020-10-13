@@ -8,9 +8,6 @@ import messagequeue.Event;
 
 public interface IMessageService {
 
-//    Future<Void> message(Data content);
-    //other agents open the line of communication
-    public ISubscriptionIntermediateFuture<Data> subscribe(IComponentIdentifier agentID);
-    //a reference to itself
+    Future<Void> message(Data content);
     IInternalAccess getAgent();
 }
