@@ -22,13 +22,13 @@ variables:
   
 
 constraints:
-  - { name: "diff1", type: "functional", expression: "v9 vb vc"}
-  - { name: "diff2", type: "functional", expression: "v1 v9"}
-  - { name: "diff3", type: "functional", expression: "v1 v5 v3"}
-  - { name: "diff4", type: "functional", expression: "v7 v5 v3"}
-  - { name: "diff5", type: "functional", expression: "v6 v3 v1"}
-  - { name: "diff6", type: "functional", expression: "v3 v8"}
-  - { name: "diff7", type: "functional", expression: "v6 v2"}
-  - { name: "diff8", type: "functional", expression: "v2 v8"}
-  - { name: "diff9", type: "functional", expression: "v2 v4"}
-  - { name: "diff10", type: "functional", expression: "v4 va"}
+  - { name: "diff1", type: "functional", expression: "v9 = vb + vc"}
+  - { name: "diff2", type: "functional", expression: "v1 = v9"}
+  - { name: "diff3", type: "functional", expression: "v1 = v5 + v3"}
+  - { name: "diff4", type: "functional", expression: "v7 = v5 + v3"}
+  - { name: "diff5", type: "functional", expression: "v6 = v3 + v1"}
+  - { name: "diff6", type: "functional", expression: "v3 = v8"}
+  - { name: "diff7", type: "functional", expression: "v6 = v2"}
+  - { name: "diff8", type: "functional", expression: "v2 = v8"}
+  - { name: "diff9", type: "functional", expression: "v2 = v4"}
+  - { name: "diff10", type: "functional", expression: "v4 = va"}

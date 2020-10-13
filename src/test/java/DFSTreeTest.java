@@ -7,7 +7,7 @@ public class DFSTreeTest {
 
     public static void main(String[] args) throws Exception {
         YamlLoader loader = new YamlLoader();
-        DCOP dcop = loader.loadYAML("DFSTreeTest.yaml");
+        DCOP dcop = loader.loadYAML("./yaml/DFSTreeTest.yaml");
         DFSTree tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), 4);
 
         tree.OutputGraph();
