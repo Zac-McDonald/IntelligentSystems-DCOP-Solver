@@ -148,26 +148,50 @@ public class DFSTree {
         return null;
     }
 
-    public List<Variable> GetNeighbours(Variable var, boolean withPseudo){
+    public List<Variable> GetNeighbours(Variable var, boolean Pseudo){
         List<Variable> list =  new ArrayList<>();
         DFSNode node = GetNodeFromVariable(var);
-        for (DFSNode neighbour: node.GetNeighbours(withPseudo))
+        for (DFSNode neighbour: node.GetNeighbours(Pseudo))
             list.add(neighbour.var);
         return list;
     }
 
-    public List<Variable> GetChildren(Variable var, boolean withPseudo){
+    public List<Variable> GetAllNeighbours(Variable var){
         List<Variable> list =  new ArrayList<>();
         DFSNode node = GetNodeFromVariable(var);
-        for (DFSNode child: node.GetChildren(withPseudo))
+        for (DFSNode neighbour: node.GetAllNeighbours())
+            list.add(neighbour.var);
+        return list;
+    }
+
+    public List<Variable> GetChildren(Variable var, boolean Pseudo){
+        List<Variable> list =  new ArrayList<>();
+        DFSNode node = GetNodeFromVariable(var);
+        for (DFSNode child: node.GetChildren(Pseudo))
             list.add(child.var);
         return list;
     }
 
-    public List<Variable> GetParents(Variable var, boolean withPseudo){
+    public List<Variable> GetAllChildren(Variable var){
         List<Variable> list =  new ArrayList<>();
         DFSNode node = GetNodeFromVariable(var);
-        for (DFSNode parent: node.GetNeighbours(withPseudo))
+        for (DFSNode child: node.GetAllChildren())
+            list.add(child.var);
+        return list;
+    }
+
+    public List<Variable> GetParents(Variable var, boolean Pseudo){
+        List<Variable> list =  new ArrayList<>();
+        DFSNode node = GetNodeFromVariable(var);
+        for (DFSNode parent: node.GetParents(Pseudo))
+            list.add(parent.var);
+        return list;
+    }
+
+    public List<Variable> GetAllParents(Variable var){
+        List<Variable> list =  new ArrayList<>();
+        DFSNode node = GetNodeFromVariable(var);
+        for (DFSNode parent: node.GetAllParents())
             list.add(parent.var);
         return list;
     }
