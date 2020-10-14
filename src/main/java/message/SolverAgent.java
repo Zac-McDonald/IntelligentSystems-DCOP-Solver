@@ -4,10 +4,15 @@ import dcopsolver.dcop.DCOP;
 import dcopsolver.dcop.Variable;
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
+import jadex.bridge.component.IArgumentsResultsFeature;
 import jadex.micro.annotation.AgentArgument;
 import jadex.micro.annotation.AgentCreated;
 import jadex.micro.annotation.Argument;
 import jadex.micro.annotation.Arguments;
+
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Arguments({@Argument(name="dcop", clazz= DCOP.class), @Argument(name="assignedVariableName", clazz= String.class)})
 public class SolverAgent extends MessageAgent {
@@ -16,12 +21,15 @@ public class SolverAgent extends MessageAgent {
 
     @AgentArgument
     String assignedVariableName;
-    Variable assignedVariable;
+    public Variable assignedVariable;
 
     @AgentCreated
     public void created () {
         assignedVariable = dcop.getVariables().get(assignedVariableName);
     }
+
+    //agents var map
+    private HashMap<Variable,IComponentIdentifier> variableMap = new HashMap<>();
 
     @Override
     public void body (IInternalAccess agent) {
@@ -29,7 +37,20 @@ public class SolverAgent extends MessageAgent {
 
         while (true) {
             super.body(agent);
+
+            //add the other solvers and their variables to a map
+            for (IComponentIdentifier solver:solvers) {
+                if (!variableMap.containsValue(solver)){
+                    Map<String,Object> args = addressBook.get(solver).getAgent()
+                            .getComponentFeature(IArgumentsResultsFeature.class).getArguments();
+                    if(args.get("dcop").hashCode() == dcop.hashCode()){
+                        variableMap.put(dcop.getVariables().get(args.get("assignedVariableName")),solver);
+                    }
+                }
+            }
         }
+
+
     }
 
     @Override

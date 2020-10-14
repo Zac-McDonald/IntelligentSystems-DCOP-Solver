@@ -32,6 +32,7 @@ public class HostAgent extends MessageAgent {
 
             startDcopAgents(dcop);
             System.out.println("Successfully loaded DCOP ("+ dcopFile + ")");
+
         } catch (Exception e) {
             System.out.println("Error loading DCOP ("+ dcopFile + "): " + e.toString());
             e.printStackTrace();
@@ -44,7 +45,7 @@ public class HostAgent extends MessageAgent {
 
         dcop.getVariables().keySet().forEach(name -> {
             CreationInfo ci = new CreationInfo(
-                    SUtil.createHashMap(new String[] { "dcop", "variable" }, new Object[] { dcop, name })
+                    SUtil.createHashMap(new String[] { "dcop", "assignedVariableName" }, new Object[] { dcop, name })
             );
             cms.createComponent("Agent:" + name, "message.SolverAgent.class", ci);
         });
@@ -81,7 +82,6 @@ public class HostAgent extends MessageAgent {
                 }
             }
         }
-
         return content;
     }
 }

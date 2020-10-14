@@ -73,12 +73,12 @@ public class MessageAgent implements IMessageService{
             sendMessage(new Data("Debug.ignore", "Test message", getId()), id);
         });
 */
-        // Delay for debugging clarity
+      /*  // Delay for debugging clarity
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
             //
-        }
+        }*/
     }
 
     @Override
@@ -97,6 +97,7 @@ public class MessageAgent implements IMessageService{
 
     protected Data receiveMessage (Data content, String[] typeTree) {
         // Handle lowest level messages here
+
         if (typeTree.length == 2) {
             switch (typeTree[0]) {
                 case "Debug":
