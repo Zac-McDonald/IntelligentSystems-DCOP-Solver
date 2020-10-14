@@ -65,7 +65,23 @@ public class HostAgent extends MessageAgent {
     }
 
     @Override
-    protected Boolean receiveMessage (Data content) {
-        return super.receiveMessage(content);
+    protected Data receiveMessage (Data content, String[] typeTree) {
+        content = super.receiveMessage(content, typeTree);
+
+        // If a message remains to be processed
+        if (content != null) {
+            if (typeTree.length == 2) {
+                switch (typeTree[0]) {
+                    case "Discover":
+                        if (typeTree[1].equals("askType")) {
+                            Data response = new Data("Discover.tellType", "Host", getId());
+                            sendMessage(response, content.source);
+                        }
+                        break;
+                }
+            }
+        }
+
+        return content;
     }
 }

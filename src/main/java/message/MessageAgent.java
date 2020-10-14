@@ -22,13 +22,19 @@ public class MessageAgent implements IMessageService{
     @AgentFeature
     IRequiredServicesFeature requiredServicesFeature;
 
-    // The connections that can be messaged.
+    // The connections that can be messaged / record of everyone that is online
     protected HashMap<IComponentIdentifier, IMessageService> addressBook = new HashMap<>();
-    // A record of everyone that is online
+
+    // Common for both Host and Solver -- so implemented here
+    protected List<IComponentIdentifier> hosts = new ArrayList<>();
+    protected List<IComponentIdentifier> solvers = new ArrayList<>();
+
 
     public IInternalAccess getAgent(){
         return agent;
     }
+
+    public IComponentIdentifier getId () { return agent.getComponentIdentifier(); }
 
     public void updateAddressBook () {
         //get a container of the IMessageService's provided by agents on the platform
@@ -38,10 +44,11 @@ public class MessageAgent implements IMessageService{
             IComponentIdentifier id = it.getAgent().getComponentIdentifier();
 
             //add each agent to the address book
-            if (!addressBook.keySet().contains(id)) {
+            if (!addressBook.containsKey(id)) {
                 //the agent appears in the stream but not on the list of active agents, it was just discovered, add it.
                 addressBook.put(id, it);
                 System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + id);
+                agentDiscovered(id);
             }
             return id;  // Return id, to create a list of active agents
         }).collect(Collectors.toList());
@@ -51,6 +58,7 @@ public class MessageAgent implements IMessageService{
             // Remove unreachable agents
             if (!activeAgents.contains(id)) {
                 System.out.println(agent.getComponentIdentifier().toString() + " Dropped: " + id);
+                agentDropped(id);
                 return true;
             }
             return false;
@@ -60,41 +68,83 @@ public class MessageAgent implements IMessageService{
     @AgentBody
     public void body (IInternalAccess agent) {
         updateAddressBook();
-
-        // Message all connections
-        for (IComponentIdentifier id : addressBook.keySet()) {
-            sendMessage(new Data("Debug", "Trace", agent.getComponentIdentifier()), id);
-        }
-
+/*
+        addressBook.keySet().forEach(id -> {
+            sendMessage(new Data("Debug.ignore", "Test message", getId()), id);
+        });
+*/
+        // Delay for debugging clarity
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
-            // Temporary delay
+            //
         }
     }
 
     @Override
     public Future<Void> message (Data content) {
-        if (content.type == "Debug" && content.value == "Trace") {
-            String me = getAgent().toString();
-            me = me.substring(0, me.indexOf("@"));
-
-            String them = content.source.toString();
-            them = them.substring(0, them.indexOf("@"));
-
-            System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
-        }
-
-        receiveMessage(content);
+        receiveMessage(content, content.getTypeTree());
         return null;
     }
 
     protected void sendMessage (Data content, IComponentIdentifier id) {
+        // TODO: Remove after, or toggle with, debugging
+        // Wrap all messages in a Debug.trace to output them to the console
+        content = new Data("Debug.trace", content, getId());
+
         addressBook.get(id).message(content);
     }
 
-    protected Boolean receiveMessage (Data content) {
-        // Handle lowest level messages here, otherwise return false and let higher agents handle them
-        return false;
+    protected Data receiveMessage (Data content, String[] typeTree) {
+        // Handle lowest level messages here
+        if (typeTree.length == 2) {
+            switch (typeTree[0]) {
+                case "Debug":
+                    if (typeTree[1].equals("trace")) {
+                        String me = getAgent().toString();
+                        me = me.substring(0, me.indexOf("@"));
+
+                        String them = content.source.toString();
+                        them = them.substring(0, them.indexOf("@"));
+
+                        System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
+
+                        // Unwrap any remaining content
+                        // Case-by-case -- message was enclosed, so need to re-evaluate it
+                        if (content.value instanceof Data) {
+                            content = (Data)content.value;
+                            // Send it for another loop
+                            receiveMessage(content, content.getTypeTree());
+                        } else {
+                            content = null;
+                        }
+                    }
+                    break;
+                case "Discover":
+                    if (typeTree[1].equals("tellType")) {
+                        if (content.value.equals("Host")) {
+                            hosts.add(content.source);
+                        } else if (content.value.equals("Solver")) {
+                            solvers.add(content.source);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        return content;
+    }
+
+    // TODO: Ideally call these async, they might block for a while otherwise
+    protected void agentDiscovered (IComponentIdentifier id) {
+        // Ask what type of agent they are
+        Data content = new Data("Discover.askType", null, getId());
+        sendMessage(content, id);
+    }
+
+    protected void agentDropped (IComponentIdentifier id) {
+        // For now just remove them from our records
+        hosts.remove(id);
+        solvers.remove(id);
     }
 }

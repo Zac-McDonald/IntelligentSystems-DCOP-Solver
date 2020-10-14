@@ -100,6 +100,8 @@ public class Data
 	{
 		return "Data(type=" + type + ", value=" + value + ", source="+ source + ")";
 	}
-	
-	
+
+	public String[] getTypeTree () {
+		return this.type.split("\\.");
+	}
 }

@@ -41,14 +41,28 @@ public class SolverAgent extends MessageAgent {
     }
 
     @Override
-    protected Boolean receiveMessage (Data content) {
-        return super.receiveMessage(content);
+    protected Data receiveMessage (Data content, String[] typeTree) {
+        content = super.receiveMessage(content, typeTree);
 
         // TODO: When we receive a message, we can sort it by type and deal with it here
-        //       When we implement the algorithms, it'll probably be like ADOPTSolverAgent extending this class
-        //       It would then have ADOPT specific message handling, but always pass messages down to super first
-        //       Return value is "was this message handled", might be a better method
-        //       Biggest downside of this is multiple levels can't handle the same message,
-        //       although we can just not return on a case-by-case if we need to.
+        //       When we implement the algorithms, I changed my mind from extending, that would be gross
+        //       Instead we can just pass specific message types to it
+        //       Return value is the message that still needs to be handled
+
+        // If a message remains to be processed
+        if (content != null) {
+            if (typeTree.length == 2) {
+                switch (typeTree[0]) {
+                    case "Discover":
+                        if (typeTree[1].equals("askType")) {
+                            Data response = new Data("Discover.tellType", "Solver", getId());
+                            sendMessage(response, content.source);
+                        }
+                        break;
+                }
+            }
+        }
+
+        return content;
     }
 }
