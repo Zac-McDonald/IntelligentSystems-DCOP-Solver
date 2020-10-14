@@ -12,6 +12,10 @@ public class DCOP {
     HashMap<String, Variable> variables;
     HashMap<String, Constraint> constraints;
 
+    public DCOP () {
+        // JavaBeans compliance
+    }
+
     public DCOP (String name, String description, Boolean objectiveIsMin) {
         this.name = name;
         this.description = description;
@@ -56,6 +60,30 @@ public class DCOP {
 
     public HashMap<String, Constraint> getConstraints () {
         return constraints;
+    }
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public void setDescription (String description) {
+        this.description = description;
+    }
+
+    public void setObjectiveIsMin (Boolean objectiveIsMin) {
+        this.objectiveIsMin = objectiveIsMin;
+    }
+
+    public void setDomains (HashMap<String, Domain> domains) {
+        this.domains = domains;
+    }
+
+    public void setVariables (HashMap<String, Variable> variables) {
+        this.variables = variables;
+    }
+
+    public void setConstraints (HashMap<String, Constraint> constraints) {
+        this.constraints = constraints;
     }
 
     public void addVariable (Variable variable) {

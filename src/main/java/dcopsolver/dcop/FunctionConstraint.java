@@ -9,6 +9,10 @@ public class FunctionConstraint extends Constraint {
     String expression;
     String source;
 
+    public FunctionConstraint () {
+        // JavaBeans compliance
+    }
+
     public FunctionConstraint (String name, ArrayList<Variable> variables, String expression, String source) {
         this.name = name;
         this.variables = variables;
@@ -33,6 +37,14 @@ public class FunctionConstraint extends Constraint {
 
     public String getSource () {
         return source;
+    }
+
+    public void setExpression (String expression) {
+        this.expression = expression;
+    }
+
+    public void setSource (String source) {
+        this.source = source;
     }
 
     @Override

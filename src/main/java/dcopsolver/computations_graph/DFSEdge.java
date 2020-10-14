@@ -11,6 +11,34 @@ public class DFSEdge {
     DFSNode parent;
     DFSNode child;
 
+    public DFSEdge () {
+        // JavaBeans compliance
+    }
+
+    public Boolean getSpan () {
+        return span;
+    }
+
+    public void setSpan (Boolean span) {
+        this.span = span;
+    }
+
+    public DFSNode getParent () {
+        return parent;
+    }
+
+    public void setParent (DFSNode parent) {
+        this.parent = parent;
+    }
+
+    public DFSNode getChild () {
+        return child;
+    }
+
+    public void setChild (DFSNode child) {
+        this.child = child;
+    }
+
     public DFSEdge(DFSNode parent, DFSNode child){
         this.parent = parent;
         this.child = child;

@@ -17,6 +17,10 @@ public class DFSTree {
     HostDivider hD;
     int hosts;
 
+    public DFSTree () {
+        // JavaBeans compliance
+    }
+
     public DFSTree(HashMap<String, Variable> variables, HashMap<String, Constraint> constraints, int hosts){
 
         this.hosts = hosts;
@@ -30,7 +34,7 @@ public class DFSTree {
 
             //this is used to track all variables that share a constraint
             List<DFSNode> temp = new ArrayList<>();
-            for (Variable v : c.variables){
+            for (Variable v : c.getVariables()){
                 assert nodes != null;
                 for (DFSNode n : nodes){
                     if ((n.var.equals(v)) && !(temp.contains(n))){
@@ -81,6 +85,38 @@ public class DFSTree {
                 Visit(n);
         }
         DivideHosts();
+    }
+
+    public List<DFSNode> getNodes () {
+        return nodes;
+    }
+
+    public void setNodes (List<DFSNode> nodes) {
+        this.nodes = nodes;
+    }
+
+    public List<DFSEdge> getEdges () {
+        return edges;
+    }
+
+    public void setEdges (List<DFSEdge> edges) {
+        this.edges = edges;
+    }
+
+    public HostDivider gethD () {
+        return hD;
+    }
+
+    public void sethD (HostDivider hD) {
+        this.hD = hD;
+    }
+
+    public int getHosts () {
+        return hosts;
+    }
+
+    public void setHosts (int hosts) {
+        this.hosts = hosts;
     }
 
     // recursive algorithm to create tree

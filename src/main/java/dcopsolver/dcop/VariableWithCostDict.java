@@ -8,6 +8,10 @@ public class VariableWithCostDict extends Variable {
     HashMap<Integer, Float> costs;      // Maps integer values (from the domain) to floating point costs
     Float defaultCost;
 
+    public VariableWithCostDict () {
+        // JavaBeans compliance
+    }
+
     public VariableWithCostDict (String name, Domain domain, Integer initialValue,
                                  HashMap<Integer, Float> costs, Float defaultCost) {
         super(name, domain, initialValue);
@@ -28,6 +32,14 @@ public class VariableWithCostDict extends Variable {
 
     public Float getDefaultCost () {
         return defaultCost;
+    }
+
+    public void setCosts (HashMap<Integer, Float> costs) {
+        this.costs = costs;
+    }
+
+    public void setDefaultCost (Float defaultCost) {
+        this.defaultCost = defaultCost;
     }
 
     @Override

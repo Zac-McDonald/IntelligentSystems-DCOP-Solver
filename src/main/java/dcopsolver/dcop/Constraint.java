@@ -7,7 +7,11 @@ import java.util.stream.Collectors;
 
 public abstract class Constraint {
     String name;
-    public ArrayList<Variable> variables;
+    ArrayList<Variable> variables;
+
+    public Constraint () {
+        // JavaBeans compliance
+    }
 
     public ArrayList<String> variable_names () {
         return variables.stream()
@@ -21,6 +25,14 @@ public abstract class Constraint {
 
     public ArrayList<Variable> getVariables () {
         return variables;
+    }
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public void setVariables (ArrayList<Variable> variables) {
+        this.variables = variables;
     }
 
     public int arity () {

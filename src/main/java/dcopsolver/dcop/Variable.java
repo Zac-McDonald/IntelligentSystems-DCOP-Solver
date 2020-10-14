@@ -8,6 +8,10 @@ public class Variable {
     Domain domain;
     Integer initialValue;
 
+    public Variable () {
+        // JavaBeans compliance
+    }
+
     public Variable (String name, Domain domain, Integer initialValue) {
         this.name = name;
         this.domain = domain;
@@ -29,6 +33,18 @@ public class Variable {
 
     public Integer getInitialValue () {
         return initialValue;
+    }
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public void setDomain (Domain domain) {
+        this.domain = domain;
+    }
+
+    public void setInitialValue (Integer initialValue) {
+        this.initialValue = initialValue;
     }
 
     public Float evaluate (Integer value) {

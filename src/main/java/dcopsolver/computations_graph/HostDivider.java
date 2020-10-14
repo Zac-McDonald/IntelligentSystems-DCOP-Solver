@@ -17,6 +17,10 @@ public class HostDivider {
     List<DFSNode> nodes;
     List<List<DFSNode>> hostNodes = new ArrayList<>();
 
+    public HostDivider () {
+        // JavaBeans compliance
+    }
+
     public HostDivider(List<DFSNode> v, int hostNumber){
         hostNum = hostNumber;
         nodes = v;
@@ -61,6 +65,46 @@ public class HostDivider {
             //increases range if no list is found
             range ++;
         }
+    }
+
+    public int getHostNum () {
+        return hostNum;
+    }
+
+    public void setHostNum (int hostNum) {
+        this.hostNum = hostNum;
+    }
+
+    public double getAim () {
+        return aim;
+    }
+
+    public void setAim (double aim) {
+        this.aim = aim;
+    }
+
+    public double getRange () {
+        return range;
+    }
+
+    public void setRange (double range) {
+        this.range = range;
+    }
+
+    public List<DFSNode> getNodes () {
+        return nodes;
+    }
+
+    public void setNodes (List<DFSNode> nodes) {
+        this.nodes = nodes;
+    }
+
+    public List<List<DFSNode>> getHostNodes () {
+        return hostNodes;
+    }
+
+    public void setHostNodes (List<List<DFSNode>> hostNodes) {
+        this.hostNodes = hostNodes;
     }
 
     //changes aim depending on current variables and hosts left

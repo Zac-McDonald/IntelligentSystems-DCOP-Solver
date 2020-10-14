@@ -9,6 +9,10 @@ public class Domain {
     String semanticType;
     Set<Integer> values;
 
+    public Domain () {
+        // JavaBeans compliance
+    }
+
     public Domain (String name, String semanticType, Set<Integer> values) {
         this.name = name;
         this.semanticType = semanticType;
@@ -21,6 +25,22 @@ public class Domain {
 
     public String getSemanticType () {
         return semanticType;
+    }
+
+    public Set<Integer> getValues () {
+        return values;
+    }
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public void setSemanticType (String semanticType) {
+        this.semanticType = semanticType;
+    }
+
+    public void setValues (Set<Integer> values) {
+        this.values = values;
     }
 
     public Integer size () {

@@ -11,10 +11,46 @@ public class DFSNode {
     Boolean visited;
     List<DFSEdge> adjacent = new ArrayList<>();
 
+    public DFSNode () {
+        // JavaBeans compliance
+    }
+
     public DFSNode (Variable v){
         this.var = v;
         name = v.name;
         visited = false;
+    }
+
+    public String getName () {
+        return name;
+    }
+
+    public void setName (String name) {
+        this.name = name;
+    }
+
+    public Variable getVar () {
+        return var;
+    }
+
+    public void setVar (Variable var) {
+        this.var = var;
+    }
+
+    public Boolean getVisited () {
+        return visited;
+    }
+
+    public void setVisited (Boolean visited) {
+        this.visited = visited;
+    }
+
+    public List<DFSEdge> getAdjacent () {
+        return adjacent;
+    }
+
+    public void setAdjacent (List<DFSEdge> adjacent) {
+        this.adjacent = adjacent;
     }
 
     public DFSNode GetParent(){

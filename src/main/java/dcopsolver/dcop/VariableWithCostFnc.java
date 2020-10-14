@@ -8,6 +8,10 @@ public class VariableWithCostFnc extends Variable {
     String expression;      // Maps the variable values (integer) to a floating point cost
     String source;
 
+    public VariableWithCostFnc () {
+        // JavaBeans compliance
+    }
+
     public VariableWithCostFnc (String name, Domain domain, Integer initialValue, String expression, String source) {
         super(name, domain, initialValue);
         this.expression = expression;
@@ -25,6 +29,14 @@ public class VariableWithCostFnc extends Variable {
 
     public String getSource () {
         return source;
+    }
+
+    public void setExpression (String expression) {
+        this.expression = expression;
+    }
+
+    public void setSource (String source) {
+        this.source = source;
     }
 
     @Override
