@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class Variable {
-    String name;
+    public String name;
     Domain domain;
     Integer initialValue;
 
@@ -17,6 +17,18 @@ public class Variable {
         if (!this.domain.contains(this.initialValue)) {
             throw new NoSuchElementException("Initial value not found in domain");
         }
+    }
+
+    public String getName () {
+        return name;
+    }
+
+    public Domain getDomain () {
+        return domain;
+    }
+
+    public Integer getInitialValue () {
+        return initialValue;
     }
 
     public Float evaluate (Integer value) {
@@ -44,6 +56,14 @@ public class Variable {
                 "name='" + name + '\'' +
                 ", domain=" + domain +
                 ", initialValue=" + initialValue +
+                '}';
+    }
+
+    public String prettyPrint () {
+        return "Variable{\n" +
+                "\tname='" + name + "' (#" + hashCode() + "),\n" +
+                "\tdomain=" + domain.name + " (#" + domain.hashCode() + "),\n" +
+                "\tinitialValue=" + initialValue + "\n" +
                 '}';
     }
 }

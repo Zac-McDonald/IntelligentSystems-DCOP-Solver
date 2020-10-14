@@ -13,9 +13,8 @@ import java.util.stream.Collectors;
 
 @Agent
 @RequiredServices({@RequiredService(name="messageServices", type = IMessageService.class, multiple = true,
-        binding = @Binding(scope = RequiredServiceInfo.SCOPE_PLATFORM, dynamic = true))})
+                    binding = @Binding(scope = RequiredServiceInfo.SCOPE_PLATFORM, dynamic = true))})
 @ProvidedServices(@ProvidedService(name = "thisService", type= IMessageService.class))
-@Arguments(@Argument(name="dcop", clazz= Object.class, defaultvalue="\"HashMap<String, Integer> map = new HashMap<String, Integer>()\""))
 public class MessageAgent implements IMessageService{
     @Agent
     protected IInternalAccess agent; //reference to itself
@@ -23,36 +22,35 @@ public class MessageAgent implements IMessageService{
     @AgentFeature
     IRequiredServicesFeature requiredServicesFeature;
 
-    // The subscriptions that will get messaged.
+    // The connections that can be messaged.
     protected HashMap<IComponentIdentifier, IMessageService> addressBook = new HashMap<>();
-    // A record of who is online
-
-    @AgentArgument
-    private Object dcop;
+    // A record of everyone that is online
 
     public IInternalAccess getAgent(){
         return agent;
     }
 
-    public void updateAddressBookStream () {
+    public void updateAddressBook () {
         //get a container of the IMessageService's provided by agents on the platform
         ITerminableIntermediateFuture<IMessageService> fut = requiredServicesFeature.getRequiredServices("messageServices");
 
         List<IComponentIdentifier> activeAgents = fut.get().stream().map((it) -> {
             IComponentIdentifier id = it.getAgent().getComponentIdentifier();
+
             //add each agent to the address book
             if (!addressBook.keySet().contains(id)) {
-                //the agent appears in the stream but not on the list of active agents, add it.
+                //the agent appears in the stream but not on the list of active agents, it was just discovered, add it.
                 addressBook.put(id, it);
-                System.out.println(agent.getComponentIdentifier().toString() + "Discovered:" + id);
+                System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + id);
             }
-            return id;
+            return id;  // Return id, to create a list of active agents
         }).collect(Collectors.toList());
 
         //Dropped agent detection
-        addressBook.keySet().removeIf(x -> {
-            if (!activeAgents.contains(x)) {
-                System.out.println("\tDropped " + x);
+        addressBook.keySet().removeIf(id -> {
+            // Remove unreachable agents
+            if (!activeAgents.contains(id)) {
+                System.out.println(agent.getComponentIdentifier().toString() + " Dropped: " + id);
                 return true;
             }
             return false;
@@ -61,41 +59,42 @@ public class MessageAgent implements IMessageService{
 
     @AgentBody
     public void body (IInternalAccess agent) {
-        updateAddressBookStream();
+        updateAddressBook();
 
-        while (true) {
-            try {
-                TimeUnit.SECONDS.sleep(3);
-            } catch (InterruptedException e) {
-                // Do fuck all
-            }
+        // Message all connections
+        for (IComponentIdentifier id : addressBook.keySet()) {
+            sendMessage(new Data("Debug", "Trace", agent.getComponentIdentifier()), id);
+        }
 
-            // Message all subscribers
-            for (IComponentIdentifier id : addressBook.keySet()) {
-                Data content = getMessageContent();
-                addressBook.get(id).message(content);
-            }
-
-            updateAddressBookStream();
+        try {
+            TimeUnit.SECONDS.sleep(3);
+        } catch (InterruptedException e) {
+            // Temporary delay
         }
     }
 
-    //TODO Replace this with a function that returns meaningful message content
-    private Data getMessageContent() {
-        return new Data("test",dcop, agent.getComponentIdentifier());
-    }
-
     @Override
-    public Future<Void> message(Data content) {
-        String me = getAgent().toString();
-        me = me.substring(0, me.indexOf("@"));
+    public Future<Void> message (Data content) {
+        if (content.type == "Debug" && content.value == "Trace") {
+            String me = getAgent().toString();
+            me = me.substring(0, me.indexOf("@"));
 
-        String them = content.source.toString();
-        them = them.substring(0, them.indexOf("@"));
+            String them = content.source.toString();
+            them = them.substring(0, them.indexOf("@"));
 
-        System.out.println(me + " messaged from " + them);
+            System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
+        }
+
+        receiveMessage(content);
         return null;
     }
 
+    protected void sendMessage (Data content, IComponentIdentifier id) {
+        addressBook.get(id).message(content);
+    }
 
+    protected Boolean receiveMessage (Data content) {
+        // Handle lowest level messages here, otherwise return false and let higher agents handle them
+        return false;
+    }
 }

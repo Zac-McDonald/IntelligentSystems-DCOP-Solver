@@ -1,17 +1,26 @@
 package dcopsolver.dcop;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public abstract class Constraint {
     String name;
-    ArrayList<Variable> variables;
+    public ArrayList<Variable> variables;
 
     public ArrayList<String> variable_names () {
         return variables.stream()
                 .map(variable -> variable.name)
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public String getName () {
+        return name;
+    }
+
+    public ArrayList<Variable> getVariables () {
+        return variables;
     }
 
     public int arity () {
@@ -24,9 +33,11 @@ public abstract class Constraint {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    // TODO: Slice function
+    // Uses partial assignment
+    public abstract Constraint slice (HashMap<String, Integer> variableAssignments);
 
-    public abstract Float evaluate ();
+    // Needs complete assignment
+    public abstract Float evaluate (HashMap<String, Integer> variableAssignments);
 
     @Override
     public boolean equals (Object o) {
@@ -48,5 +59,21 @@ public abstract class Constraint {
                 "name='" + name + '\'' +
                 ", variables=" + variables +
                 '}';
+    }
+
+    public String prettyPrint () {
+        StringBuilder pretty = new StringBuilder(
+                "Constraint{\n" +
+                "\tname='" + name + "' (#" + hashCode() + "),\n"
+        );
+
+        pretty.append("\tvariables=[\n");
+        for (Variable v : variables)
+        {
+            pretty.append("\t\t").append(v.name).append(" (#").append(v.hashCode()).append(")\n");
+        }
+        pretty.append("\t]\n}");
+
+        return pretty.toString();
     }
 }

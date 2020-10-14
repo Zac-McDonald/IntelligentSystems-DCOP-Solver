@@ -1,0 +1,23 @@
+#TEMPLATE FOR DCOP, REPLACE ALL SECTIONS BETWEEN "##....##"
+
+name: ##NAME##
+description: ##DESCRIPTION##
+objectiveIsMin: ##TRUE OR FALSE##
+
+domains:
+  - name: "##NAME##"
+    semanticType: "##TYPE##"
+    values: [##VALUES##]
+  - ##NEXT DOMAIN##
+  
+variables:
+  - name: "##NAME##"
+    domain: "##DOMAIN##"
+    initialValue: ##INITIAL VALUE##
+  - ##NEXT VARIABLE##
+ 
+constraints:
+  - name: "##NAME##"
+    type: "##TYPE##"
+    expression: "FUNCTION"
+  - ##NEXT CONSTRAINT##

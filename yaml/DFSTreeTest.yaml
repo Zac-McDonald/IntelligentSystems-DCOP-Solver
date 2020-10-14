@@ -1,0 +1,82 @@
+name: Test DCOP
+description: yaml file to test DCOP creation
+objectiveIsMin: true
+
+domains:
+  - name: "domain1"
+    semanticType: "type"
+    values: [1, 2]
+  - name: "domain2"
+    semanticType: "type"
+    values: [4, 8]
+  
+variables:
+  - name: "v1"
+    domain: "domain1"
+    initialValue: 1
+  - name: "v2"
+    domain: "domain1"
+    initialValue: 2
+  - name: "v3"
+    domain: "domain2"
+    initialValue: 8
+  - name: "v4"
+    domain: "domain2"
+    initialValue: 8
+  - name: "v5"
+    domain: "domain2"
+    initialValue: 8
+  - name: "v6"
+    domain: "domain2"
+    initialValue: 8
+  - name: "v7"
+    domain: "domain2"
+    initialValue: 8
+  - name: "v8"
+    domain: "domain2"
+    initialValue: 8
+  - name: "v9"
+    domain: "domain2"
+    initialValue: 8
+  - name: "va"
+    domain: "domain2"
+    initialValue: 8
+  - name: "vb"
+    domain: "domain2"
+    initialValue: 8
+  - name: "vc"
+    domain: "domain2"
+    initialValue: 8
+  
+
+constraints:
+  - name: "diff1"
+    type: "functional"
+    expression: "v9 = vb + vc"
+  - name: "diff2"
+    type: "functional"
+    expression: "v1 = v9"
+  - name: "diff3"
+    type: "functional"
+    expression: "v1 = v5 + v3"
+  - name: "diff4"
+    type: "functional"
+    expression: "v7 = v5 + v3"
+  - name: "diff5"
+    type: "functional"
+    expression: "v6 = v3 + v1"
+  - name: "diff6"
+    type: "functional"
+    expression: "v3 = v8"
+  - name: "diff7"
+    type: "functional"
+    expression: "v6 = v2"
+  - name: "diff8"
+    type: "functional"
+    expression: "v2 = v8"
+  - name: "diff9"
+    type: "functional"
+    expression: "v2 = v4"
+  - name: "diff10"
+    type: "functional"
+    expression: "v4 = va"

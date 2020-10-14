@@ -6,4 +6,7 @@ Contributers:
 - Angus Maude (`101100419`
 - Zac McDonald (`102580465`)
 
-a
+
+Github: https://github.com/Zac-McDonald/IntelligentSystems-DCOP-Solver <br />
+Github (Network): https://github.com/Zac-McDonald/IntelligentSystems-DCOP-Solver/network <br />
+Trello: https://trello.com/b/6ovyFlWI/jadex-dcop-solver
