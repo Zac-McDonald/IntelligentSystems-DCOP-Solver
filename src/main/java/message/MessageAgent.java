@@ -1,19 +1,15 @@
 package message;
 
-import chat.testing.IChatService;
+
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
 import jadex.bridge.service.RequiredServiceInfo;
-import jadex.bridge.service.annotation.Service;
 import jadex.bridge.service.component.IRequiredServicesFeature;
 import jadex.commons.future.*;
 import jadex.micro.annotation.*;
-
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Agent
 @RequiredServices({@RequiredService(name="messageServices", type = IMessageService.class, multiple = true,
