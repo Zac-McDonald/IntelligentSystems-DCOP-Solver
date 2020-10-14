@@ -1,7 +1,9 @@
 package message;
 
+import dcopsolver.computations_graph.DFSTree;
 import dcopsolver.dcop.DCOP;
 import dcopsolver.dcop.Variable;
+import edu.uci.ics.jung.algorithms.layout.DAGLayout;
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
 import jadex.bridge.component.IArgumentsResultsFeature;
@@ -10,11 +12,13 @@ import jadex.micro.annotation.AgentCreated;
 import jadex.micro.annotation.Argument;
 import jadex.micro.annotation.Arguments;
 
-import java.awt.*;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Arguments({@Argument(name="dcop", clazz= DCOP.class), @Argument(name="assignedVariableName", clazz= String.class)})
+@Arguments({@Argument(name="dcop", clazz= DCOP.class),
+        @Argument(name="assignedVariableName", clazz= String.class),
+        @Argument(name="dfsTree", clazz= DFSTree.class)})
 public class SolverAgent extends MessageAgent {
     @AgentArgument
     DCOP dcop;
@@ -23,9 +27,14 @@ public class SolverAgent extends MessageAgent {
     String assignedVariableName;
     public Variable assignedVariable;
 
+    @AgentArgument
+    DFSTree dfsTree;
+    List<Variable> parentsChecked;
+
     @AgentCreated
     public void created () {
         assignedVariable = dcop.getVariables().get(assignedVariableName);
+        parentsChecked = dfsTree.GetParents(assignedVariable, true);
     }
 
     //agents var map
@@ -41,15 +50,26 @@ public class SolverAgent extends MessageAgent {
             //add the other solvers and their variables to a map
             for (IComponentIdentifier solver:solvers) {
                 if (!variableMap.containsValue(solver)){
-                    Map<String,Object> args = addressBook.get(solver).getAgent()
-                            .getComponentFeature(IArgumentsResultsFeature.class).getArguments();
+                    Map<String,Object> args = addressBook.get(solver).getAgent().getComponentFeature(IArgumentsResultsFeature.class).getArguments();
                     if(args.get("dcop").hashCode() == dcop.hashCode()){
-                        variableMap.put(dcop.getVariables().get(args.get("assignedVariableName")),solver);
+                            variableMap.put(dcop.getVariables().get(args.get("assignedVariableName")),solver);
                     }
                 }
             }
-        }
 
+
+            if (parentsChecked.size()>0){
+                List<Variable> vars = dfsTree.GetParents(assignedVariable, true);
+                for (Variable v: vars) {
+                    Data content = new Data("Debug.neighbours", "parent", getId());
+                    if (addressBook.containsKey(variableMap.get(v))){
+                        sendMessage(content, variableMap.get(v));
+                        parentsChecked.remove(v);
+                    }
+                }
+            }
+
+        }
 
     }
 

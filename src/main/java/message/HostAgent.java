@@ -1,5 +1,6 @@
 package message;
 
+import dcopsolver.computations_graph.DFSTree;
 import dcopsolver.dcop.DCOP;
 import fileInput.YamlLoader;
 import jadex.bridge.IComponentIdentifier;
@@ -30,7 +31,9 @@ public class HostAgent extends MessageAgent {
             YamlLoader loader = new YamlLoader();
             DCOP dcop = loader.loadYAML(dcopFile);
 
-            startDcopAgents(dcop);
+            DFSTree tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), 1);
+
+            startDcopAgents(dcop, tree);
             System.out.println("Successfully loaded DCOP ("+ dcopFile + ")");
 
         } catch (Exception e) {
@@ -39,13 +42,13 @@ public class HostAgent extends MessageAgent {
         }
     }
 
-    protected void startDcopAgents (DCOP dcop) {
+    protected void startDcopAgents (DCOP dcop, DFSTree tree) {
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 
         dcop.getVariables().keySet().forEach(name -> {
             CreationInfo ci = new CreationInfo(
-                    SUtil.createHashMap(new String[] { "dcop", "assignedVariableName" }, new Object[] { dcop, name })
+                    SUtil.createHashMap(new String[] { "dcop", "assignedVariableName", "dfsTree" }, new Object[] { dcop, name, tree })
             );
             cms.createComponent("Agent:" + name, "message.SolverAgent.class", ci);
         });
