@@ -7,6 +7,7 @@ import jadex.bridge.service.RequiredServiceInfo;
 import jadex.bridge.service.component.IRequiredServicesFeature;
 import jadex.commons.future.*;
 import jadex.micro.annotation.*;
+
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -29,6 +30,8 @@ public class MessageAgent implements IMessageService{
     protected List<IComponentIdentifier> hosts = new ArrayList<>();
     protected List<IComponentIdentifier> solvers = new ArrayList<>();
 
+    // Stores messages whose recipient could not be found
+    private HashMap<IComponentIdentifier, IMessageService> pendingAddresses = new HashMap<>();
 
     public IInternalAccess getAgent(){
         return agent;
@@ -45,8 +48,11 @@ public class MessageAgent implements IMessageService{
 
             //add each agent to the address book
             if (!addressBook.containsKey(id)) {
-                //the agent appears in the stream but not on the list of active agents, it was just discovered, add it.
-                addressBook.put(id, it);
+                // The agent appears in the stream but not on the list of active agents, it was just discovered, add it.
+                // No longer adds to addressBook until we get a tellType message
+                // Instead adds to a pendingAddresses book
+                // This ensures that we have a 2-way connection with the agent before adding to addressBook
+                pendingAddresses.put(id, it);
                 System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + id);
                 agentDiscovered(id);
             }
@@ -72,13 +78,14 @@ public class MessageAgent implements IMessageService{
         addressBook.keySet().forEach(id -> {
             sendMessage(new Data("Debug.ignore", "Test message", getId()), id);
         });
-*/
-      /*  // Delay for debugging clarity
+*
+        // Delay for debugging clarity
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
             //
-        }*/
+        }
+*/
     }
 
     @Override
@@ -92,7 +99,12 @@ public class MessageAgent implements IMessageService{
         // Wrap all messages in a Debug.trace to output them to the console
         content = new Data("Debug.trace", content, getId());
 
-        addressBook.get(id).message(content);
+        // Send to agent, regardless of which addressBook they are in
+        if (addressBook.containsKey(id)) {
+            addressBook.get(id).message(content);
+        } else if (pendingAddresses.containsKey(id)) {
+            pendingAddresses.get(id).message(content);
+        }
     }
 
     protected Data receiveMessage (Data content, String[] typeTree) {
@@ -116,6 +128,7 @@ public class MessageAgent implements IMessageService{
                             content = (Data)content.value;
                             // Send it for another loop
                             receiveMessage(content, content.getTypeTree());
+                            return null;
                         } else {
                             content = null;
                         }
@@ -123,6 +136,10 @@ public class MessageAgent implements IMessageService{
                     break;
                 case "Discover":
                     if (typeTree[1].equals("tellType")) {
+                        // If the id is null here, there is a problem -- it should NEVER happen
+                        addressBook.put(content.source, pendingAddresses.get(content.source));
+                        pendingAddresses.remove(content.source);
+
                         if (content.value.equals("Host")) {
                             hosts.add(content.source);
                         } else if (content.value.equals("Solver")) {

@@ -7,14 +7,12 @@ import edu.uci.ics.jung.algorithms.layout.DAGLayout;
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
 import jadex.bridge.component.IArgumentsResultsFeature;
-import jadex.micro.annotation.AgentArgument;
-import jadex.micro.annotation.AgentCreated;
-import jadex.micro.annotation.Argument;
-import jadex.micro.annotation.Arguments;
+import jadex.micro.annotation.*;
 
 import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Arguments({@Argument(name="dcop", clazz= DCOP.class),
         @Argument(name="assignedVariableName", clazz= String.class),
@@ -31,14 +29,22 @@ public class SolverAgent extends MessageAgent {
     DFSTree dfsTree;
     List<Variable> parentsChecked;
 
+    //agents var map
+    private HashMap<Variable,IComponentIdentifier> variableMap = new HashMap<>();
+
     @AgentCreated
     public void created () {
         assignedVariable = dcop.getVariables().get(assignedVariableName);
-        parentsChecked = dfsTree.GetParents(assignedVariable, true);
+        parentsChecked = dfsTree.GetAllParents(assignedVariable);
     }
 
-    //agents var map
-    private HashMap<Variable,IComponentIdentifier> variableMap = new HashMap<>();
+    @AgentKilled
+    public void killed () {
+        // For debugging if agents were unreachable -- saves trying to find individual messages
+        List<String> a = variableMap.keySet().stream().map(Variable::getName).collect(Collectors.toList());
+        List<String> b = parentsChecked.stream().map(Variable::getName).collect(Collectors.toList());
+        System.out.println(assignedVariableName + ": " + a + " -> " + b);
+    }
 
     @Override
     public void body (IInternalAccess agent) {
@@ -47,30 +53,27 @@ public class SolverAgent extends MessageAgent {
         while (true) {
             super.body(agent);
 
-            //add the other solvers and their variables to a map
-            for (IComponentIdentifier solver:solvers) {
-                if (!variableMap.containsValue(solver)){
-                    Map<String,Object> args = addressBook.get(solver).getAgent().getComponentFeature(IArgumentsResultsFeature.class).getArguments();
-                    if(args.get("dcop").hashCode() == dcop.hashCode()){
-                            variableMap.put(dcop.getVariables().get(args.get("assignedVariableName")),solver);
-                    }
+            for (IComponentIdentifier other : solvers) {
+                if (!variableMap.values().contains(other)) {
+                    sendMessage(new Data("DCOP.askVariable", null, getId()), other);
                 }
             }
 
-
-            if (parentsChecked.size()>0){
-                List<Variable> vars = dfsTree.GetParents(assignedVariable, true);
+            if (parentsChecked.size() > 0) {
+                // For each parent we haven't already messaged
+                List<Variable> vars = dfsTree.GetAllParents(assignedVariable);
                 for (Variable v: vars) {
-                    Data content = new Data("Debug.neighbours", "parent", getId());
-                    if (addressBook.containsKey(variableMap.get(v))){
+                    // If we know the parent variables agent
+                    if (addressBook.containsKey(variableMap.get(v))) {
+                        Data content = new Data("Debug.neighbours", "parent", getId());
                         sendMessage(content, variableMap.get(v));
+
+                        // Mark parent as sent to
                         parentsChecked.remove(v);
                     }
                 }
             }
-
         }
-
     }
 
     @Override
@@ -100,6 +103,13 @@ public class SolverAgent extends MessageAgent {
                             sendMessage(response, content.source);
                         }
                         break;
+                    case "DCOP":
+                        if (typeTree[1].equals("askVariable")) {
+                            Data response = new Data("DCOP.tellVariable", assignedVariableName, getId());
+                            sendMessage(response, content.source);
+                        } else if (typeTree[1].equals("tellVariable")) {
+                            variableMap.put(dcop.getVariables().get(content.value), content.source);
+                        }
                 }
             }
         }

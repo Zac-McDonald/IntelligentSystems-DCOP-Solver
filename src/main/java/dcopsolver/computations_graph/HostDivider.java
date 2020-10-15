@@ -159,7 +159,7 @@ public class HostDivider {
                 list.addAll(tempList);
 
                 //move up tree one node
-                topNode = topNode.GetParent();
+                topNode = topNode.GetParents(false).get(0);
 
                 if (topNode == null)
                     //current node has no parents
