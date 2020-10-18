@@ -6,17 +6,13 @@ import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;
 import jadex.bridge.IExternalAccess;
 import jadex.bridge.service.search.SServiceProvider;
-import jadex.bridge.service.types.cms.CreationInfo;
 import jadex.bridge.service.types.cms.IComponentManagementService;
-import jadex.commons.SUtil;
-
-import java.util.HashMap;
 
 public class TestMain {
 
     public static void main(String[] args0) throws Exception {
         YamlLoader loader = new YamlLoader();
-        DCOP dcop = loader.loadYAML("./yaml/graph_coloring_basic.yaml");
+        DCOP dcop = loader.loadDCOP("./yaml/graph_coloring_basic.yaml");
 
         PlatformConfiguration config = PlatformConfiguration.getDefault();
         config.setGui(true);

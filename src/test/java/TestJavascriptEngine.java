@@ -19,7 +19,7 @@ public class TestJavascriptEngine {
         // Test using DCOP
         try {
             YamlLoader loader = new YamlLoader();
-            DCOP dcop = loader.loadYAML("./yaml/graph_coloring_basic.yaml");
+            DCOP dcop = loader.loadDCOP("./yaml/graph_coloring_basic.yaml");
 
             // Assign values
             HashMap<String, Integer> assignment = new HashMap<String, Integer>();
