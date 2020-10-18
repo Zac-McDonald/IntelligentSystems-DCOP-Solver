@@ -32,18 +32,27 @@ public class HostAgent extends MessageAgent {
         // Load DCOP from YAML
         try {
             YamlLoader loader = new YamlLoader();
-            DCOP dcop = loader.loadYAML(dcopFile);
-
-            DFSTree tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), 1);
-            tree.OutputGraph();
-
-            startDcopAgents(dcop, tree);
+            DCOP dcop = loader.loadDCOP(dcopFile);
             System.out.println("Successfully loaded DCOP ("+ dcopFile + ")");
+            startNegotiatingHosts(dcop);
+            
 
         } catch (Exception e) {
             System.out.println("Error loading DCOP ("+ dcopFile + "): " + e.toString());
             e.printStackTrace();
         }
+    }
+
+    public void startNegotiatingHosts(DCOP dcop){
+        //TODO understand how many hosts are on the system.
+        Integer numberOfHosts = hosts.size(); //how to make sure that this is up to date by the time the solving starts?
+        //TODO create a DFSTree for that many hosts.
+        DFSTree tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), 1);
+        /*TODO message to determine ownership for different hostnodes
+             - tiebreaking by using each host's component ID*/
+
+        //TODO each host then adds agents/nodes/variables it is responsible for to its platform.
+        startDcopAgents(dcop, tree);
     }
 
     protected void startDcopAgents (DCOP dcop, DFSTree tree) {
@@ -60,8 +69,6 @@ public class HostAgent extends MessageAgent {
 
     @Override
     public void body (IInternalAccess agent) {
-        //
-
         while (true) {
             super.body(agent);
         }

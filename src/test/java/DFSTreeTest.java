@@ -1,5 +1,4 @@
 import dcopsolver.computations_graph.DFSTree;
-import dcopsolver.computations_graph.HostDivider;
 import dcopsolver.dcop.DCOP;
 import fileInput.YamlLoader;
 

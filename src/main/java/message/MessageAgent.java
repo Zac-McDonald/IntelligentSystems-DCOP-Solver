@@ -2,6 +2,7 @@ package message;
 
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
+import jadex.bridge.service.ProvidedServiceInfo;
 import jadex.bridge.service.RequiredServiceInfo;
 import jadex.bridge.service.component.IRequiredServicesFeature;
 import jadex.commons.future.*;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Agent
 @RequiredServices({@RequiredService(name="messageServices", type = IMessageService.class, multiple = true,
-                    binding = @Binding(scope = RequiredServiceInfo.SCOPE_PLATFORM, dynamic = true))})
+                    binding = @Binding(dynamic = true))})
 @ProvidedServices(@ProvidedService(name = "thisService", type= IMessageService.class))
 public class MessageAgent implements IMessageService{
     @Agent
