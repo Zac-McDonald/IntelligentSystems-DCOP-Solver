@@ -34,7 +34,7 @@ public class SolverAgent extends MessageAgent {
     @AgentCreated
     public void created () {
         assignedVariable = dcop.getVariables().get(assignedVariableName);
-        parentsChecked = dfsTree.GetParents(assignedVariable, true);
+        parentsChecked = dfsTree.GetAllParents(assignedVariable);
     }
 
     //agents var map
@@ -59,7 +59,7 @@ public class SolverAgent extends MessageAgent {
 
 
             if (parentsChecked.size()>0){
-                List<Variable> vars = dfsTree.GetParents(assignedVariable, true);
+                List<Variable> vars = dfsTree.GetAllParents(assignedVariable);
                 for (Variable v: vars) {
                     Data content = new Data("Debug.neighbours", "parent", getId());
                     if (addressBook.containsKey(variableMap.get(v))){
