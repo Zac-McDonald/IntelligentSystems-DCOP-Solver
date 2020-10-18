@@ -1,0 +1,9 @@
+diff a/src/main/java/message/SolverAgent.java b/src/main/java/message/SolverAgent.java	(rejected hunks)
+@@ -59,7 +59,7 @@
+ 
+ 
+             if (parentsChecked.size()>0){
++                List<Variable> vars = dfsTree.GetAllParents(assignedVariable);
+                 for (Variable v: vars) {
+                     Data content = new Data("Debug.neighbours", "parent", getId());
+                     if (addressBook.containsKey(variableMap.get(v))){
