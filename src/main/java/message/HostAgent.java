@@ -18,7 +18,10 @@ import jadex.micro.annotation.Arguments;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
+
+
 
 @Arguments(@Argument(name="platform", clazz= IExternalAccess.class))
 public class HostAgent extends MessageAgent {
@@ -31,10 +34,9 @@ public class HostAgent extends MessageAgent {
     }
 
     private HashMap<IComponentIdentifier, List<DFSNode>> hostNodeMap;
-    private HashMap<IComponentIdentifier, Boolean> hostsReady;
     private DCOP dcop;
     private DFSTree tree;
-    private String state = "start";
+    private String state = "dormant";
 
     public DCOP loadDCOP (String dcopFile) {
         // Load DCOP from YAML
@@ -47,26 +49,25 @@ public class HostAgent extends MessageAgent {
             System.out.println("Error loading DCOP ("+ dcopFile + "): " + e.toString());
             e.printStackTrace();
         }
+        return dcop;
     }
 
-    public void negotiateHostNodes(){
-        for (IComponentIdentifier host : hosts){
-            hostsReady.put(host,false);
+    public void startOtherHosts(){
+        state = "solving";
+        //create the DFSTree
+        tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), hosts.size());
+        //make a hashmap of each host and assign nodes
+        for (int i = 0; i < hosts.size(); i++) {
+            hostNodeMap.put(hosts.get(i), tree.gethD().getHostNodes().get(i));
         }
-
-        //sort a list of all the hosts
-        List<IComponentIdentifier> sorted = hosts;
-        sorted = sorted.stream().sorted().collect(Collectors.toList());
-        //add each of the host node lists to a hashmap of these lists.
-        for (int i = 0; i < sorted.size(); i++) {
-            hostNodeMap.put(sorted.get(i), tree.gethD().getHostNodes().get(i));
-        }
-
-        //make sure everyone's list matches before we start
+        //send out the map to the other hosts
         for (IComponentIdentifier other : hosts){
-            sendMessage(new Data("Negotiate.askHostNodes", hostNodeMap, getId()), other);
+            sendMessage(new Data("Start.tellHostNodes", hostNodeMap, getId()), other);
         }
-
+        //send out the tree to the other hosts
+        for (IComponentIdentifier other : hosts){
+            sendMessage(new Data("Start.tellDFSTree", tree, getId()), other);
+        }
     }
 
     //TODO host launches agents only for its nodes
@@ -74,31 +75,32 @@ public class HostAgent extends MessageAgent {
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 
-        dcop.getVariables().keySet().forEach(name -> {
+        for (DFSNode node : hostNodeMap.get(agent.getComponentIdentifier())){
+            String name = node.getName();
             CreationInfo ci = new CreationInfo(
                     SUtil.createHashMap(new String[] { "dcop", "assignedVariableName", "dfsTree" }, new Object[] { dcop, name, tree })
             );
             cms.createComponent("Agent:" + name, "message.SolverAgent.class", ci);
-        });
+        }
     }
 
     @Override
     public void body (IInternalAccess agent) {
+        Scanner in = new Scanner(System.in);
+        System.out.println(state);
         while (true) {
             super.body(agent);
-            if (state == "start"){
-                //TODO understand how many hosts are on the system.
-                //how to make sure that this is up to date by the time the solving starts?
-                Integer numberOfHosts = hosts.size();
-                //TODO create a DFSTree for that many hosts.
-                tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), numberOfHosts);
-                /*TODO message to determine ownership for different hostnodes
-                    - for each of the hosts, send a message asking for one of the hostNodes
-                    - tiebreaking by using each host's component ID*/
-                state = "stop";
-                negotiateHostNodes();
+            if (state != "solving"){
+                System.out.println("options are show, or start.");
+                state = in.nextLine();
             }
-
+            if (state == "show"){
+                System.out.println("Hosts on network"+hosts);
+            }
+            if (state == "start"){
+                startOtherHosts();
+                startDcopAgents();
+            }
         }
     }
 
@@ -121,13 +123,22 @@ public class HostAgent extends MessageAgent {
                             sendMessage(response, content.source);
                         }
                         break;
-                    case "Negotiate":
-                        if (typeTree[1].equals("askHostNodes")){
-                            if(hostNodeMap == content.value){
-
-                            }else{
-                                if(nodes == null){
-                                    nodes = (List<DFSNode>) content.value;
+                    case "Start":
+                        if (typeTree[1].equals("tellHostNodes")){
+                            if (content.source != agent.getComponentIdentifier()){ //dont call self
+                                hostNodeMap = (HashMap<IComponentIdentifier, List<DFSNode>>) content.value;
+                                if (tree != null){
+                                    state.equals("solving");
+                                    startDcopAgents();
+                                }
+                            }
+                        }
+                        if (typeTree[1].equals("tellDFSTree")){
+                            if (content.source != agent.getComponentIdentifier()){ //dont call self
+                                tree = (DFSTree) content.value;
+                                if (hostNodeMap != null){
+                                    state.equals("solving");
+                                    startDcopAgents();
                                 }
                             }
                         }
