@@ -39,7 +39,8 @@ public class JavascriptEngine {
     }
 
     public Float evaluateFloatExpression (String expression, String sources) {
-        V8 runtime = V8.createV8Runtime();
+        return 0f;
+        /*V8 runtime = V8.createV8Runtime();
 
         // Execute sources first - if they exist
         if (!sources.isEmpty()) {
@@ -49,7 +50,7 @@ public class JavascriptEngine {
         Float result = ((Double)runtime.executeDoubleScript(expression)).floatValue();
 
         runtime.release();
-        return result;
+        return result;*/
     }
 
     public Float evaluateFloatExpression (String expression) {
@@ -57,7 +58,8 @@ public class JavascriptEngine {
     }
 
     public Boolean validFloatExpression (String expression, String sources) {
-        V8 runtime = V8.createV8Runtime();
+        return true;
+    /*    V8 runtime = V8.createV8Runtime();
         boolean result = true;
 
         try {
@@ -72,7 +74,7 @@ public class JavascriptEngine {
         }
 
         runtime.release();
-        return result;
+        return result;*/
     }
 
     public Boolean validFloatExpression (String expression) {
