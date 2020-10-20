@@ -1,5 +1,6 @@
 package message;
 
+import dcopsolver.computations_graph.DFSNode;
 import dcopsolver.computations_graph.DFSTree;
 import dcopsolver.dcop.DCOP;
 import fileInput.YamlLoader;
@@ -15,6 +16,10 @@ import jadex.micro.annotation.AgentCreated;
 import jadex.micro.annotation.Argument;
 import jadex.micro.annotation.Arguments;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Arguments(@Argument(name="platform", clazz= IExternalAccess.class))
 public class HostAgent extends MessageAgent {
     @AgentArgument
@@ -23,39 +28,50 @@ public class HostAgent extends MessageAgent {
     @AgentCreated
     public void created () {
         super.created();
-
-        //initiateDcop("./yaml/graph_coloring_basic.yaml");
-        initiateDcop("./yaml/graph_coloring_10vars.yaml");
+        dcop = loadDCOP("./yaml/graph_coloring_basic.yaml");
     }
 
-    public void initiateDcop (String dcopFile) {
+    private HashMap<IComponentIdentifier, List<DFSNode>> hostNodeMap;
+    private HashMap<IComponentIdentifier, Boolean> hostsReady;
+    private DCOP dcop;
+    private DFSTree tree;
+    private String state = "start";
+
+    public DCOP loadDCOP (String dcopFile) {
         // Load DCOP from YAML
         try {
             YamlLoader loader = new YamlLoader();
             DCOP dcop = loader.loadDCOP(dcopFile);
             System.out.println("Successfully loaded DCOP ("+ dcopFile + ")");
-            startNegotiatingHosts(dcop);
-            
-
+            return dcop;
         } catch (Exception e) {
             System.out.println("Error loading DCOP ("+ dcopFile + "): " + e.toString());
             e.printStackTrace();
         }
     }
 
-    public void startNegotiatingHosts(DCOP dcop){
-        //TODO understand how many hosts are on the system.
-        Integer numberOfHosts = hosts.size(); //how to make sure that this is up to date by the time the solving starts?
-        //TODO create a DFSTree for that many hosts.
-        DFSTree tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), 1);
-        /*TODO message to determine ownership for different hostnodes
-             - tiebreaking by using each host's component ID*/
+    public void negotiateHostNodes(){
+        for (IComponentIdentifier host : hosts){
+            hostsReady.put(host,false);
+        }
 
-        //TODO each host then adds agents/nodes/variables it is responsible for to its platform.
-        startDcopAgents(dcop, tree);
+        //sort a list of all the hosts
+        List<IComponentIdentifier> sorted = hosts;
+        sorted = sorted.stream().sorted().collect(Collectors.toList());
+        //add each of the host node lists to a hashmap of these lists.
+        for (int i = 0; i < sorted.size(); i++) {
+            hostNodeMap.put(sorted.get(i), tree.gethD().getHostNodes().get(i));
+        }
+
+        //make sure everyone's list matches before we start
+        for (IComponentIdentifier other : hosts){
+            sendMessage(new Data("Negotiate.askHostNodes", hostNodeMap, getId()), other);
+        }
+
     }
 
-    protected void startDcopAgents (DCOP dcop, DFSTree tree) {
+    //TODO host launches agents only for its nodes
+    protected void startDcopAgents () {
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 
@@ -71,6 +87,19 @@ public class HostAgent extends MessageAgent {
     public void body (IInternalAccess agent) {
         while (true) {
             super.body(agent);
+            if (state == "start"){
+                //TODO understand how many hosts are on the system.
+                //how to make sure that this is up to date by the time the solving starts?
+                Integer numberOfHosts = hosts.size();
+                //TODO create a DFSTree for that many hosts.
+                tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), numberOfHosts);
+                /*TODO message to determine ownership for different hostnodes
+                    - for each of the hosts, send a message asking for one of the hostNodes
+                    - tiebreaking by using each host's component ID*/
+                state = "stop";
+                negotiateHostNodes();
+            }
+
         }
     }
 
