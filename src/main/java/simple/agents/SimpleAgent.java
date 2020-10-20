@@ -3,6 +3,9 @@ package simple.agents;
 import jadex.micro.annotation.Agent;
 import jadex.micro.annotation.AgentBody;
 
+import java.util.Scanner;
+
+
 @Agent
 public class SimpleAgent {
     /**
@@ -10,6 +13,16 @@ public class SimpleAgent {
      */
     @AgentBody
     public void body () {
-        System.out.println("Hello World");
+        Scanner in = new Scanner(System.in);
+        String name = in.nextLine();
+        printName(name);
+    }
+    public void printName(String name){
+
+        if (name == "matthew"){
+            System.out.println("hey matt");
+        }else{
+            System.out.println("hey matt");
+        }
     }
 }
