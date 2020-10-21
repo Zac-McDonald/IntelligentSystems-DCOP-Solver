@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Agent
 @RequiredServices({@RequiredService(name="messageServices", type = IMessageService.class, multiple = true,
-                    binding = @Binding(dynamic = true))})
+                    binding = @Binding(scope =RequiredServiceInfo.SCOPE_GLOBAL, dynamic = true))})
 @ProvidedServices(@ProvidedService(name = "thisService", type= IMessageService.class))
 public class MessageAgent implements IMessageService{
     @Agent
@@ -47,7 +47,6 @@ public class MessageAgent implements IMessageService{
 
         List<IComponentIdentifier> activeAgents = fut.get().stream().map((it) -> {
             IComponentIdentifier id = it.getId();
-
             //add each agent to the address book
             if (!addressBook.containsKey(id)) {
                 // The agent appears in the stream but not on the list of active agents, it was just discovered, add it.

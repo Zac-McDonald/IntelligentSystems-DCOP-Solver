@@ -13,6 +13,8 @@ public class PrototypeDemo {
         // Setup JadeX platform
         PlatformConfiguration config = PlatformConfiguration.getDefault();
         config.setGui(true);
+        config.setNetworkName("Swinburne");
+        config.setNetworkPass("SwinPass");
         IExternalAccess platform = Starter.createPlatform(config).get();
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();

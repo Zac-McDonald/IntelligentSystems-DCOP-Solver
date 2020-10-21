@@ -87,10 +87,10 @@ public class HostAgent extends MessageAgent {
 
     @Override
     public void body (IInternalAccess agent) {
-        Scanner in = new Scanner(System.in);
+
         while (true) {
             super.body(agent);
-            System.out.println(state.toString());
+            /*System.out.println(state);
             if (state.equals("show")){
                 System.out.println("Hosts on network"+hosts);
             }
@@ -99,9 +99,11 @@ public class HostAgent extends MessageAgent {
                 startDcopAgents();
             }
             if (state != "solving"){
-                System.out.println("options are show, or start.");
-                state = in.nextLine();
-            }
+                Scanner in = new Scanner(System.in);
+                if (in.hasNextLine()){
+                    state =in.nextLine();
+                }
+            }*/
         }
     }
 
