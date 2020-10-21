@@ -45,7 +45,6 @@ public class MessageAgent implements IMessageService{
         ITerminableIntermediateFuture<IMessageService> fut = requiredServicesFeature.getRequiredServices("messageServices");
 
         List<IComponentIdentifier> activeAgents = fut.get().stream().map((it) -> {
-            System.out.println(it.getAgent().getComponentIdentifier());
             IComponentIdentifier id = it.getAgent().getComponentIdentifier();
             //add each agent to the address book
             if (!addressBook.containsKey(id)) {
