@@ -11,6 +11,8 @@ public class DFSTree {
     // Main class for the DFS tree
     // nodes - All nodes in the graph
     // edges - All edges in the graph
+    // hD - divides nodes into hosts
+    // hosts - number of hosts
 
     List<DFSNode> nodes = new ArrayList<>();
     List<DFSEdge> edges = new ArrayList<>();
@@ -140,6 +142,7 @@ public class DFSTree {
         }
     }
 
+    //returns node that is holding variable
     public DFSNode GetNodeFromVariable(Variable var){
         for (DFSNode n: nodes){
             if (n.var.equals(var))
@@ -148,6 +151,7 @@ public class DFSTree {
         return null;
     }
 
+    //returns either real neighbours or pseudo neighbors of a variable
     public List<Variable> GetNeighbours(Variable var, boolean Pseudo){
         List<Variable> list =  new ArrayList<>();
         DFSNode node = GetNodeFromVariable(var);
@@ -156,6 +160,7 @@ public class DFSTree {
         return list;
     }
 
+    //returns all neighbours of variable
     public List<Variable> GetAllNeighbours(Variable var){
         List<Variable> list =  new ArrayList<>();
         DFSNode node = GetNodeFromVariable(var);
@@ -164,6 +169,7 @@ public class DFSTree {
         return list;
     }
 
+    //returns either real or pseudo children
     public List<Variable> GetChildren(Variable var, boolean Pseudo){
         List<Variable> list =  new ArrayList<>();
         DFSNode node = GetNodeFromVariable(var);
@@ -172,6 +178,7 @@ public class DFSTree {
         return list;
     }
 
+    //returns all children
     public List<Variable> GetAllChildren(Variable var){
         List<Variable> list =  new ArrayList<>();
         DFSNode node = GetNodeFromVariable(var);
@@ -180,6 +187,7 @@ public class DFSTree {
         return list;
     }
 
+    //returns either real or pseudo parents
     public List<Variable> GetParents(Variable var, boolean Pseudo){
         List<Variable> list =  new ArrayList<>();
         DFSNode node = GetNodeFromVariable(var);
@@ -188,6 +196,7 @@ public class DFSTree {
         return list;
     }
 
+    //returns all parents
     public List<Variable> GetAllParents(Variable var){
         List<Variable> list =  new ArrayList<>();
         DFSNode node = GetNodeFromVariable(var);
