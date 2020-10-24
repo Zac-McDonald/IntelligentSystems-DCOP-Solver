@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class GUI extends JFrame{
 
-    Canvas graphic = new Canvas();
+    Graphic graphic;
 
     public GUI(DFSTree tree){
         super("GUI window");
@@ -15,6 +15,7 @@ public class GUI extends JFrame{
         setResizable(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
+        graphic = new Graphic(tree);
         add(graphic);
 
         setVisible(true);
