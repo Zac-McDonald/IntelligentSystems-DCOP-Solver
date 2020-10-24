@@ -18,6 +18,7 @@ public class DFSTree {
     List<DFSEdge> edges = new ArrayList<>();
     HostDivider hD;
     int hosts;
+    DFSNode topNode;
 
     public DFSTree () {
         // JavaBeans compliance
@@ -79,6 +80,7 @@ public class DFSTree {
                 temp = n;
         }
         if (temp != null)
+            topNode = temp;
             Visit(temp);
 
         //check for separated networks
@@ -120,6 +122,10 @@ public class DFSTree {
     public void setHosts (int hosts) {
         this.hosts = hosts;
     }
+
+    public DFSNode getTopNode() { return topNode; }
+
+    public void setTopNode(DFSNode topNode) { this.topNode = topNode; }
 
     // recursive algorithm to create tree
     public void Visit(DFSNode u){
