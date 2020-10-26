@@ -22,7 +22,10 @@ public class HostAgent extends MessageAgent {
 
     @AgentCreated
     public void created () {
-        initiateDcop("./yaml/graph_coloring_basic.yaml");
+        super.created();
+
+        //initiateDcop("./yaml/graph_coloring_basic.yaml");
+        initiateDcop("./yaml/graph_coloring_10vars.yaml");
     }
 
     public void initiateDcop (String dcopFile) {
@@ -32,6 +35,7 @@ public class HostAgent extends MessageAgent {
             DCOP dcop = loader.loadYAML(dcopFile);
 
             DFSTree tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), 1);
+            tree.OutputGraph();
 
             startDcopAgents(dcop, tree);
             System.out.println("Successfully loaded DCOP ("+ dcopFile + ")");

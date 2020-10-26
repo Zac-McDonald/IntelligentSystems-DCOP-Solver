@@ -3,15 +3,12 @@ package message;
 import dcopsolver.computations_graph.DFSTree;
 import dcopsolver.dcop.DCOP;
 import dcopsolver.dcop.Variable;
-import edu.uci.ics.jung.algorithms.layout.DAGLayout;
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
-import jadex.bridge.component.IArgumentsResultsFeature;
 import jadex.micro.annotation.*;
 
 import java.util.*;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Arguments({@Argument(name="dcop", clazz= DCOP.class),
@@ -28,18 +25,24 @@ public class SolverAgent extends MessageAgent {
     @AgentArgument
     DFSTree dfsTree;
     List<Variable> parentsChecked;
+    List<Variable> psuedosChecked;
 
     //agents var map
     private HashMap<Variable,IComponentIdentifier> variableMap = new HashMap<>();
 
     @AgentCreated
     public void created () {
+        super.created();
+
         assignedVariable = dcop.getVariables().get(assignedVariableName);
         parentsChecked = dfsTree.GetAllParents(assignedVariable);
+        psuedosChecked = dfsTree.GetParents(assignedVariable, true);
     }
 
     @AgentKilled
     public void killed () {
+        super.killed();
+
         // For debugging if agents were unreachable -- saves trying to find individual messages
         List<String> a = variableMap.keySet().stream().map(Variable::getName).collect(Collectors.toList());
         List<String> b = parentsChecked.stream().map(Variable::getName).collect(Collectors.toList());
@@ -71,6 +74,21 @@ public class SolverAgent extends MessageAgent {
 
                         // Mark parent as sent to
                         parentsChecked.remove(v);
+                    }
+                }
+            }
+
+            if (psuedosChecked.size() > 0) {
+                // For each parent we haven't already messaged
+                List<Variable> vars = dfsTree.GetParents(assignedVariable, true);
+                for (Variable v: vars) {
+                    // If we know the parent variables agent
+                    if (addressBook.containsKey(variableMap.get(v))) {
+                        Data content = new Data("Debug.neighbours", "pseudo-parent", getId());
+                        sendMessage(content, variableMap.get(v));
+
+                        // Mark parent as sent to
+                        psuedosChecked.remove(v);
                     }
                 }
             }
