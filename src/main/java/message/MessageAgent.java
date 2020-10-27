@@ -125,7 +125,7 @@ public class MessageAgent implements IMessageService{
                         String them = content.source.toString();
                         them = them.substring(0, them.indexOf("@"));
 
-                        System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
+                        //System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
 
                         // Unwrap any remaining content
                         // Case-by-case -- message was enclosed, so need to re-evaluate it

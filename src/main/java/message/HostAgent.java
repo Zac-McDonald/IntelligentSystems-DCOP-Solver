@@ -87,6 +87,7 @@ public class HostAgent extends MessageAgent {
     protected void startDcopAgents () {
         System.out.println("debug 6");
         System.out.println(agent.getComponentIdentifier() +" starting DCOP Agents");
+
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 
