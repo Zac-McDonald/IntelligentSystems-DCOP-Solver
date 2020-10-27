@@ -15,11 +15,11 @@ import jadex.micro.annotation.AgentArgument;
 import jadex.micro.annotation.AgentCreated;
 import jadex.micro.annotation.Argument;
 import jadex.micro.annotation.Arguments;
-
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
+
 
 
 
@@ -31,10 +31,10 @@ public class HostAgent extends MessageAgent {
     @AgentCreated
     public void created () {
         super.created();
-        dcop = loadDCOP("./yaml/graph_coloring_basic.yaml");
+        dcop = loadDCOP("./yaml/graph_coloring_10vars.yaml");
     }
     private Scanner in = new Scanner(System.in);
-    private HashMap<IComponentIdentifier, List<DFSNode>> hostNodeMap;
+    private HashMap<IComponentIdentifier, List<DFSNode>> hostNodeMap = new HashMap<IComponentIdentifier, List<DFSNode>>();
     private DCOP dcop;
     private DFSTree tree;
 
@@ -55,39 +55,29 @@ public class HostAgent extends MessageAgent {
     public void startOtherHosts(){
         //create the DFSTree
         //TODO there may be more hosts than there are variable to divide up... what happens?
-        System.out.println("debug 1");
 
         try{tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), hosts.size());}
-        catch (Exception e){System.out.println("Failed To Create DFS Tree");}
-        tree.PrintHosts();
+        catch (Exception e){System.out.println("Failed To Create DFS Tree - Host Size: " + hosts.size());}
 
-        System.out.println("debug 2");
         //make a hashmap of each host and assign nodes
         for (int i = 0; i < hosts.size(); i++) {
-            System.out.println(hosts.get(i).toString());
-            System.out.println(tree.gethD().getHostNodes().get(i));
             hostNodeMap.put(hosts.get(i), tree.gethD().getHostNodes().get(i));
-            System.out.println("debug 3." + i);
         }
-        System.out.println("debug 4");
-        System.out.println(hostNodeMap.toString());
-        System.out.println(tree.toString());
 
-        //send out the map to the other hosts
+        //pack up the host nodes hashmap and the DFS Tree into a container
+        ArrayList<Object> pair = new ArrayList<Object>();
+        pair.add(hostNodeMap);
+        pair.add(tree);
+
+        //send out the container to the other hosts
         for (IComponentIdentifier other : hosts){
-            sendMessage(new Data("Start.tellHostNodes", hostNodeMap, getId()), other);
-        }
-        //send out the tree to the other hosts
-        for (IComponentIdentifier other : hosts){
-            sendMessage(new Data("Start.tellDFSTree", tree, getId()), other);
+            if (!other.equals(agent.getComponentIdentifier()))//don't message itself
+                sendMessage(new Data("Start.tellHostNodes", pair, getId()), other);
         }
     }
 
     //TODO host launches agents only for its nodes
     protected void startDcopAgents () {
-        System.out.println("debug 6");
-        System.out.println(agent.getComponentIdentifier() +" starting DCOP Agents");
-
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 
@@ -128,23 +118,15 @@ public class HostAgent extends MessageAgent {
                         break;
                     case "Start":
                         if (typeTree[1].equals("tellHostNodes")){
-                            if (content.source != agent.getComponentIdentifier()){ //dont call self
-                                hostNodeMap = (HashMap<IComponentIdentifier, List<DFSNode>>) content.value;
-                                if (tree != null){
-                                    startDcopAgents();
-                                }
-                            }
-                        }
-                        if (typeTree[1].equals("tellDFSTree")){
-                            if (content.source != agent.getComponentIdentifier()){ //dont call self
-                                tree = (DFSTree) content.value;
-                                if (hostNodeMap != null){
-                                    startDcopAgents();
-                                }
+                            if (!content.source.equals(agent.getComponentIdentifier())){ //don't receive messages from self
+                                ArrayList<Object> pair = (ArrayList<Object>) content.value;
+                                hostNodeMap = (HashMap<IComponentIdentifier, List<DFSNode>>) pair.get(0);
+                                tree = (DFSTree) pair.get(1);
+                                startDcopAgents();
                             }
                         }
                         if (typeTree[1].equals("firstHost")){
-                            System.out.print("Start Message Received\n");
+                            System.out.println(agent.getComponentIdentifier() + " is the Starter Host");
                             startOtherHosts();
                             startDcopAgents();
                         }

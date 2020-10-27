@@ -1,5 +1,3 @@
-import dcopsolver.dcop.DCOP;
-import fileInput.YamlLoader;
 import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;
 import jadex.bridge.IExternalAccess;
@@ -8,7 +6,7 @@ import jadex.bridge.service.types.cms.CreationInfo;
 import jadex.bridge.service.types.cms.IComponentManagementService;
 import jadex.commons.SUtil;
 
-public class PrototypeDemo {
+public class PrototypeDemo2 {
     public static void main (String[] args) {
         // Setup JadeX platform
         PlatformConfiguration config = PlatformConfiguration.getDefault();
@@ -22,7 +20,6 @@ public class PrototypeDemo {
         // Create HostAgent
         CreationInfo ci = new CreationInfo(
                 SUtil.createHashMap(new String[]{ "platform" }, new Object[]{ platform }));
-        cms.createComponent("Host1","message.HostAgent.class", ci);
-        cms.createComponent("Host2","message.HostAgent.class", ci);
+        cms.createComponent("Host3","message.HostAgent.class", ci);
     }
 }
