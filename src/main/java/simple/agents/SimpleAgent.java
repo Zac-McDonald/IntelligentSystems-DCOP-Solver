@@ -19,10 +19,10 @@ public class SimpleAgent {
     }
     public void printName(String name){
 
-        if (name == "matthew"){
+        if (name.equals("matthew") ){
             System.out.println("hey matt");
         }else{
-            System.out.println("hey matt");
+            System.out.println("no thanks");
         }
     }
 }
