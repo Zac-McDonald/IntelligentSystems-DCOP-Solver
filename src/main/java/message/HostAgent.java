@@ -37,7 +37,6 @@ public class HostAgent extends MessageAgent {
     private HashMap<IComponentIdentifier, List<DFSNode>> hostNodeMap;
     private DCOP dcop;
     private DFSTree tree;
-    private String state = "dormant";
 
     public DCOP loadDCOP (String dcopFile) {
         // Load DCOP from YAML
@@ -54,14 +53,26 @@ public class HostAgent extends MessageAgent {
     }
 
     public void startOtherHosts(){
-        state = "solving";
         //create the DFSTree
-        //TODO there may be more hostst than there are variable to divide up... what happens?
-        tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), hosts.size());
+        //TODO there may be more hosts than there are variable to divide up... what happens?
+        System.out.println("debug 1");
+
+        try{tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), hosts.size());}
+        catch (Exception e){System.out.println("Failed To Create DFS Tree");}
+        tree.PrintHosts();
+
+        System.out.println("debug 2");
         //make a hashmap of each host and assign nodes
         for (int i = 0; i < hosts.size(); i++) {
+            System.out.println(hosts.get(i).toString());
+            System.out.println(tree.gethD().getHostNodes().get(i));
             hostNodeMap.put(hosts.get(i), tree.gethD().getHostNodes().get(i));
+            System.out.println("debug 3." + i);
         }
+        System.out.println("debug 4");
+        System.out.println(hostNodeMap.toString());
+        System.out.println(tree.toString());
+
         //send out the map to the other hosts
         for (IComponentIdentifier other : hosts){
             sendMessage(new Data("Start.tellHostNodes", hostNodeMap, getId()), other);
@@ -74,6 +85,8 @@ public class HostAgent extends MessageAgent {
 
     //TODO host launches agents only for its nodes
     protected void startDcopAgents () {
+        System.out.println("debug 6");
+        System.out.println(agent.getComponentIdentifier() +" starting DCOP Agents");
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 
@@ -88,13 +101,8 @@ public class HostAgent extends MessageAgent {
 
     @Override
     public void body (IInternalAccess agent) {
-
         while (true) {
             super.body(agent);
-            if (state.equals("start")){
-                startOtherHosts();
-                startDcopAgents();
-            }
         }
     }
 
@@ -122,7 +130,6 @@ public class HostAgent extends MessageAgent {
                             if (content.source != agent.getComponentIdentifier()){ //dont call self
                                 hostNodeMap = (HashMap<IComponentIdentifier, List<DFSNode>>) content.value;
                                 if (tree != null){
-                                    state.equals("solving");
                                     startDcopAgents();
                                 }
                             }
@@ -131,13 +138,14 @@ public class HostAgent extends MessageAgent {
                             if (content.source != agent.getComponentIdentifier()){ //dont call self
                                 tree = (DFSTree) content.value;
                                 if (hostNodeMap != null){
-                                    state.equals("solving");
                                     startDcopAgents();
                                 }
                             }
                         }
                         if (typeTree[1].equals("firstHost")){
-                            state.equals("start");
+                            System.out.print("Start Message Received\n");
+                            startOtherHosts();
+                            startDcopAgents();
                         }
                 }
             }
