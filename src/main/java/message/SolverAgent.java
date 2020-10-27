@@ -3,15 +3,11 @@ package message;
 import dcopsolver.computations_graph.DFSTree;
 import dcopsolver.dcop.DCOP;
 import dcopsolver.dcop.Variable;
-import edu.uci.ics.jung.algorithms.layout.DAGLayout;
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
-import jadex.bridge.component.IArgumentsResultsFeature;
 import jadex.micro.annotation.*;
-
 import java.util.*;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Arguments({@Argument(name="dcop", clazz= DCOP.class),

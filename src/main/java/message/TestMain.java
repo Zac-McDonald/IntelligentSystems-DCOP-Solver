@@ -18,6 +18,7 @@ public class TestMain {
         config.setGui(true);
         config.setNetworkName("Swinburne");
         config.setNetworkPass("SwinPass");
+        config.setAwareness(true);
         IExternalAccess platform = Starter.createPlatform(config).get();
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
@@ -25,6 +26,8 @@ public class TestMain {
         // Create HostAgent
         CreationInfo ci = new CreationInfo(
                 SUtil.createHashMap(new String[]{ "platform" }, new Object[]{ platform }));
-        cms.createComponent("Host","message.HostAgent.class", ci);
+//        cms.createComponent("Host","message.HostAgent.class", ci);
+        cms.createComponent("CLI", "message.CLIAgent.class", ci);
+
     }
 }

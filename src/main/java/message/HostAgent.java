@@ -32,7 +32,7 @@ public class HostAgent extends MessageAgent {
     public void created () {
         dcop = loadDCOP("./yaml/graph_coloring_basic.yaml");
     }
-
+    private Scanner in = new Scanner(System.in);
     private HashMap<IComponentIdentifier, List<DFSNode>> hostNodeMap;
     private DCOP dcop;
     private DFSTree tree;
@@ -55,6 +55,7 @@ public class HostAgent extends MessageAgent {
     public void startOtherHosts(){
         state = "solving";
         //create the DFSTree
+        //TODO there may be more hostst than there are variable to divide up... what happens?
         tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), hosts.size());
         //make a hashmap of each host and assign nodes
         for (int i = 0; i < hosts.size(); i++) {
@@ -89,20 +90,10 @@ public class HostAgent extends MessageAgent {
 
         while (true) {
             super.body(agent);
-            /*System.out.println(state);
-            if (state.equals("show")){
-                System.out.println("Hosts on network"+hosts);
-            }
             if (state.equals("start")){
                 startOtherHosts();
                 startDcopAgents();
             }
-            if (state != "solving"){
-                Scanner in = new Scanner(System.in);
-                if (in.hasNextLine()){
-                    state =in.nextLine();
-                }
-            }*/
         }
     }
 
@@ -143,6 +134,9 @@ public class HostAgent extends MessageAgent {
                                     startDcopAgents();
                                 }
                             }
+                        }
+                        if (typeTree[1].equals("firstHost")){
+                            state.equals("start");
                         }
                 }
             }

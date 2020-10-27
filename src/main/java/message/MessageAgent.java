@@ -45,7 +45,7 @@ public class MessageAgent implements IMessageService{
         ITerminableIntermediateFuture<IMessageService> fut = requiredServicesFeature.getRequiredServices("messageServices");
 
         List<IComponentIdentifier> activeAgents = fut.get().stream().map((it) -> {
-            IComponentIdentifier id = it.getAgent().getComponentIdentifier();
+            IComponentIdentifier id = it.getId();
             //add each agent to the address book
             if (!addressBook.containsKey(id)) {
                 // The agent appears in the stream but not on the list of active agents, it was just discovered, add it.
@@ -74,18 +74,6 @@ public class MessageAgent implements IMessageService{
     @AgentBody
     public void body (IInternalAccess agent) {
         updateAddressBook();
-/*
-        addressBook.keySet().forEach(id -> {
-            sendMessage(new Data("Debug.ignore", "Test message", getId()), id);
-        });
-*
-        // Delay for debugging clarity
-        try {
-            TimeUnit.SECONDS.sleep(3);
-        } catch (InterruptedException e) {
-            //
-        }
-*/
     }
 
     @Override
@@ -120,7 +108,7 @@ public class MessageAgent implements IMessageService{
                         String them = content.source.toString();
                         them = them.substring(0, them.indexOf("@"));
 
-                        System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
+                        //System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
 
                         // Unwrap any remaining content
                         // Case-by-case -- message was enclosed, so need to re-evaluate it
