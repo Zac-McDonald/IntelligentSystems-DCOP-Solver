@@ -47,7 +47,6 @@ public class MessageAgent implements IMessageService{
 
         List<IComponentIdentifier> activeAgents = fut.get().stream().map((it) -> {
             IComponentIdentifier id = it.getId();
-
             //add each agent to the address book
             if (!addressBook.containsKey(id)) {
                 // The agent appears in the stream but not on the list of active agents, it was just discovered, add it.
@@ -126,7 +125,7 @@ public class MessageAgent implements IMessageService{
                         String them = content.source.toString();
                         them = them.substring(0, them.indexOf("@"));
 
-                        System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
+                        //System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
 
                         // Unwrap any remaining content
                         // Case-by-case -- message was enclosed, so need to re-evaluate it

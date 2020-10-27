@@ -7,6 +7,5 @@ import jadex.commons.future.Future;
 public interface IMessageService {
     IInternalAccess getAgent();
     IComponentIdentifier getId();
-
     Future<Void> message(Data content);
 }

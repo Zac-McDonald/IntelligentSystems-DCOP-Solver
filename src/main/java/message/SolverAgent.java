@@ -6,7 +6,6 @@ import dcopsolver.dcop.Variable;
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
 import jadex.micro.annotation.*;
-
 import java.util.*;
 import java.util.HashMap;
 import java.util.stream.Collectors;
