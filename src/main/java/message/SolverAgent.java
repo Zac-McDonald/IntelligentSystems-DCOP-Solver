@@ -25,15 +25,18 @@ public class SolverAgent extends MessageAgent {
     DFSTree dfsTree;
     List<Variable> parentsChecked;
     List<Variable> psuedosChecked;
+    ArrayList<Variable> variablesChecked = new ArrayList<Variable>();
 
     //agents var map
     private HashMap<Variable,IComponentIdentifier> variableMap = new HashMap<>();
+    private Boolean solving = false;
 
     @AgentCreated
     public void created () {
         super.created();
 
         assignedVariable = dcop.getVariables().get(assignedVariableName);
+        variablesChecked.addAll(dcop.getVariables().values());
         parentsChecked = dfsTree.GetAllParents(assignedVariable);
         psuedosChecked = dfsTree.GetParents(assignedVariable, true);
     }
@@ -55,11 +58,19 @@ public class SolverAgent extends MessageAgent {
         while (true) {
             super.body(agent);
 
+            if (solving){
+                System.out.println(agent.getComponentIdentifier() + " solving...");
+            }else if(variablesChecked.size() <= 0){
+                for (IComponentIdentifier host: hosts)
+                    sendMessage(new Data("Start.solverReady",null, getId()),host);
+            }
+
             for (IComponentIdentifier other : solvers) {
                 if (!variableMap.values().contains(other)) {
                     sendMessage(new Data("DCOP.askVariable", null, getId()), other);
                 }
             }
+
 
 
             if (parentsChecked.size() > 0) {
@@ -127,7 +138,13 @@ public class SolverAgent extends MessageAgent {
                             sendMessage(response, content.source);
                         } else if (typeTree[1].equals("tellVariable")) {
                             variableMap.put(dcop.getVariables().get(content.value), content.source);
+                            variablesChecked.remove(dcop.getVariables().get(content.value));
                         }
+                    case "Start":
+                        if (typeTree[1].equals("solving")) {
+                            solving = true;
+                        }
+                        break;
                 }
             }
         }

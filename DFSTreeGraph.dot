@@ -7,10 +7,27 @@ digraph tree
 	node [ shape = circle ];
 	edge [ arrowhead = normal ];
 
+	v6 [ color = blue]
+	v7 [ color = green]
+	v8 [ color = green]
+	v9 [ color = blue]
 	v0 [ color = red]
-	v1 [ color = green]
+	v1 [ color = red]
 	v2 [ color = blue]
+	v3 [ color = green]
+	v4 [ color = green]
+	v5 [ color = red]
 
-	v1 -> v0 [ ]
-	v1 -> v2 [ ]
+	v2 -> v5 [ ]
+	v0 -> v1 [ ]
+	v6 -> v2 [ ]
+	v4 -> v7 [ ]
+	v9 -> v6 [ ]
+	v3 -> v8 [ ]
+	v5 -> v0 [ ]
+	v7 -> v9 [ ]
+	v4 -> v0 [ style = dotted, arrowhead = none, dir=back]
+	v2 -> v1 [ style = dotted, arrowhead = none, dir=back]
+	v4 -> v3 [ ]
+	v4 -> v5 [ style = dotted, arrowhead = none, dir=back]
 }

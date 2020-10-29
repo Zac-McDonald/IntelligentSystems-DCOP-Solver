@@ -3,6 +3,7 @@ package message;
 import dcopsolver.computations_graph.DFSNode;
 import dcopsolver.computations_graph.DFSTree;
 import dcopsolver.dcop.DCOP;
+import dcopsolver.dcop.Variable;
 import fileInput.YamlLoader;
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IExternalAccess;
@@ -37,6 +38,7 @@ public class HostAgent extends MessageAgent {
     private HashMap<IComponentIdentifier, List<DFSNode>> hostNodeMap = new HashMap<IComponentIdentifier, List<DFSNode>>();
     private DCOP dcop;
     private DFSTree tree;
+    private ArrayList<Variable> solversChecked;
 
     public DCOP loadDCOP (String dcopFile) {
         // Load DCOP from YAML
@@ -54,10 +56,9 @@ public class HostAgent extends MessageAgent {
 
     public void startOtherHosts(){
         //create the DFSTree
-        //TODO there may be more hosts than there are variable to divide up... what happens?
-
-        try{tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), hosts.size());}
+        try{tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), hosts.size());tree.OutputGraph();}
         catch (Exception e){System.out.println("Failed To Create DFS Tree - Host Size: " + hosts.size());}
+
 
         //make a hashmap of each host and assign nodes
         for (int i = 0; i < hosts.size(); i++) {
@@ -76,7 +77,6 @@ public class HostAgent extends MessageAgent {
         }
     }
 
-    //TODO host launches agents only for its nodes
     protected void startDcopAgents () {
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
@@ -129,10 +129,30 @@ public class HostAgent extends MessageAgent {
                             System.out.println(agent.getComponentIdentifier() + " is the Starter Host");
                             startOtherHosts();
                             startDcopAgents();
+                            //initialise the solvers check list.
+                            solversChecked = new ArrayList<Variable>();
+                            //add all of our variables to it
+                            solversChecked.addAll(dcop.getVariables().values());
+                        }
+                        if (typeTree[1].equals("solverReady")){
+                            //check that the solver check list is initialised (indicating if this is the root host)
+                            if (solversChecked!= null){
+                                //remove the variable name from the list
+                                solversChecked.remove(content.value);
+                                //if the list is done send out the message to start solving
+                                if(solversChecked.size()<= 0){
+                                    for (IComponentIdentifier solver: solvers){
+                                        sendMessage(new Data("Start.solving",null,agent.getComponentIdentifier()),solver);
+                                    }
+                                }
+                            }
                         }
                 }
             }
         }
         return content;
     }
+
+
+
 }

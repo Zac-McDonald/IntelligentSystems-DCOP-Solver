@@ -22,7 +22,7 @@ public class MessageAgent implements IMessageService{
     @AgentFeature
     IRequiredServicesFeature requiredServicesFeature;
 
-    long nextAddressBookDelay = 5000;
+    long nextAddressBookDelay = 1000;
     long nextAddressBook;
 
     // The connections that can be messaged / record of everyone that is online
