@@ -1,6 +1,8 @@
 
 package message;
 
+import dcopsolver.dcop.DCOP;
+import fileInput.YamlLoader;
 import jadex.bridge.IInternalAccess;
 import jadex.micro.annotation.AgentCreated;
 
@@ -13,14 +15,21 @@ public class CLIAgent extends MessageAgent {
 
     @AgentCreated
     public void created () {
+        super.created();
+
         in = new Scanner(System.in);
         input = "Null";
-        startMsg = new Data("Start.firstHost", null, agent.getComponentIdentifier());
+
+        //DCOP dcop = loadDCOP("./yaml/graph_coloring_basic.yaml");
+        DCOP dcop = loadDCOP("./yaml/graph_coloring_10vars.yaml");
+
+        startMsg = new Data("Start.firstHost", dcop, getId());
     }
 
     @Override
     public void body (IInternalAccess agent) {
         System.out.print("Enter CMD>");
+
         while (true) {
             super.body(agent);
 
@@ -31,6 +40,20 @@ public class CLIAgent extends MessageAgent {
                 sendMessage(startMsg, hosts.get(0));
             }
         }
+    }
+
+    public DCOP loadDCOP (String dcopFile) {
+        // Load DCOP from YAML
+        try {
+            YamlLoader loader = new YamlLoader();
+            DCOP dcop = loader.loadDCOP(dcopFile);
+            System.out.println("Successfully loaded DCOP ("+ dcopFile + ")");
+            return dcop;
+        } catch (Exception e) {
+            System.out.println("Error loading DCOP ("+ dcopFile + "): " + e.toString());
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

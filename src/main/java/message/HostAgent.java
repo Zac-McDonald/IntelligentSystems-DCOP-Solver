@@ -34,21 +34,6 @@ public class HostAgent extends MessageAgent {
     @AgentCreated
     public void created () {
         super.created();
-        dcop = loadDCOP("./yaml/graph_coloring_10vars.yaml");
-    }
-
-    public DCOP loadDCOP (String dcopFile) {
-        // Load DCOP from YAML
-        try {
-            YamlLoader loader = new YamlLoader();
-            DCOP dcop = loader.loadDCOP(dcopFile);
-            System.out.println("Successfully loaded DCOP ("+ dcopFile + ")");
-            return dcop;
-        } catch (Exception e) {
-            System.out.println("Error loading DCOP ("+ dcopFile + "): " + e.toString());
-            e.printStackTrace();
-        }
-        return dcop;
     }
 
     public void startOtherHosts() {
@@ -58,6 +43,7 @@ public class HostAgent extends MessageAgent {
             tree.OutputGraph();
         } catch (Exception e) {
             System.out.println("Failed To Create DFS Tree - Host Size: " + hosts.size());
+            return;
         }
 
         //make a hashmap of each host and assign nodes
@@ -67,6 +53,7 @@ public class HostAgent extends MessageAgent {
 
         //pack up the host nodes hashmap and the DFS Tree into a container
         ArrayList<Object> pair = new ArrayList<Object>();
+        pair.add(dcop);
         pair.add(hostNodeMap);
         pair.add(tree);
 
@@ -123,12 +110,18 @@ public class HostAgent extends MessageAgent {
                             //don't receive messages from self
                             if (!content.source.equals(getId())) {
                                 ArrayList<Object> pair = (ArrayList<Object>) content.value;
-                                hostNodeMap = (HashMap<IComponentIdentifier, List<DFSNode>>) pair.get(0);
-                                tree = (DFSTree) pair.get(1);
+                                dcop = (DCOP) pair.get(0);
+                                hostNodeMap = (HashMap<IComponentIdentifier, List<DFSNode>>) pair.get(1);
+                                tree = (DFSTree) pair.get(2);
                                 startDcopAgents();
                             }
                         } else if (typeTree[1].equals("firstHost")) {
                             System.out.println(getId() + " is the Starter Host");
+
+                            // Extract DCOP
+                            dcop = (DCOP)content.getValue();
+
+                            // Start Agents
                             startOtherHosts();
                             startDcopAgents();
 
@@ -151,7 +144,7 @@ public class HostAgent extends MessageAgent {
                                 if (solversChecked.size() == 0) {
                                     for (IComponentIdentifier solver : solvers) {
                                         System.out.println("all agents ready!");
-                                        sendMessage(new Data("Start.solving", null, getId()),solver);
+                                        sendMessage(new Data("DCOP.startSolving", null, getId()),solver);
                                     }
                                 }
                             }

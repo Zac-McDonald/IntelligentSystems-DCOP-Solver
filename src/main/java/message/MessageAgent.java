@@ -101,7 +101,7 @@ public class MessageAgent implements IMessageService{
     protected void sendMessage (Data content, IComponentIdentifier id) {
         // TODO: Remove after, or toggle with, debugging
         // Wrap all messages in a Debug.trace to output them to the console
-        //if (content.type.equals("Debug.neighbours"))
+        if (content.type.startsWith("Start") || content.type.equals("DCOP.startSolving"))
             content = new Data("Debug.trace", content, getId());
 
         // Send to agent, regardless of which addressBook they are in

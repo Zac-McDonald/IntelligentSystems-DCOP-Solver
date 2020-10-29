@@ -1,5 +1,3 @@
-package message;
-
 import dcopsolver.dcop.DCOP;
 import fileInput.YamlLoader;
 import jadex.base.PlatformConfiguration;
