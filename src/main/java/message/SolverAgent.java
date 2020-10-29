@@ -1,6 +1,8 @@
 package message;
 
+import dcopsolver.algorithm.AdoptSolver;
 import dcopsolver.computations_graph.DFSTree;
+import dcopsolver.dcop.Constraint;
 import dcopsolver.dcop.DCOP;
 import dcopsolver.dcop.Variable;
 import jadex.bridge.IComponentIdentifier;
@@ -20,12 +22,14 @@ public class SolverAgent extends MessageAgent {
 
     @AgentArgument
     String assignedVariableName;
-    public Variable assignedVariable;
+    Variable assignedVariable;
 
     @AgentArgument
     DFSTree dfsTree;
     List<Variable> parentsChecked;
     List<Variable> psuedosChecked;
+
+    AdoptSolver solver;
 
     //agents var map
     private HashMap<Variable,IComponentIdentifier> variableMap = new HashMap<>();
@@ -37,6 +41,12 @@ public class SolverAgent extends MessageAgent {
         assignedVariable = dcop.getVariables().get(assignedVariableName);
         parentsChecked = dfsTree.GetAllParents(assignedVariable);
         psuedosChecked = dfsTree.GetParents(assignedVariable, true);
+
+        List<Constraint> constraints = dcop.getConstraints().values().stream().filter(c -> {
+            return c.getVariables().contains(assignedVariable);
+        }).collect(Collectors.toList());
+
+        solver = new AdoptSolver(assignedVariable, dfsTree, constraints, this);
     }
 
     @AgentKilled
@@ -57,12 +67,11 @@ public class SolverAgent extends MessageAgent {
             super.body(agent);
 
             for (IComponentIdentifier other : solvers) {
-                if (!variableMap.values().contains(other)) {
+                if (!variableMap.containsValue(other)) {
                     sendMessage(new Data("DCOP.askVariable", null, getId()), other);
                 }
             }
-
-
+/*
             if (parentsChecked.size() > 0) {
                 // For each parent we haven't already messaged
                 List<Variable> vars = dfsTree.GetAllParents(assignedVariable);
@@ -92,7 +101,13 @@ public class SolverAgent extends MessageAgent {
                     }
                 }
             }
+*/
         }
+    }
+
+    public void sendMessage (Data content, Variable target) {
+        content.source = getId();
+        sendMessage(content, variableMap.get(target));
     }
 
     @Override
@@ -127,11 +142,15 @@ public class SolverAgent extends MessageAgent {
                             Data response = new Data("DCOP.tellVariable", assignedVariableName, getId());
                             sendMessage(response, content.source);
                         } else if (typeTree[1].equals("tellVariable")) {
-                            variableMap.put(dcop.getVariables().get(content.value), content.source);
+                            variableMap.put(dcop.getVariables().get((String)content.value), content.source);
+                        } else if (typeTree[1].equals("startSolving")) {
+                            solver.start();
                         }
                 }
             }
         }
+
+        solver.handleMessage(content, typeTree);
 
         return content;
     }

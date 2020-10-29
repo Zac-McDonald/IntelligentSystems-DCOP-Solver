@@ -67,6 +67,34 @@ public class FunctionConstraint extends Constraint {
     }
 
     @Override
+    public Integer getOptimalValue (Variable variable, HashMap<String, Integer> variableAssignments) {
+        Constraint slicedConstraint = slice(variableAssignments);
+
+        // Can't optimise if more than one variable or if the variable isn't remaining in the constraint
+        if (slicedConstraint.arity() != 1 && !slicedConstraint.variables.get(0).equals(variable)) {
+            // TODO: Probably throw an error tbh
+            return null;
+        }
+
+        float optimalCost = Float.POSITIVE_INFINITY;
+        int optimalValue = variable.initialValue;
+        HashMap<String, Integer> assignment = new HashMap<>();
+
+        // Try each value, return the one with lowest cost
+        for (Integer value : variable.domain.getValues()) {
+            assignment.put(variable.name, value);
+            float cost = slicedConstraint.evaluate(assignment);
+
+            if (cost < optimalCost) {
+                optimalCost = cost;
+                optimalValue = value;
+            }
+        }
+
+        return optimalValue;
+    }
+
+    @Override
     public Float evaluate (HashMap<String, Integer> variableAssignments) {
         // Evaluate expression using J2V8
         String assign = JavascriptEngine.getAssignment(variableAssignments);
