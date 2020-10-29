@@ -57,12 +57,12 @@ public class SolverAgent extends MessageAgent {
 
         while (true) {
             super.body(agent);
-
             if (solving){
-                System.out.println(agent.getComponentIdentifier() + " solving...");
-            }else if(variablesChecked.size() <= 0){
-                for (IComponentIdentifier host: hosts)
-                    sendMessage(new Data("Start.solverReady",null, getId()),host);
+                System.out.println(agent.getComponentIdentifier() + " is solving...");
+            }else if(variablesChecked.size() == 0){
+                for (IComponentIdentifier host: hosts){
+                    sendMessage(new Data("Start.solverReady",assignedVariable, getId()),host);
+                }
             }
 
             for (IComponentIdentifier other : solvers) {

@@ -106,6 +106,8 @@ public class MessageAgent implements IMessageService{
 
         // Send to agent, regardless of which addressBook they are in
         if (addressBook.containsKey(id)) {
+            if(addressBook.get(id)==null)
+                System.out.println("id null from send message");
             addressBook.get(id).message(content);
         } else if (pendingAddresses.containsKey(id)) {
             pendingAddresses.get(id).message(content);
@@ -140,15 +142,15 @@ public class MessageAgent implements IMessageService{
                     }
                     break;
                 case "Discover":
-                    if (typeTree[1].equals("tellType")) {
+                    if (typeTree[1].equals("tellType") && pendingAddresses.containsKey(content.source)) {
                         // If the id is null here, there is a problem -- it should NEVER happen
                         addressBook.put(content.source, pendingAddresses.get(content.source));
                         pendingAddresses.remove(content.source);
                         System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + content.source);
 
-                        if (content.value.equals("Host")) {
+                        if (content.value.equals("Host") && !hosts.contains(content.source)) {
                             hosts.add(content.source);
-                        } else if (content.value.equals("Solver")) {
+                        } else if (content.value.equals("Solver") && !solvers.contains(content.source)) {
                             solvers.add(content.source);
                         }
                     }

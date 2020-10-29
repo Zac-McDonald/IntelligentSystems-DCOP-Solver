@@ -135,13 +135,16 @@ public class HostAgent extends MessageAgent {
                             solversChecked.addAll(dcop.getVariables().values());
                         }
                         if (typeTree[1].equals("solverReady")){
+                            System.out.println(content.source + "is ready");
                             //check that the solver check list is initialised (indicating if this is the root host)
                             if (solversChecked!= null){
+                                System.out.println(getId() + " Is the root host");
                                 //remove the variable name from the list
                                 solversChecked.remove(content.value);
                                 //if the list is done send out the message to start solving
-                                if(solversChecked.size()<= 0){
+                                if(solversChecked.size()== 0){
                                     for (IComponentIdentifier solver: solvers){
+                                        System.out.println("all agents ready!");
                                         sendMessage(new Data("Start.solving",null,agent.getComponentIdentifier()),solver);
                                     }
                                 }
