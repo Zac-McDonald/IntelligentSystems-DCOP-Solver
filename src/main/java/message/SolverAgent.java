@@ -8,7 +8,6 @@ import dcopsolver.dcop.Variable;
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
 import jadex.micro.annotation.*;
-
 import java.util.*;
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -28,17 +27,20 @@ public class SolverAgent extends MessageAgent {
     DFSTree dfsTree;
     List<Variable> parentsChecked;
     List<Variable> psuedosChecked;
+    ArrayList<Variable> variablesChecked = new ArrayList<Variable>();
 
     AdoptSolver solver;
 
     //agents var map
     private HashMap<Variable,IComponentIdentifier> variableMap = new HashMap<>();
+    private Boolean solving = false;
 
     @AgentCreated
     public void created () {
         super.created();
 
         assignedVariable = dcop.getVariables().get(assignedVariableName);
+        variablesChecked.addAll(dcop.getVariables().values());
         parentsChecked = dfsTree.GetAllParents(assignedVariable);
         psuedosChecked = dfsTree.GetParents(assignedVariable, true);
 
@@ -65,6 +67,12 @@ public class SolverAgent extends MessageAgent {
 
         while (true) {
             super.body(agent);
+
+            if(!solving && variablesChecked.size() == 0) {
+                for (IComponentIdentifier host: hosts) {
+                    sendMessage(new Data("Start.solverReady",assignedVariable, getId()),host);
+                }
+            }
 
             for (IComponentIdentifier other : solvers) {
                 if (!variableMap.containsValue(other)) {
@@ -143,9 +151,12 @@ public class SolverAgent extends MessageAgent {
                             sendMessage(response, content.source);
                         } else if (typeTree[1].equals("tellVariable")) {
                             variableMap.put(dcop.getVariables().get((String)content.value), content.source);
+                            variablesChecked.remove(dcop.getVariables().get(content.value));
                         } else if (typeTree[1].equals("startSolving")) {
                             solver.start();
+                            solving = true;
                         }
+                        break;
                 }
             }
         }

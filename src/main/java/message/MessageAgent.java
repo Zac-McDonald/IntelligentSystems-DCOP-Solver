@@ -2,6 +2,7 @@ package message;
 
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
+import jadex.bridge.service.ProvidedServiceInfo;
 import jadex.bridge.service.RequiredServiceInfo;
 import jadex.bridge.service.component.IRequiredServicesFeature;
 import jadex.commons.future.*;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Agent
 @RequiredServices({@RequiredService(name="messageServices", type = IMessageService.class, multiple = true,
-                    binding = @Binding(scope = RequiredServiceInfo.SCOPE_PLATFORM, dynamic = true))})
+                    binding = @Binding(scope =RequiredServiceInfo.SCOPE_GLOBAL, dynamic = true))})
 @ProvidedServices(@ProvidedService(name = "thisService", type= IMessageService.class))
 public class MessageAgent implements IMessageService{
     @Agent
@@ -46,7 +47,6 @@ public class MessageAgent implements IMessageService{
 
         List<IComponentIdentifier> activeAgents = fut.get().stream().map((it) -> {
             IComponentIdentifier id = it.getId();
-
             //add each agent to the address book
             if (!addressBook.containsKey(id)) {
                 // The agent appears in the stream but not on the list of active agents, it was just discovered, add it.
@@ -101,7 +101,7 @@ public class MessageAgent implements IMessageService{
     protected void sendMessage (Data content, IComponentIdentifier id) {
         // TODO: Remove after, or toggle with, debugging
         // Wrap all messages in a Debug.trace to output them to the console
-        if (content.type.equals("Debug.neighbours"))
+        //if (content.type.equals("Debug.neighbours"))
             content = new Data("Debug.trace", content, getId());
 
         // Send to agent, regardless of which addressBook they are in
@@ -140,14 +140,16 @@ public class MessageAgent implements IMessageService{
                     }
                     break;
                 case "Discover":
-                    if (typeTree[1].equals("tellType")) {
+                    if (typeTree[1].equals("tellType") && pendingAddresses.containsKey(content.source)) {
                         // If the id is null here, there is a problem -- it should NEVER happen
                         addressBook.put(content.source, pendingAddresses.get(content.source));
                         pendingAddresses.remove(content.source);
 
-                        if (content.value.equals("Host")) {
+                        System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + content.source);
+
+                        if (content.value.equals("Host") && !hosts.contains(content.source)) {
                             hosts.add(content.source);
-                        } else if (content.value.equals("Solver")) {
+                        } else if (content.value.equals("Solver") && !solvers.contains(content.source)) {
                             solvers.add(content.source);
                         }
                     }
