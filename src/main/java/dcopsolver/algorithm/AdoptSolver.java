@@ -41,33 +41,40 @@ public class AdoptSolver {
 
         List<Variable> parents = dfsTree.GetParents(assignedVariable, false);
         this.parent = (parents.isEmpty()) ? null : parents.get(0);
+
+        setup();
     }
 
-    public void start () {
+    public void setup () {
         threshold = 0;
         currentContext = new HashMap<>();
         receivedTerminate = false;
 
+        childLowerBounds = new HashMap<>();
+        childUpperBounds = new HashMap<>();
+        childThresholds = new HashMap<>();
+        childContexts = new HashMap<>();
+
         for (Integer d : assignedVariable.getDomain().getValues()) {
+            childLowerBounds.put(d, new HashMap<>());
+            childUpperBounds.put(d, new HashMap<>());
+            childThresholds.put(d, new HashMap<>());
+            childContexts.put(d, new HashMap<>());
+
             for (Variable child : directChildren) {
-                childLowerBounds.put(d, new HashMap<>());
                 childLowerBounds.get(d).put(child, 0f);
-
-                childUpperBounds.put(d, new HashMap<>());
                 childUpperBounds.get(d).put(child, Float.POSITIVE_INFINITY);
-
-                childThresholds.put(d, new HashMap<>());
                 childThresholds.get(d).put(child, 0f);
-
-                childContexts.put(d, new HashMap<>());
                 childContexts.get(d).put(child, new HashMap<>());
             }
         }
 
         // Get the value that minimises LB
-        AtomicInteger minLBValue = new AtomicInteger();
-        optimiseLowerBounds(minLBValue);
-        currentValue = minLBValue.get();
+        currentValue = optimiseLowerBoundsValue();
+    }
+
+    public void start () {
+        System.out.println("Starting ADOPT for " + assignedVariable.getName());
 
         backtrack();
     }
@@ -177,8 +184,8 @@ public class AdoptSolver {
                 for (Variable child : directChildren) {
                     HashMap<Variable, Integer> context = currentContext;
                     context.put(assignedVariable, currentValue);
-                    Data terminageMsg = new Data("Adopt.terminate", new TerminateMessage(context), null);
-                    solverAgent.sendMessage(terminageMsg, child);
+                    Data terminateMsg = new Data("Adopt.terminate", new TerminateMessage(context), null);
+                    solverAgent.sendMessage(terminateMsg, child);
                 }
 
                 // TODO: Stop execution

@@ -83,6 +83,17 @@ public class HostAgent extends MessageAgent {
     public void body (IInternalAccess agent) {
         while (true) {
             super.body(agent);
+
+            //if the list is done send out the message to start solving
+            if (solversChecked != null && solversChecked.isEmpty()) {
+                System.out.println("all agents ready!");
+
+                for (IComponentIdentifier solver : solvers) {
+                    sendMessage(new Data("DCOP.startSolving", null, getId()),solver);
+                }
+
+                solversChecked = null;
+            }
         }
     }
 
@@ -131,22 +142,14 @@ public class HostAgent extends MessageAgent {
                             //add all of our variables to it
                             solversChecked.addAll(dcop.getVariables().values());
                         } else if (typeTree[1].equals("solverReady")) {
-                            System.out.println(content.source + "is ready");
+                            //System.out.println(content.source + "is ready");
 
                             //check that the solver check list is initialised (indicating if this is the root host)
                             if (solversChecked != null) {
-                                System.out.println(getId() + " Is the root host");
+                                //System.out.println(getId() + " Is the root host");
 
                                 //remove the variable name from the list
                                 solversChecked.remove((Variable)content.value);
-
-                                //if the list is done send out the message to start solving
-                                if (solversChecked.size() == 0) {
-                                    for (IComponentIdentifier solver : solvers) {
-                                        System.out.println("all agents ready!");
-                                        sendMessage(new Data("DCOP.startSolving", null, getId()),solver);
-                                    }
-                                }
                             }
                         }
                         break;

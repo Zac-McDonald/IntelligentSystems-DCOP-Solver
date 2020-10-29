@@ -3,6 +3,7 @@ package message;
 
 import dcopsolver.dcop.DCOP;
 import fileInput.YamlLoader;
+import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
 import jadex.micro.annotation.AgentCreated;
 
@@ -28,7 +29,7 @@ public class CLIAgent extends MessageAgent {
 
     @Override
     public void body (IInternalAccess agent) {
-        System.out.print("Enter CMD>");
+        System.out.println("Enter CMD>");
 
         while (true) {
             super.body(agent);
@@ -38,6 +39,11 @@ public class CLIAgent extends MessageAgent {
                 //just send the start message to the first host the CLI Agent is aware of
                 System.out.print("Start message sent to: " + hosts.get(0));
                 sendMessage(startMsg, hosts.get(0));
+            } else if (input.equals("list")) {
+                System.out.println("Known agents:");
+                for (IComponentIdentifier id : addressBook.keySet()) {
+                    System.out.println("\t" + id + ",");
+                }
             }
         }
     }

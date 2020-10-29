@@ -33,7 +33,8 @@ public class SolverAgent extends MessageAgent {
 
     //agents var map
     private HashMap<Variable,IComponentIdentifier> variableMap = new HashMap<>();
-    private Boolean solving = false;
+    private Boolean startSolving = false;
+    private Boolean sentReadyMessage = false;
 
     @AgentCreated
     public void created () {
@@ -68,10 +69,16 @@ public class SolverAgent extends MessageAgent {
         while (true) {
             super.body(agent);
 
-            if(!solving && variablesChecked.size() == 0) {
-                for (IComponentIdentifier host: hosts) {
+            if(!sentReadyMessage && variablesChecked.isEmpty()) {
+                for (IComponentIdentifier host : hosts) {
                     sendMessage(new Data("Start.solverReady",assignedVariable, getId()),host);
+                    //sentReadyMessage = true;
                 }
+            }
+
+            if (startSolving) {
+                solver.start();
+                startSolving = false;
             }
 
             for (IComponentIdentifier other : solvers) {
@@ -151,10 +158,10 @@ public class SolverAgent extends MessageAgent {
                             sendMessage(response, content.source);
                         } else if (typeTree[1].equals("tellVariable")) {
                             variableMap.put(dcop.getVariables().get((String)content.value), content.source);
-                            variablesChecked.remove(dcop.getVariables().get(content.value));
+                            variablesChecked.remove(dcop.getVariables().get((String)content.value));
                         } else if (typeTree[1].equals("startSolving")) {
-                            solver.start();
-                            solving = true;
+                            startSolving = true;
+                            sentReadyMessage = true;
                         }
                         break;
                 }

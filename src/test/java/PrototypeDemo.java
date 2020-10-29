@@ -12,7 +12,7 @@ public class PrototypeDemo {
     public static void main (String[] args) {
         // Setup JadeX platform
         PlatformConfiguration config = PlatformConfiguration.getDefault();
-        config.setGui(true);
+        config.setGui(false);
 
         config.setNetworkName("Swinburne");
         config.setNetworkPass("SwinPass");
