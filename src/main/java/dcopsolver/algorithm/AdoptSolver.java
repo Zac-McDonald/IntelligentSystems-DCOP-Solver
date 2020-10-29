@@ -9,10 +9,7 @@ import message.SolverAgent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class AdoptSolver {
     private final Variable assignedVariable;
@@ -185,6 +182,7 @@ public class AdoptSolver {
                 }
 
                 // TODO: Stop execution
+                System.out.println(solverAgent.getId() + " finished solving: " + assignedVariable.getName() + " = " + currentValue);
             }
         }
 
