@@ -89,7 +89,7 @@ public class HostAgent extends MessageAgent {
                 System.out.println("all agents ready!");
 
                 for (IComponentIdentifier solver : solvers) {
-                    sendMessage(new Data("DCOP.startSolving", null, getId()),solver);
+                    sendMessage(new Data("DCOP.startSolving", null, getId()), solver);
                 }
 
                 solversChecked = null;

@@ -1,24 +1,22 @@
 package dcopsolver.algorithm;
 
-import dcopsolver.dcop.Variable;
-
 import java.util.HashMap;
 
 public class ThresholdMessage {
-    private Float t;
+    private Float thresh;
     private HashMap<String, Integer> context;
 
-    public ThresholdMessage (Float t, HashMap<String, Integer> context) {
-        this.t = t;
+    public ThresholdMessage (Float thresh, HashMap<String, Integer> context) {
+        this.thresh = thresh;
         this.context = context;
     }
 
-    public Float getT () {
-        return t;
+    public Float getThresh () {
+        return thresh;
     }
 
-    public void setT (Float t) {
-        this.t = t;
+    public void setThresh (Float thresh) {
+        this.thresh = thresh;
     }
 
     public HashMap<String, Integer> getContext () {
@@ -31,7 +29,7 @@ public class ThresholdMessage {
 
     @Override
     public String toString () {
-        return "ThresholdMessage{ t = " + t.toString() +
+        return "ThresholdMessage{ t = " + thresh.toString() +
                 ", context = " + context.toString() +
                 " }";
     }

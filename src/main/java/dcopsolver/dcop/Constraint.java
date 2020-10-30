@@ -13,7 +13,7 @@ public abstract class Constraint {
         // JavaBeans compliance
     }
 
-    public ArrayList<String> variable_names () {
+    public ArrayList<String> variableNames () {
         return variables.stream()
                 .map(variable -> variable.name)
                 .collect(Collectors.toCollection(ArrayList::new));

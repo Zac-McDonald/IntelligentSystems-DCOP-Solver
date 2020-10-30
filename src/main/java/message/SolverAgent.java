@@ -8,6 +8,8 @@ import dcopsolver.dcop.Variable;
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
 import jadex.micro.annotation.*;
+
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -33,6 +35,8 @@ public class SolverAgent extends MessageAgent {
 
     //agents var map
     private HashMap<String, IComponentIdentifier> variableMap = new HashMap<>();
+    // TODO: pendingVariables and variablesChecked do similar things, maybe combine them?
+    private ArrayList<IComponentIdentifier> pendingVariables = new ArrayList<>();
     private Boolean startSolving = false;
     private Boolean sentReadyMessage = false;
 
@@ -69,23 +73,25 @@ public class SolverAgent extends MessageAgent {
         while (true) {
             super.body(agent);
 
-            if(!sentReadyMessage && variablesChecked.isEmpty()) {
-                for (IComponentIdentifier host : hosts) {
-                    sendMessage(new Data("Start.solverReady",assignedVariable, getId()),host);
-                    //sentReadyMessage = true;
-                }
-            }
-
             if (startSolving) {
                 solver.start();
                 startSolving = false;
-            }
+            } else {
+                if(!sentReadyMessage && variablesChecked.isEmpty()) {
+                    for (IComponentIdentifier host : hosts) {
+                        sendMessage(new Data("Start.solverReady",assignedVariable, getId()),host);
+                        //sentReadyMessage = true;
+                    }
+                }
 
-            for (IComponentIdentifier other : solvers) {
-                if (!variableMap.containsValue(other)) {
-                    sendMessage(new Data("DCOP.askVariable", null, getId()), other);
+                for (IComponentIdentifier other : solvers) {
+                    if (!variableMap.containsValue(other) && !pendingVariables.contains(other)) {
+                        sendMessage(new Data("DCOP.askVariable", null, getId()), other);
+                        pendingVariables.add(other);
+                    }
                 }
             }
+
 /*
             if (parentsChecked.size() > 0) {
                 // For each parent we haven't already messaged
@@ -159,6 +165,7 @@ public class SolverAgent extends MessageAgent {
                         } else if (typeTree[1].equals("tellVariable")) {
                             variableMap.put(dcop.getVariables().get((String)content.value).getName(), content.source);
                             variablesChecked.remove(dcop.getVariables().get((String)content.value));
+                            pendingVariables.remove(content.source);
                         } else if (typeTree[1].equals("startSolving")) {
                             startSolving = true;
                             sentReadyMessage = true;

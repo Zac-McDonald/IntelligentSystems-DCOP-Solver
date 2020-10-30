@@ -102,7 +102,7 @@ public class MessageAgent implements IMessageService{
         // TODO: Remove after, or toggle with, debugging
         // Wrap all messages in a Debug.trace to output them to the console
         //if (content.type.startsWith("Adopt.") || content.type.equals("DCOP.startSolving"))
-        if (!content.type.equals("Start.solverReady"))
+        if (content.type.equals("DCOP.startSolving") || content.type.startsWith("Adopt."))
             content = new Data("Debug.trace", content, getId());
 
         // Send to agent, regardless of which addressBook they are in
@@ -146,7 +146,7 @@ public class MessageAgent implements IMessageService{
                         addressBook.put(content.source, pendingAddresses.get(content.source));
                         pendingAddresses.remove(content.source);
 
-                        //System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + content.source);
+                        System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + content.source);
 
                         if (content.value.equals("Host") && !hosts.contains(content.source)) {
                             hosts.add(content.source);

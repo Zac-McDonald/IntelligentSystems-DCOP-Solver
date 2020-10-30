@@ -50,7 +50,7 @@ public class FunctionConstraint extends Constraint {
     @Override
     public Constraint slice (HashMap<String, Integer> variableAssignments) {
         // Check that assignment only contains associated variables
-        if (!variable_names().containsAll(variableAssignments.keySet())) {
+        if (!variableNames().containsAll(variableAssignments.keySet())) {
             // Warning: Unassociated variables present in slice
             // TODO: Should we throw an error here?
         }

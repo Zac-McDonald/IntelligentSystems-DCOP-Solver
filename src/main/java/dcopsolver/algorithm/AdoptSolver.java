@@ -126,13 +126,14 @@ public class AdoptSolver {
     public void onCost (String other, HashMap<String, Integer> otherContext, float otherLB, float otherUB) {
         Integer valueInOtherContext = otherContext.get(assignedVariable.getName());
         // TODO: Make sure that on the same platform, otherContext is a copy and not a reference to the original hashmap
-        otherContext.remove(assignedVariable);
+        otherContext.remove(assignedVariable.getName());
 
         //
         if (!receivedTerminate) {
             for (String x : otherContext.keySet()) {
-                // TODO: Checks if not neighbour -- does this include/exclude pseudos?
-                if (parent.equals(x) || allChildren.contains(x)) {
+                // Check if not a neighbour
+                // TODO: Do pseudoparents count as neighbours?
+                if (!parent.equals(x) && !allChildren.contains(x)) {
                     currentContext.put(x, otherContext.get(x));
                 }
             }
@@ -172,8 +173,8 @@ public class AdoptSolver {
         }
 
         // Send value messages
+        Data valueMsg = new Data("Adopt.value", new ValueMessage(assignedVariable.getName(), currentValue), null);
         for (String child : allChildren) {
-            Data valueMsg = new Data("Adopt.value", new ValueMessage(assignedVariable.getName(), currentValue), null);
             solverAgent.sendMessage(valueMsg, child);
         }
 
@@ -184,10 +185,13 @@ public class AdoptSolver {
             // If we have terminated or am root
             if (receivedTerminate || parent == null) {
                 // Send terminate message
+                HashMap<String, Integer> context = new HashMap<>(currentContext);
+                context.put(assignedVariable.getName(), currentValue);
+                Data terminateMsg = new Data("Adopt.terminate", new TerminateMessage(context), null);
+
                 for (String child : directChildren) {
-                    HashMap<String, Integer> context = currentContext;
-                    context.put(assignedVariable.getName(), currentValue);
-                    Data terminateMsg = new Data("Adopt.terminate", new TerminateMessage(context), null);
+                    // TODO: Message consistently reaches v2 but never reaches v0, looks like v0 actually just dies?
+                    System.out.println("Sending terminate to " + child);
                     solverAgent.sendMessage(terminateMsg, child);
                 }
 
@@ -250,14 +254,16 @@ public class AdoptSolver {
     }
 
     public void maintainChildThresholdInvariant () {
-        // Maintain that: -----
+        // Maintain that: lb <= t <= ub for all child information
         for (Integer d : assignedVariable.getDomain().getValues()) {
             for (String child : directChildren) {
+                // Enforce lb <= t
                 while (childLowerBounds.get(d).get(child) > childThresholds.get(d).get(child)) {
                     // Increment child threshold
                     childThresholds.get(d).put(child, childThresholds.get(d).get(child) + 1);
                 }
 
+                // Enforce t <= ub
                 while (childThresholds.get(d).get(child) > childUpperBounds.get(d).get(child)) {
                     // Decrement child threshold
                     childThresholds.get(d).put(child, childThresholds.get(d).get(child) - 1);
@@ -269,12 +275,15 @@ public class AdoptSolver {
     public float currentCost () {
         // TODO: Cost of assigning the currentValue. Q: Do we include the constraints on children, or just parents?
         //       I think we only do parent, pseudoparents, pseudochildren?, as direct children are part of the lower subtree
+        //       causing them to add those constraints to lower/upper/threshold
 
         float totalCost = assignedVariable.evaluate(currentValue);
 
         for (Constraint c : constraints) {
             // For only constraints covered by our currentContext
-            if (currentContext.keySet().containsAll(c.getVariables().stream().map(Variable::getName).collect(Collectors.toList()))) {
+            List<String> variableNames = c.variableNames();
+            variableNames.add(assignedVariable.getName());
+            if (currentContext.keySet().containsAll(variableNames)) {
                 totalCost += c.evaluate(currentContext);
             }
         }
@@ -369,7 +378,7 @@ public class AdoptSolver {
                 switch (typeTree[1]) {
                     case "threshold":
                         ThresholdMessage thresholdMsg = (ThresholdMessage)content.getValue();
-                        onThreshold(thresholdMsg.getT(), thresholdMsg.getContext());
+                        onThreshold(thresholdMsg.getThresh(), thresholdMsg.getContext());
                         break;
                     case "terminate":
                         TerminateMessage terminateMsg = (TerminateMessage)content.getValue();
