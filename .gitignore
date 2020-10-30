@@ -1,3 +1,7 @@
+# Our project
+*.dot
+temp/
+
 # Eclipse
 .classpath
 .project

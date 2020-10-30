@@ -1,4 +1,5 @@
 import dcopsolver.dcop.DCOP;
+import dcopsolver.dcop.JavascriptEngine;
 import fileInput.YamlLoader;
 import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;
@@ -18,6 +19,8 @@ public class PrototypeDemo {
         config.setNetworkPass("SwinPass");
 
         IExternalAccess platform = Starter.createPlatform(config).get();
+        JavascriptEngine.setupEngine("./temp/j2v8/" + platform.getComponentIdentifier());
+
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 

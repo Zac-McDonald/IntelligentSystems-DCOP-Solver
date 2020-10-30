@@ -32,7 +32,7 @@ public class SolverAgent extends MessageAgent {
     AdoptSolver solver;
 
     //agents var map
-    private HashMap<Variable,IComponentIdentifier> variableMap = new HashMap<>();
+    private HashMap<String, IComponentIdentifier> variableMap = new HashMap<>();
     private Boolean startSolving = false;
     private Boolean sentReadyMessage = false;
 
@@ -57,7 +57,7 @@ public class SolverAgent extends MessageAgent {
         super.killed();
 
         // For debugging if agents were unreachable -- saves trying to find individual messages
-        List<String> a = variableMap.keySet().stream().map(Variable::getName).collect(Collectors.toList());
+        List<String> a = new ArrayList<>(variableMap.keySet());
         List<String> b = parentsChecked.stream().map(Variable::getName).collect(Collectors.toList());
         System.out.println(assignedVariableName + ": " + a + " -> " + b);
     }
@@ -120,7 +120,7 @@ public class SolverAgent extends MessageAgent {
         }
     }
 
-    public void sendMessage (Data content, Variable target) {
+    public void sendMessage (Data content, String target) {
         content.source = getId();
         sendMessage(content, variableMap.get(target));
     }
@@ -157,7 +157,7 @@ public class SolverAgent extends MessageAgent {
                             Data response = new Data("DCOP.tellVariable", assignedVariableName, getId());
                             sendMessage(response, content.source);
                         } else if (typeTree[1].equals("tellVariable")) {
-                            variableMap.put(dcop.getVariables().get((String)content.value), content.source);
+                            variableMap.put(dcop.getVariables().get((String)content.value).getName(), content.source);
                             variablesChecked.remove(dcop.getVariables().get((String)content.value));
                         } else if (typeTree[1].equals("startSolving")) {
                             startSolving = true;

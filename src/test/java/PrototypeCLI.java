@@ -1,3 +1,4 @@
+import dcopsolver.dcop.JavascriptEngine;
 import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;
 import jadex.bridge.IExternalAccess;
@@ -17,6 +18,8 @@ public class PrototypeCLI {
 
         config.setAwareness(true);
         IExternalAccess platform = Starter.createPlatform(config).get();
+        JavascriptEngine.setupEngine("./temp/j2v8/" + platform.getComponentIdentifier());
+
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 
