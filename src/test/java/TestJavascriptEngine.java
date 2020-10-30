@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 public class TestJavascriptEngine {
     public static void main (String[] args) {
+        JavascriptEngine.setupEngine("./temp/test");
+
         // Test validate function
         Boolean valid = JavascriptEngine.getInstance().validFloatExpression("10 * 2.5");
         Boolean invalid = JavascriptEngine.getInstance().validFloatExpression("2 * \"abc\"");
