@@ -2,6 +2,8 @@ package message;
 
 import jadex.bridge.IComponentIdentifier;
 
+import java.util.Objects;
+
 /**
  *  Simple message struct.
  */
@@ -103,5 +105,20 @@ public class Data
 
 	public String[] getTypeTree () {
 		return this.type.split("\\.");
+	}
+
+	@Override
+	public boolean equals (Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Data data = (Data) o;
+		return Objects.equals(type, data.type) &&
+				Objects.equals(value, data.value) &&
+				Objects.equals(source, data.source);
+	}
+
+	@Override
+	public int hashCode () {
+		return Objects.hash(type, value, source);
 	}
 }

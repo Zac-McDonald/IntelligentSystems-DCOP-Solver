@@ -6,9 +6,11 @@ import dcopsolver.dcop.Variable;
 import message.Data;
 import message.SolverAgent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -79,7 +81,14 @@ public class AdoptSolver {
     public void start () {
         System.out.println("Starting ADOPT for " + assignedVariable.getName());
 
-        backtrack();
+        // Only root backtracks?
+        if (parent == null) {
+            backtrack();
+        }
+    }
+
+    public InfoMessage getInfo () {
+        return new InfoMessage(assignedVariable.name, currentValue, currentCost(), terminated);
     }
 
     // Handle early threshold change from parent
@@ -153,6 +162,9 @@ public class AdoptSolver {
 
         // Update local child information
         if (compatibleContexts(otherContext, currentContext)) {
+            //System.out.println(otherContext);
+            //System.out.println(valueInOtherContext + " - " + other + " - " + otherLB);
+            //System.out.println(childLowerBounds);
             childLowerBounds.get(valueInOtherContext).put(other, otherLB);
             childUpperBounds.get(valueInOtherContext).put(other, otherUB);
             childContexts.get(valueInOtherContext).put(other, otherContext);
@@ -196,7 +208,9 @@ public class AdoptSolver {
                 }
 
                 // TODO: Stop execution
-                System.out.println(solverAgent.getId() + " finished solving: " + assignedVariable.getName() + " = " + currentValue);
+                System.out.println(solverAgent.getId() + " finished solving: " +
+                        assignedVariable.getName() + " = " + currentValue +
+                        " costing " + currentCost());
                 terminated = true;
                 return;
             }
@@ -206,9 +220,18 @@ public class AdoptSolver {
         Data costMsg = new Data("Adopt.cost", new CostMessage(assignedVariable.getName(), currentContext,
                 optimiseLowerBoundsCost(), optimiseUpperBoundsCost()), null);
         solverAgent.sendMessage(costMsg, parent);
+
+        // Delay for console spam
+        try {
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            //
+        }
+
     }
 
     public void maintainThresholdInvariant () {
+        // TODO: Cache bounds
         // Maintain that: lb <= threshold <= ub
         float lb = optimiseLowerBoundsCost();
         if (threshold < lb) {
@@ -279,12 +302,14 @@ public class AdoptSolver {
 
         float totalCost = assignedVariable.evaluate(currentValue);
 
+        HashMap<String, Integer> context = new HashMap<>(currentContext);
+        context.put(assignedVariable.getName(), currentValue);
+
         for (Constraint c : constraints) {
             // For only constraints covered by our currentContext
-            List<String> variableNames = c.variableNames();
-            variableNames.add(assignedVariable.getName());
-            if (currentContext.keySet().containsAll(variableNames)) {
-                totalCost += c.evaluate(currentContext);
+            List<String> variableNames = new ArrayList<>(c.variableNames());
+            if (context.keySet().containsAll(variableNames)) {
+                totalCost += c.evaluate(context);
             }
         }
 
@@ -360,7 +385,7 @@ public class AdoptSolver {
     }
 
     public Boolean compatibleContexts (HashMap<String, Integer> c1, HashMap<String, Integer> c2) {
-        Boolean compatible = true;
+        boolean compatible = true;
         // Check that no key assignments conflict
         for (String v : c1.keySet()) {
             if (c2.containsKey(v) && !c1.get(v).equals(c2.get(v))) {
@@ -373,6 +398,8 @@ public class AdoptSolver {
 
     public void handleMessage (Data content, String[] typeTree) {
         // If a message remains to be processed
+        // TODO: Does line 51 (Terminate execution) mean "Do not accept any new messages"?
+        //if (content != null && !terminated) {
         if (content != null) {
             if (typeTree.length == 2 && typeTree[0].equals("Adopt")) {
                 switch (typeTree[1]) {

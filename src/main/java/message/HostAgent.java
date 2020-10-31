@@ -1,5 +1,6 @@
 package message;
 
+import dcopsolver.algorithm.InfoMessage;
 import dcopsolver.computations_graph.DFSNode;
 import dcopsolver.computations_graph.DFSTree;
 import dcopsolver.dcop.DCOP;
@@ -30,6 +31,12 @@ public class HostAgent extends MessageAgent {
     private DCOP dcop;
     private DFSTree tree;
     private ArrayList<Variable> solversChecked;
+
+    private Boolean shownSolution = false;
+    private HashMap<String, InfoMessage> solverInfo;
+
+    long nextCheckResultDelay = 1000;
+    long nextCheckResult;
 
     @AgentCreated
     public void created () {
@@ -70,8 +77,12 @@ public class HostAgent extends MessageAgent {
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 
+        shownSolution = false;
+        solverInfo = new HashMap<>();
+
         for (DFSNode node : hostNodeMap.get(getId())){
             String name = node.getName();
+            solverInfo.put(name, null);
             CreationInfo ci = new CreationInfo(
                     SUtil.createHashMap(new String[] { "dcop", "assignedVariableName", "dfsTree" }, new Object[] { dcop, name, tree })
             );
@@ -93,6 +104,40 @@ public class HostAgent extends MessageAgent {
                 }
 
                 solversChecked = null;
+            }
+
+            long currentTime = System.currentTimeMillis();
+            if (currentTime > nextCheckResult) {
+                nextCheckResult = currentTime + nextCheckResultDelay;
+
+                // Loop through solvers - ask for solution
+                for (IComponentIdentifier solver : solvers) {
+                    Data infoReq = new Data("Adopt.askInfo", null, getId());
+                    sendMessage(infoReq, solver);
+                }
+
+                // Check if solvers have finished
+                if (!shownSolution && solverInfo != null) {
+                    boolean solved = true;
+                    for (String variable : solverInfo.keySet()) {
+                        // Check that all have terminated
+                        if (solverInfo.get(variable) == null || !solverInfo.get(variable).getTerminated()) {
+                            solved = false;
+                            break;
+                        }
+                    }
+
+                    // Print result
+                    if (solved) {
+                        StringBuilder sb = new StringBuilder("Solved dcop:\n");
+                        for (String variable : solverInfo.keySet()) {
+                            InfoMessage info = solverInfo.get(variable);
+                            sb.append(info.getName()).append("=").append(info.getValue()).append(", cosing ").append(info.getCost());
+                        }
+                        System.out.println(sb.toString());
+                        shownSolution = true;
+                    }
+                }
             }
         }
     }
@@ -117,40 +162,50 @@ public class HostAgent extends MessageAgent {
                         }
                         break;
                     case "Start":
-                        if (typeTree[1].equals("tellHostNodes")) {
-                            //don't receive messages from self
-                            if (!content.source.equals(getId())) {
-                                ArrayList<Object> pair = (ArrayList<Object>) content.value;
-                                dcop = (DCOP) pair.get(0);
-                                hostNodeMap = (HashMap<IComponentIdentifier, List<DFSNode>>) pair.get(1);
-                                tree = (DFSTree) pair.get(2);
+                        switch (typeTree[1]) {
+                            case "tellHostNodes":
+                                //don't receive messages from self
+                                if (!content.source.equals(getId())) {
+                                    ArrayList<Object> pair = (ArrayList<Object>) content.value;
+                                    dcop = (DCOP) pair.get(0);
+                                    hostNodeMap = (HashMap<IComponentIdentifier, List<DFSNode>>) pair.get(1);
+                                    tree = (DFSTree) pair.get(2);
+                                    startDcopAgents();
+                                }
+                                break;
+                            case "firstHost":
+                                System.out.println(getId() + " is the Starter Host");
+
+                                // Extract DCOP
+                                dcop = (DCOP) content.getValue();
+
+                                // Start Agents
+                                startOtherHosts();
                                 startDcopAgents();
-                            }
-                        } else if (typeTree[1].equals("firstHost")) {
-                            System.out.println(getId() + " is the Starter Host");
-
-                            // Extract DCOP
-                            dcop = (DCOP)content.getValue();
-
-                            // Start Agents
-                            startOtherHosts();
-                            startDcopAgents();
 
                             //initialise the solvers check list.
                             solversChecked = new ArrayList<>();
 
-                            //add all of our variables to it
-                            solversChecked.addAll(dcop.getVariables().values());
-                        } else if (typeTree[1].equals("solverReady")) {
-                            //System.out.println(content.source + "is ready");
+                                //add all of our variables to it
+                                solversChecked.addAll(dcop.getVariables().values());
+                                break;
+                            case "solverReady":
+                                //System.out.println(content.source + "is ready");
 
-                            //check that the solver check list is initialised (indicating if this is the root host)
-                            if (solversChecked != null) {
-                                //System.out.println(getId() + " Is the root host");
+                                //check that the solver check list is initialised (indicating if this is the root host)
+                                if (solversChecked != null) {
+                                    //System.out.println(getId() + " Is the root host");
 
-                                //remove the variable name from the list
-                                solversChecked.remove(content.value);
-                            }
+                                    //remove the variable name from the list
+                                    solversChecked.remove((Variable) content.value);
+                                }
+                                break;
+                        }
+                        break;
+                    case "Adopt":
+                        if (typeTree[1].equals("tellInfo")) {
+                            InfoMessage response = (InfoMessage)content.value;
+                            solverInfo.put(response.getName(), response);
                         }
                         break;
                     case "GUI":

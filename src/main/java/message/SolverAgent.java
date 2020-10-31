@@ -74,6 +74,7 @@ public class SolverAgent extends MessageAgent {
             super.body(agent);
 
             if (startSolving) {
+                //System.out.println(assignedVariableName + " -> starting agent");
                 solver.start();
                 startSolving = false;
             } else {
@@ -159,16 +160,25 @@ public class SolverAgent extends MessageAgent {
                         }
                         break;
                     case "DCOP":
-                        if (typeTree[1].equals("askVariable")) {
-                            Data response = new Data("DCOP.tellVariable", assignedVariableName, getId());
-                            sendMessage(response, content.source);
-                        } else if (typeTree[1].equals("tellVariable")) {
-                            variableMap.put(dcop.getVariables().get((String)content.value).getName(), content.source);
-                            variablesChecked.remove(dcop.getVariables().get((String)content.value));
-                            pendingVariables.remove(content.source);
-                        } else if (typeTree[1].equals("startSolving")) {
-                            startSolving = true;
-                            sentReadyMessage = true;
+                        switch (typeTree[1]) {
+                            case "askVariable":
+                                Data response = new Data("DCOP.tellVariable", assignedVariableName, getId());
+                                sendMessage(response, content.source);
+                                break;
+                            case "tellVariable":
+                                variableMap.put(dcop.getVariables().get((String) content.value).getName(), content.source);
+                                variablesChecked.remove(dcop.getVariables().get((String) content.value));
+                                pendingVariables.remove(content.source);
+                                break;
+                            case "startSolving":
+                                //System.out.println(assignedVariableName + " -> set startSolving");
+                                startSolving = true;
+                                sentReadyMessage = true;
+                                break;
+                            case "askInfo":
+                                Data replyMsg = new Data("Adopt.tellInfo", solver.getInfo(), null);
+                                sendMessage(replyMsg, content.source);
+                                break;
                         }
                         break;
                 }
