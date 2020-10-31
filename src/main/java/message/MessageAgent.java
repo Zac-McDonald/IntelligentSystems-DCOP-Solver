@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Agent
 @RequiredServices({@RequiredService(name="messageServices", type = IMessageService.class, multiple = true,
-                    binding = @Binding(scope =RequiredServiceInfo.SCOPE_GLOBAL, dynamic = true))})
+                    binding = @Binding(scope = RequiredServiceInfo.SCOPE_GLOBAL, dynamic = true))})
 @ProvidedServices(@ProvidedService(name = "thisService", type= IMessageService.class))
 public class MessageAgent implements IMessageService{
     @Agent
@@ -114,7 +114,7 @@ public class MessageAgent implements IMessageService{
         // Wrap all messages in a Debug.trace to output them to the console
         //if (content.type.startsWith("Adopt.") || content.type.equals("DCOP.startSolving"))
         // This is the filter I have been using...
-        //if (content.type.equals("DCOP.startSolving") || content.type.startsWith("Adopt."))
+        //if (content.type.startsWith("Adopt."))
         //    content = new Data("Debug.trace", content, getId());
 
         // Send to agent, regardless of which addressBook they are in
@@ -158,7 +158,8 @@ public class MessageAgent implements IMessageService{
                         addressBook.put(content.source, pendingAddresses.get(content.source));
                         pendingAddresses.remove(content.source);
 
-                        System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + content.source);
+                        // TODO: Discovery message
+                        //System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + content.source);
 
                         if (content.value.equals("Host") && !hosts.contains(content.source)) {
                             hosts.add(content.source);

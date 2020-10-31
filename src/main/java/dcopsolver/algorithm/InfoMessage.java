@@ -6,6 +6,8 @@ public class InfoMessage {
     private Float cost;
     private Boolean terminated;
 
+    public InfoMessage () {}
+
     public InfoMessage (String name, Integer value, Float cost, Boolean terminated) {
         this.name = name;
         this.value = value;
@@ -48,7 +50,8 @@ public class InfoMessage {
     @Override
     public String toString () {
         return "InfoMessage{" +
-                "value=" + value +
+                "name=" + name +
+                ", value=" + value +
                 ", cost=" + cost +
                 ", terminated=" + terminated +
                 '}';

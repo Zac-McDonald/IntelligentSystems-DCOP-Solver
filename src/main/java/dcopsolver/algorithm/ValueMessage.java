@@ -6,6 +6,8 @@ public class ValueMessage {
     private String other;
     private Integer otherValue;
 
+    public ValueMessage () {}
+
     public ValueMessage (String other, Integer otherValue) {
         this.other = other;
         this.otherValue = otherValue;

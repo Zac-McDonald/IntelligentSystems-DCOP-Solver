@@ -175,10 +175,12 @@ public class SolverAgent extends MessageAgent {
                                 startSolving = true;
                                 sentReadyMessage = true;
                                 break;
-                            case "askInfo":
-                                Data replyMsg = new Data("Adopt.tellInfo", solver.getInfo(), null);
-                                sendMessage(replyMsg, content.source);
-                                break;
+                        }
+                        break;
+                    case "Adopt":
+                        if (typeTree[1].equals("askInfo")) {
+                            Data replyMsg = new Data("Adopt.tellInfo", solver.getInfo(), getId());
+                            sendMessage(replyMsg, content.source);
                         }
                         break;
                 }

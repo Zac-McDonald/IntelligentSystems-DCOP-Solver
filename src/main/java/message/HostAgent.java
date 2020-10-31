@@ -35,7 +35,7 @@ public class HostAgent extends MessageAgent {
     private Boolean shownSolution = false;
     private HashMap<String, InfoMessage> solverInfo;
 
-    long nextCheckResultDelay = 1000;
+    long nextCheckResultDelay = 5000;
     long nextCheckResult;
 
     @AgentCreated
@@ -71,18 +71,21 @@ public class HostAgent extends MessageAgent {
                 sendMessage(new Data("Start.tellHostNodes", pair, getId()), other);
             }
         }
+
+        // Setup for catching solution
+        shownSolution = false;
+        solverInfo = new HashMap<>();
+        for (Variable v : dcop.getVariables().values()) {
+            solverInfo.put(v.getName(), null);
+        }
     }
 
     protected void startDcopAgents () {
         IComponentManagementService cms = SServiceProvider
                 .getService(platform, IComponentManagementService.class).get();
 
-        shownSolution = false;
-        solverInfo = new HashMap<>();
-
         for (DFSNode node : hostNodeMap.get(getId())){
             String name = node.getName();
-            solverInfo.put(name, null);
             CreationInfo ci = new CreationInfo(
                     SUtil.createHashMap(new String[] { "dcop", "assignedVariableName", "dfsTree" }, new Object[] { dcop, name, tree })
             );
@@ -118,22 +121,20 @@ public class HostAgent extends MessageAgent {
 
                 // Check if solvers have finished
                 if (!shownSolution && solverInfo != null) {
-                    boolean solved = true;
-                    for (String variable : solverInfo.keySet()) {
-                        // Check that all have terminated
-                        if (solverInfo.get(variable) == null || !solverInfo.get(variable).getTerminated()) {
-                            solved = false;
-                            break;
-                        }
-                    }
+                    boolean solved = solverInfo.entrySet().stream().allMatch(i -> {
+                        return (i.getValue() != null && i.getValue().getTerminated());
+                    });
 
                     // Print result
                     if (solved) {
                         StringBuilder sb = new StringBuilder("Solved dcop:\n");
+                        float totalCost = 0f;
                         for (String variable : solverInfo.keySet()) {
                             InfoMessage info = solverInfo.get(variable);
-                            sb.append(info.getName()).append("=").append(info.getValue()).append(", cosing ").append(info.getCost());
+                            totalCost += info.getCost();
+                            sb.append("\t").append(info.getName()).append("=").append(info.getValue()).append(", costing ").append(info.getCost()).append("\n");
                         }
+                        sb.append("\tTotal cost: ").append(totalCost);
                         System.out.println(sb.toString());
                         shownSolution = true;
                     }
@@ -204,8 +205,11 @@ public class HostAgent extends MessageAgent {
                         break;
                     case "Adopt":
                         if (typeTree[1].equals("tellInfo")) {
-                            InfoMessage response = (InfoMessage)content.value;
-                            solverInfo.put(response.getName(), response);
+                            if (solverInfo != null) {
+                                InfoMessage response = (InfoMessage) content.value;
+                                solverInfo.put(response.getName(), response);
+                                System.out.println(solverInfo);
+                            }
                         }
                         break;
                 }

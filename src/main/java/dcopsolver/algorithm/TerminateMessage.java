@@ -7,8 +7,10 @@ import java.util.HashMap;
 public class TerminateMessage {
     private HashMap<String, Integer> context;
 
+    public TerminateMessage () {}
+
     public TerminateMessage (HashMap<String, Integer> context) {
-        this.context = context;
+        this.context = new HashMap<>(context);
     }
 
     public HashMap<String, Integer> getContext () {

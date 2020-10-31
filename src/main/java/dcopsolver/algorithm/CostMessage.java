@@ -10,9 +10,11 @@ public class CostMessage {
     private float otherLB;
     private float otherUB;
 
+    public CostMessage () {}
+
     public CostMessage (String other, HashMap<String, Integer> otherContext, float otherLB, float otherUB) {
         this.other = other;
-        this.otherContext = otherContext;
+        this.otherContext = new HashMap<>(otherContext);
         this.otherLB = otherLB;
         this.otherUB = otherUB;
     }

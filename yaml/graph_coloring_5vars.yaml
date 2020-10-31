@@ -1,0 +1,42 @@
+name: Graph Colouring
+description: A graph colouring problem with 5 vertices
+objectiveIsMin: true
+
+domains:
+  - name: "colours"
+    semanticType: "colours => R: 0, G: 1"
+    values: [0, 1]
+
+variables:
+  - name: "v0"
+    domain: "colours"
+  - name: "v1"
+    domain: "colours"
+  - name: "v2"
+    domain: "colours"
+  - name: "v3"
+    domain: "colours"
+  - name: "v4"
+    domain: "colours"
+  - name: "v5"
+    domain: "colours"
+
+constraints:
+  - name: "diff_v0_v1"
+    type: "functional"
+    expression: "(v0 == v1) ? 10 : 0"
+  - name: "diff_v0_v4"
+    type: "functional"
+    expression: "(v0 == v4) ? 10 : 0"
+  - name: "diff_v0_v5"
+    type: "functional"
+    expression: "(v0 == v5) ? 10 : 0"
+  - name: "diff_v1_v2"
+    type: "functional"
+    expression: "(v1 == v2) ? 10 : 0"
+  - name: "diff_v2_v5"
+    type: "functional"
+    expression: "(v3 == v4) ? 10 : 0"
+  - name: "diff_v4_v5"
+    type: "functional"
+    expression: "(v4 == v5) ? 10 : 0"

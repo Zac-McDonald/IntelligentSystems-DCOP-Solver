@@ -6,9 +6,11 @@ public class ThresholdMessage {
     private Float thresh;
     private HashMap<String, Integer> context;
 
+    public ThresholdMessage () {}
+
     public ThresholdMessage (Float thresh, HashMap<String, Integer> context) {
         this.thresh = thresh;
-        this.context = context;
+        this.context = new HashMap<>(context);
     }
 
     public Float getThresh () {

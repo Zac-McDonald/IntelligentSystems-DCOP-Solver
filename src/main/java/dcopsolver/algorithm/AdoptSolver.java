@@ -134,6 +134,11 @@ public class AdoptSolver {
     // Handle cost message from child
     public void onCost (String other, HashMap<String, Integer> otherContext, float otherLB, float otherUB) {
         Integer valueInOtherContext = otherContext.get(assignedVariable.getName());
+
+        if (valueInOtherContext == null ) {
+            return;
+        }
+
         // TODO: Make sure that on the same platform, otherContext is a copy and not a reference to the original hashmap
         otherContext.remove(assignedVariable.getName());
 
@@ -202,15 +207,16 @@ public class AdoptSolver {
                 Data terminateMsg = new Data("Adopt.terminate", new TerminateMessage(context), null);
 
                 for (String child : directChildren) {
-                    // TODO: Message consistently reaches v2 but never reaches v0, looks like v0 actually just dies?
-                    System.out.println("Sending terminate to " + child);
+                    //System.out.println("Sending terminate to " + child);
                     solverAgent.sendMessage(terminateMsg, child);
                 }
 
                 // TODO: Stop execution
+                /*
                 System.out.println(solverAgent.getId() + " finished solving: " +
                         assignedVariable.getName() + " = " + currentValue +
                         " costing " + currentCost());
+                */
                 terminated = true;
                 return;
             }
