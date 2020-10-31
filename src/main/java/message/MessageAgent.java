@@ -22,8 +22,8 @@ public class MessageAgent implements IMessageService{
     @AgentFeature
     IRequiredServicesFeature requiredServicesFeature;
 
-    long nextAddressBookDelay = 1000;
-    long nextAddressBook;
+    private long nextAddressBookDelay = 1000;
+    private long nextAddressBook;
 
     // The connections that can be messaged / record of everyone that is online
     protected HashMap<IComponentIdentifier, IMessageService> addressBook = new HashMap<>();
@@ -34,6 +34,8 @@ public class MessageAgent implements IMessageService{
 
     // Stores messages whose recipient could not be found
     private HashMap<IComponentIdentifier, IMessageService> pendingAddresses = new HashMap<>();
+
+    private Queue<Data> pendingMessages = new ArrayDeque<>();
 
     public IInternalAccess getAgent(){
         return agent;
@@ -90,11 +92,20 @@ public class MessageAgent implements IMessageService{
             nextAddressBook = currentTime + nextAddressBookDelay;
             updateAddressBook();
         }
+
+        Data content = pendingMessages.peek();
+        if (content != null) {
+            receiveMessage(content, content.getTypeTree());
+            pendingMessages.remove();
+        }
     }
 
     @Override
     public Future<Void> message (Data content) {
-        receiveMessage(content, content.getTypeTree());
+        if (!pendingMessages.contains(content)) {
+            pendingMessages.add(content);
+            //receiveMessage(content, content.getTypeTree());
+        }
         return null;
     }
 
@@ -102,8 +113,9 @@ public class MessageAgent implements IMessageService{
         // TODO: Remove after, or toggle with, debugging
         // Wrap all messages in a Debug.trace to output them to the console
         //if (content.type.startsWith("Adopt.") || content.type.equals("DCOP.startSolving"))
-        if (content.type.equals("DCOP.startSolving") || content.type.startsWith("Adopt."))
-            content = new Data("Debug.trace", content, getId());
+        // This is the filter I have been using...
+        //if (content.type.equals("DCOP.startSolving") || content.type.startsWith("Adopt."))
+        //    content = new Data("Debug.trace", content, getId());
 
         // Send to agent, regardless of which addressBook they are in
         if (addressBook.containsKey(id)) {
