@@ -50,7 +50,7 @@ public class FunctionConstraint extends Constraint {
     @Override
     public Constraint slice (HashMap<String, Integer> variableAssignments) {
         // Check that assignment only contains associated variables
-        if (!variable_names().containsAll(variableAssignments.keySet())) {
+        if (!variableNames().containsAll(variableAssignments.keySet())) {
             // Warning: Unassociated variables present in slice
             // TODO: Should we throw an error here?
         }
@@ -64,6 +64,34 @@ public class FunctionConstraint extends Constraint {
 
         // Return new FunctionConstraint
         return new FunctionConstraint(name, remainders, assign + expression, source);
+    }
+
+    @Override
+    public Integer getOptimalValue (Variable variable, HashMap<String, Integer> variableAssignments) {
+        Constraint slicedConstraint = slice(variableAssignments);
+
+        // Can't optimise if more than one variable or if the variable isn't remaining in the constraint
+        if (slicedConstraint.arity() != 1 && !slicedConstraint.variables.get(0).equals(variable)) {
+            // TODO: Probably throw an error tbh
+            return null;
+        }
+
+        float optimalCost = Float.POSITIVE_INFINITY;
+        int optimalValue = variable.initialValue;
+        HashMap<String, Integer> assignment = new HashMap<>();
+
+        // Try each value, return the one with lowest cost
+        for (Integer value : variable.domain.getValues()) {
+            assignment.put(variable.name, value);
+            float cost = slicedConstraint.evaluate(assignment);
+
+            if (cost < optimalCost) {
+                optimalCost = cost;
+                optimalValue = value;
+            }
+        }
+
+        return optimalValue;
     }
 
     @Override

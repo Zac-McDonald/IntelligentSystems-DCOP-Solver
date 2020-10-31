@@ -1,20 +1,19 @@
 package message;
 
-
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
+import jadex.bridge.service.ProvidedServiceInfo;
 import jadex.bridge.service.RequiredServiceInfo;
 import jadex.bridge.service.component.IRequiredServicesFeature;
 import jadex.commons.future.*;
 import jadex.micro.annotation.*;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Agent
 @RequiredServices({@RequiredService(name="messageServices", type = IMessageService.class, multiple = true,
-                    binding = @Binding(scope = RequiredServiceInfo.SCOPE_PLATFORM, dynamic = true))})
+                    binding = @Binding(scope =RequiredServiceInfo.SCOPE_GLOBAL, dynamic = true))})
 @ProvidedServices(@ProvidedService(name = "thisService", type= IMessageService.class))
 public class MessageAgent implements IMessageService{
     @Agent
@@ -22,6 +21,9 @@ public class MessageAgent implements IMessageService{
 
     @AgentFeature
     IRequiredServicesFeature requiredServicesFeature;
+
+    long nextAddressBookDelay = 1000;
+    long nextAddressBook;
 
     // The connections that can be messaged / record of everyone that is online
     protected HashMap<IComponentIdentifier, IMessageService> addressBook = new HashMap<>();
@@ -44,8 +46,7 @@ public class MessageAgent implements IMessageService{
         ITerminableIntermediateFuture<IMessageService> fut = requiredServicesFeature.getRequiredServices("messageServices");
 
         List<IComponentIdentifier> activeAgents = fut.get().stream().map((it) -> {
-            IComponentIdentifier id = it.getAgent().getComponentIdentifier();
-
+            IComponentIdentifier id = it.getId();
             //add each agent to the address book
             if (!addressBook.containsKey(id)) {
                 // The agent appears in the stream but not on the list of active agents, it was just discovered, add it.
@@ -53,7 +54,7 @@ public class MessageAgent implements IMessageService{
                 // Instead adds to a pendingAddresses book
                 // This ensures that we have a 2-way connection with the agent before adding to addressBook
                 pendingAddresses.put(id, it);
-                System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + id);
+                //System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + id);
                 agentDiscovered(id);
             }
             return id;  // Return id, to create a list of active agents
@@ -63,7 +64,7 @@ public class MessageAgent implements IMessageService{
         addressBook.keySet().removeIf(id -> {
             // Remove unreachable agents
             if (!activeAgents.contains(id)) {
-                System.out.println(agent.getComponentIdentifier().toString() + " Dropped: " + id);
+                //System.out.println(agent.getComponentIdentifier().toString() + " Dropped: " + id);
                 agentDropped(id);
                 return true;
             }
@@ -71,21 +72,24 @@ public class MessageAgent implements IMessageService{
         });
     }
 
+    @AgentCreated
+    public void created () {
+        nextAddressBook = System.currentTimeMillis();
+    }
+
+    @AgentKilled
+    public void killed () {
+        //
+    }
+
+    // TODO: Should body be seperated to body/update functions
     @AgentBody
     public void body (IInternalAccess agent) {
-        updateAddressBook();
-/*
-        addressBook.keySet().forEach(id -> {
-            sendMessage(new Data("Debug.ignore", "Test message", getId()), id);
-        });
-*
-        // Delay for debugging clarity
-        try {
-            TimeUnit.SECONDS.sleep(3);
-        } catch (InterruptedException e) {
-            //
+        long currentTime = System.currentTimeMillis();
+        if (currentTime > nextAddressBook) {
+            nextAddressBook = currentTime + nextAddressBookDelay;
+            updateAddressBook();
         }
-*/
     }
 
     @Override
@@ -97,7 +101,9 @@ public class MessageAgent implements IMessageService{
     protected void sendMessage (Data content, IComponentIdentifier id) {
         // TODO: Remove after, or toggle with, debugging
         // Wrap all messages in a Debug.trace to output them to the console
-        content = new Data("Debug.trace", content, getId());
+        //if (content.type.startsWith("Adopt.") || content.type.equals("DCOP.startSolving"))
+        if (content.type.equals("DCOP.startSolving") || content.type.startsWith("Adopt."))
+            content = new Data("Debug.trace", content, getId());
 
         // Send to agent, regardless of which addressBook they are in
         if (addressBook.containsKey(id)) {
@@ -135,14 +141,16 @@ public class MessageAgent implements IMessageService{
                     }
                     break;
                 case "Discover":
-                    if (typeTree[1].equals("tellType")) {
+                    if (typeTree[1].equals("tellType") && pendingAddresses.containsKey(content.source)) {
                         // If the id is null here, there is a problem -- it should NEVER happen
                         addressBook.put(content.source, pendingAddresses.get(content.source));
                         pendingAddresses.remove(content.source);
 
-                        if (content.value.equals("Host")) {
+                        System.out.println(agent.getComponentIdentifier().toString() + " Discovered: " + content.source);
+
+                        if (content.value.equals("Host") && !hosts.contains(content.source)) {
                             hosts.add(content.source);
-                        } else if (content.value.equals("Solver")) {
+                        } else if (content.value.equals("Solver") && !solvers.contains(content.source)) {
                             solvers.add(content.source);
                         }
                     }

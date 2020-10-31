@@ -13,7 +13,7 @@ public abstract class Constraint {
         // JavaBeans compliance
     }
 
-    public ArrayList<String> variable_names () {
+    public ArrayList<String> variableNames () {
         return variables.stream()
                 .map(variable -> variable.name)
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -47,6 +47,9 @@ public abstract class Constraint {
 
     // Uses partial assignment
     public abstract Constraint slice (HashMap<String, Integer> variableAssignments);
+
+    // Returns optimal assignment
+    public abstract Integer getOptimalValue (Variable variable, HashMap<String, Integer> variableAssignments);
 
     // Needs complete assignment
     public abstract Float evaluate (HashMap<String, Integer> variableAssignments);

@@ -10,11 +10,15 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class YamlLoader {
 
     public YamlLoader(){}
-    public DCOP loadYAML(String fileName) throws Exception {
+
+    public DCOP loadDCOP(String fileName) throws Exception {
 
         //creates new constructor
         DcopConstructor dcopCstr = new DcopConstructor(DCOPB.class);
@@ -35,5 +39,12 @@ public class YamlLoader {
         DCOPB dcopB = yaml.load(input);
 
         return dcopB.build(new File(fileName).getParent());
+    }
+
+    public HashMap<String,Integer> loadConfig() throws Exception{
+        Yaml yaml = new Yaml();
+        FileInputStream input = new FileInputStream("yaml/config.yaml");
+        HashMap<String, Integer> obj = yaml.load(input);
+       return obj;
     }
 }

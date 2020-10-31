@@ -3,6 +3,9 @@ package dcopsolver.dcop;
 import com.eclipsesource.v8.V8;
 import com.eclipsesource.v8.V8ResultUndefined;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -18,16 +21,33 @@ public class JavascriptEngine {
     //       Means we can use it in regular Java and we still have one per platform
     //       Will probably need to implement/use a mutex on the runtime though
     private static JavascriptEngine instance = null;
+    private String libraryPath;
 
     private JavascriptEngine () {
+        this.libraryPath = null;
         //
     }
 
     public static JavascriptEngine getInstance() {
         if (instance == null) {
-            instance = new JavascriptEngine();
+            synchronized (JavascriptEngine.class) {
+                if (instance == null) {
+                    instance = new JavascriptEngine();
+                }
+            }
+        } else if (instance.libraryPath == null) {
+            System.err.println("Warning: JavascriptEngine libraryPath not set, J2V8 will crash with multiple JVMs");
         }
         return instance;
+    }
+
+    public static void setupEngine (String libraryPath) {
+        getInstance().libraryPath = Paths.get(libraryPath).toAbsolutePath().toString();
+        try {
+            Files.createDirectories(Paths.get(libraryPath));
+        } catch (IOException e) {
+            System.err.println("Failed to create/open JavascriptEngine library path: \n\t" + e.toString());
+        }
     }
 
     public static String getAssignment (HashMap<String, Integer> variableAssignments) {
@@ -39,7 +59,7 @@ public class JavascriptEngine {
     }
 
     public Float evaluateFloatExpression (String expression, String sources) {
-        V8 runtime = V8.createV8Runtime();
+        V8 runtime = V8.createV8Runtime(null, libraryPath);
 
         // Execute sources first - if they exist
         if (!sources.isEmpty()) {
@@ -57,7 +77,7 @@ public class JavascriptEngine {
     }
 
     public Boolean validFloatExpression (String expression, String sources) {
-        V8 runtime = V8.createV8Runtime();
+        V8 runtime = V8.createV8Runtime(null, libraryPath);
         boolean result = true;
 
         try {

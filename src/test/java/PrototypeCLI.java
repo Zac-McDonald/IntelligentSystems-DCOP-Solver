@@ -1,6 +1,4 @@
-import dcopsolver.dcop.DCOP;
 import dcopsolver.dcop.JavascriptEngine;
-import fileInput.YamlLoader;
 import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;
 import jadex.bridge.IExternalAccess;
@@ -9,7 +7,7 @@ import jadex.bridge.service.types.cms.CreationInfo;
 import jadex.bridge.service.types.cms.IComponentManagementService;
 import jadex.commons.SUtil;
 
-public class PrototypeDemo {
+public class PrototypeCLI {
     public static void main (String[] args) {
         // Setup JadeX platform
         PlatformConfiguration config = PlatformConfiguration.getDefault();
@@ -18,6 +16,7 @@ public class PrototypeDemo {
         config.setNetworkName("Swinburne");
         config.setNetworkPass("SwinPass");
 
+        config.setAwareness(true);
         IExternalAccess platform = Starter.createPlatform(config).get();
         JavascriptEngine.setupEngine("./temp/j2v8/" + platform.getComponentIdentifier());
 
@@ -28,6 +27,8 @@ public class PrototypeDemo {
         CreationInfo ci = new CreationInfo(
                 SUtil.createHashMap(new String[]{ "platform" }, new Object[]{ platform }));
 
-        cms.createComponent("Host","message.HostAgent.class", ci);
+        //cms.createComponent("Host","message.HostAgent.class", ci);
+        cms.createComponent("CLI", "message.CLIAgent.class", ci);
+
     }
 }

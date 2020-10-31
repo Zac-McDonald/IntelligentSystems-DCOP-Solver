@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 public class TestJavascriptEngine {
     public static void main (String[] args) {
+        JavascriptEngine.setupEngine("./temp/test");
+
         // Test validate function
         Boolean valid = JavascriptEngine.getInstance().validFloatExpression("10 * 2.5");
         Boolean invalid = JavascriptEngine.getInstance().validFloatExpression("2 * \"abc\"");
@@ -19,7 +21,7 @@ public class TestJavascriptEngine {
         // Test using DCOP
         try {
             YamlLoader loader = new YamlLoader();
-            DCOP dcop = loader.loadYAML("./yaml/graph_coloring_basic.yaml");
+            DCOP dcop = loader.loadDCOP("./yaml/graph_coloring_basic.yaml");
 
             // Assign values
             HashMap<String, Integer> assignment = new HashMap<String, Integer>();
