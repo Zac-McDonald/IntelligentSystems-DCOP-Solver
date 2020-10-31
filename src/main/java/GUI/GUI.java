@@ -1,6 +1,7 @@
 package GUI;
 
 import dcopsolver.computations_graph.DFSTree;
+import jadex.bridge.IExternalAccess;
 
 import javax.swing.*;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +13,7 @@ public class GUI extends JFrame implements Runnable{
 
     Drawing drawing;
 
-    public GUI(DFSTree tree){
+    public GUI(DFSTree tree, IExternalAccess agent){
         super("GUI window");
         setSize(WIDTH, HEIGHT);
         setResizable(true);

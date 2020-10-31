@@ -26,7 +26,7 @@ public class HostAgent extends MessageAgent {
     @AgentArgument
     private IExternalAccess platform;
 
-    private HashMap<IComponentIdentifier, List<DFSNode>> hostNodeMap = new HashMap<IComponentIdentifier, List<DFSNode>>();
+    private HashMap<IComponentIdentifier, List<DFSNode>> hostNodeMap = new HashMap<>();
     private DCOP dcop;
     private DFSTree tree;
     private ArrayList<Variable> solversChecked;
@@ -52,7 +52,7 @@ public class HostAgent extends MessageAgent {
         }
 
         //pack up the host nodes hashmap and the DFS Tree into a container
-        ArrayList<Object> pair = new ArrayList<Object>();
+        ArrayList<Object> pair = new ArrayList<>();
         pair.add(dcop);
         pair.add(hostNodeMap);
         pair.add(tree);
@@ -137,7 +137,7 @@ public class HostAgent extends MessageAgent {
                             startDcopAgents();
 
                             //initialise the solvers check list.
-                            solversChecked = new ArrayList<Variable>();
+                            solversChecked = new ArrayList<>();
 
                             //add all of our variables to it
                             solversChecked.addAll(dcop.getVariables().values());
@@ -149,8 +149,18 @@ public class HostAgent extends MessageAgent {
                                 //System.out.println(getId() + " Is the root host");
 
                                 //remove the variable name from the list
-                                solversChecked.remove((Variable)content.value);
+                                solversChecked.remove(content.value);
                             }
+                        }
+                        break;
+                    case "GUI":
+                        if (typeTree[1].equals("askDCOP")) {
+                            ArrayList<Object> triple = new ArrayList<>();
+                            triple.add(dcop);
+                            triple.add(hostNodeMap);
+                            triple.add(tree);
+                            Data response = new Data("GUI.tellDCOP", triple, getId());
+                            sendMessage(response, content.source);
                         }
                         break;
                 }

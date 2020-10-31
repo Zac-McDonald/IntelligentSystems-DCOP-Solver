@@ -15,8 +15,6 @@ public class VariableGraphic {
 
     public VariableGraphic(Variable var){
         this.var = var;
-
-        Random r = new Random();
     }
 
     public void draw(Graphics g){
