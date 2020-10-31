@@ -2,7 +2,6 @@ package message;
 
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
-import jadex.bridge.service.ProvidedServiceInfo;
 import jadex.bridge.service.RequiredServiceInfo;
 import jadex.bridge.service.component.IRequiredServicesFeature;
 import jadex.commons.future.*;
@@ -115,7 +114,7 @@ public class MessageAgent implements IMessageService{
         //if (content.type.startsWith("Adopt.") || content.type.equals("DCOP.startSolving"))
         // This is the filter I have been using...
         //if (content.type.startsWith("Adopt."))
-        //    content = new Data("Debug.trace", content, getId());
+            content = new Data("Debug.trace", content, getId());
 
         // Send to agent, regardless of which addressBook they are in
         if (addressBook.containsKey(id)) {

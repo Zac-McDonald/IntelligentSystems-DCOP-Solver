@@ -135,11 +135,6 @@ public class AdoptSolver {
     public void onCost (String other, HashMap<String, Integer> otherContext, float otherLB, float otherUB) {
         Integer valueInOtherContext = otherContext.get(assignedVariable.getName());
 
-        if (valueInOtherContext == null ) {
-            return;
-        }
-
-        // TODO: Make sure that on the same platform, otherContext is a copy and not a reference to the original hashmap
         otherContext.remove(assignedVariable.getName());
 
         //
@@ -170,9 +165,11 @@ public class AdoptSolver {
             //System.out.println(otherContext);
             //System.out.println(valueInOtherContext + " - " + other + " - " + otherLB);
             //System.out.println(childLowerBounds);
-            childLowerBounds.get(valueInOtherContext).put(other, otherLB);
-            childUpperBounds.get(valueInOtherContext).put(other, otherUB);
-            childContexts.get(valueInOtherContext).put(other, otherContext);
+            if (valueInOtherContext != null) {
+                childLowerBounds.get(valueInOtherContext).put(other, otherLB);
+                childUpperBounds.get(valueInOtherContext).put(other, otherUB);
+                childContexts.get(valueInOtherContext).put(other, otherContext);
+            }
 
             maintainChildThresholdInvariant();
             maintainThresholdInvariant();

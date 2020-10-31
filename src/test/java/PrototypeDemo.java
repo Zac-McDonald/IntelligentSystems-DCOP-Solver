@@ -1,6 +1,4 @@
-import dcopsolver.dcop.DCOP;
 import dcopsolver.dcop.JavascriptEngine;
-import fileInput.YamlLoader;
 import jadex.base.PlatformConfiguration;
 import jadex.base.Starter;
 import jadex.bridge.IExternalAccess;
@@ -13,7 +11,7 @@ public class PrototypeDemo {
     public static void main (String[] args) {
         // Setup JadeX platform
         PlatformConfiguration config = PlatformConfiguration.getDefault();
-        config.setGui(false);
+        config.setGui(true);
 
         config.setNetworkName("Swinburne");
         config.setNetworkPass("SwinPass");

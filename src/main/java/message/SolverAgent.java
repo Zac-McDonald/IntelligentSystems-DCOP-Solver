@@ -9,7 +9,6 @@ import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IInternalAccess;
 import jadex.micro.annotation.*;
 
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -174,6 +173,10 @@ public class SolverAgent extends MessageAgent {
                                 //System.out.println(assignedVariableName + " -> set startSolving");
                                 startSolving = true;
                                 sentReadyMessage = true;
+                                break;
+                            case "endSolving":
+                                    // Delete agents
+                                    agent.killComponent();
                                 break;
                         }
                         break;

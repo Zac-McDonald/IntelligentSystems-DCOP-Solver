@@ -21,9 +21,9 @@ public class CLIAgent extends MessageAgent {
         in = new Scanner(System.in);
         input = "Null";
 
-        //DCOP dcop = loadDCOP("./yaml/graph_coloring_basic.yaml");
+        DCOP dcop = loadDCOP("./yaml/graph_coloring_basic.yaml");
         //DCOP dcop = loadDCOP("./yaml/graph_coloring_10vars.yaml");
-        DCOP dcop = loadDCOP("./yaml/graph_coloring_5vars.yaml");
+        //DCOP dcop = loadDCOP("./yaml/graph_coloring_5vars.yaml");
 
         startMsg = new Data("Start.firstHost", dcop, getId());
     }

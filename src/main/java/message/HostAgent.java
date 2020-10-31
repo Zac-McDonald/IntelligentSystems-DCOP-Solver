@@ -5,7 +5,7 @@ import dcopsolver.computations_graph.DFSNode;
 import dcopsolver.computations_graph.DFSTree;
 import dcopsolver.dcop.DCOP;
 import dcopsolver.dcop.Variable;
-import fileInput.YamlLoader;
+
 import jadex.bridge.IComponentIdentifier;
 import jadex.bridge.IExternalAccess;
 import jadex.bridge.IInternalAccess;
@@ -20,7 +20,6 @@ import jadex.micro.annotation.Arguments;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 
 @Arguments(@Argument(name="platform", clazz= IExternalAccess.class))
 public class HostAgent extends MessageAgent {
@@ -110,8 +109,11 @@ public class HostAgent extends MessageAgent {
             }
 
             long currentTime = System.currentTimeMillis();
-            if (currentTime > nextCheckResult) {
+            if (currentTime > nextCheckResult && solverInfo != null) {
                 nextCheckResult = currentTime + nextCheckResultDelay;
+
+                // Display solver info for debugging
+                System.out.println(solverInfo);
 
                 // Loop through solvers - ask for solution
                 for (IComponentIdentifier solver : solvers) {
@@ -120,7 +122,7 @@ public class HostAgent extends MessageAgent {
                 }
 
                 // Check if solvers have finished
-                if (!shownSolution && solverInfo != null) {
+                if (!shownSolution) {
                     boolean solved = solverInfo.entrySet().stream().allMatch(i -> {
                         return (i.getValue() != null && i.getValue().getTerminated());
                     });
@@ -137,6 +139,12 @@ public class HostAgent extends MessageAgent {
                         sb.append("\tTotal cost: ").append(totalCost);
                         System.out.println(sb.toString());
                         shownSolution = true;
+
+                        // Tell other hosts that we are done
+                        for (IComponentIdentifier solver : solvers) {
+                            Data finishMsg = new Data("DCOP.endSolving", null, getId());
+                            sendMessage(finishMsg, solver);
+                        }
                     }
                 }
             }
@@ -208,7 +216,6 @@ public class HostAgent extends MessageAgent {
                             if (solverInfo != null) {
                                 InfoMessage response = (InfoMessage) content.value;
                                 solverInfo.put(response.getName(), response);
-                                System.out.println(solverInfo);
                             }
                         }
                         break;
