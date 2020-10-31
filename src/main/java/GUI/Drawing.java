@@ -4,16 +4,18 @@ import dcopsolver.computations_graph.DFSNode;
 import dcopsolver.computations_graph.DFSTree;
 import dcopsolver.dcop.Variable;
 
+import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class Drawing extends Canvas{
+public class Drawing extends JPanel {
 
     final int WIDTH = 800;
     final int HEIGHT = 1000;
     DFSTree tree;
+
 
     List<List<VariableGraphic>> layers = new ArrayList<>();
 
@@ -24,6 +26,7 @@ public class Drawing extends Canvas{
 
         AddLayer(topLayer);
         FindVariablePositions();
+
     }
 
     private void AddLayer(List<DFSNode> layer){
@@ -117,7 +120,8 @@ public class Drawing extends Canvas{
         return null;
     }
 
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
         for (List<VariableGraphic> layer: layers){
             for(VariableGraphic vG: layer){

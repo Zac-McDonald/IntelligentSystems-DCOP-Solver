@@ -183,8 +183,8 @@ public class HostAgent extends MessageAgent {
                                 startOtherHosts();
                                 startDcopAgents();
 
-                            //initialise the solvers check list.
-                            solversChecked = new ArrayList<>();
+                                //initialise the solvers check list.
+                                solversChecked = new ArrayList<>();
 
                                 //add all of our variables to it
                                 solversChecked.addAll(dcop.getVariables().values());

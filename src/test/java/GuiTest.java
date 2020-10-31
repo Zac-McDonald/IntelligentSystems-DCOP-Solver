@@ -5,6 +5,7 @@ import dcopsolver.dcop.DCOP;
 import dcopsolver.dcop.JavascriptEngine;
 import fileInput.YamlLoader;
 
+import javax.swing.*;
 import java.util.concurrent.TimeUnit;
 
 public class GuiTest {
@@ -16,8 +17,12 @@ public class GuiTest {
         //DCOP dcop = loader.loadYAML("./yaml/graph_coloring_10vars.yaml");
         DFSTree tree = new DFSTree(dcop.getVariables(), dcop.getConstraints(), 4);
 
-        //Thread guiThread = new Thread(new GUI(tree));
-        //guiThread.start();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                GUI gui = new GUI(tree, null);
+            }
+        });
 
         int iter = 0;
 
