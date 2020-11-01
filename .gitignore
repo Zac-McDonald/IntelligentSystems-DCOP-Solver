@@ -15,6 +15,7 @@ temp/
 # Maven
 log/
 target/
+out/
 
 bin/
 

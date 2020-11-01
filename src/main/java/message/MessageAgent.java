@@ -32,6 +32,7 @@ public class MessageAgent implements IMessageService{
     protected List<IComponentIdentifier> solvers = new ArrayList<>();
 
     // Stores messages whose recipient could not be found
+    //protected boolean addressBookCompleted = false;
     private HashMap<IComponentIdentifier, IMessageService> pendingAddresses = new HashMap<>();
 
     private Queue<Data> pendingMessages = new ArrayDeque<>();
@@ -88,6 +89,7 @@ public class MessageAgent implements IMessageService{
     public void body (IInternalAccess agent) {
         long currentTime = System.currentTimeMillis();
         if (currentTime > nextAddressBook) {
+        //if (currentTime > nextAddressBook && !addressBookCompleted) {
             nextAddressBook = currentTime + nextAddressBookDelay;
             updateAddressBook();
         }

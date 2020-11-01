@@ -74,6 +74,7 @@ public class SolverAgent extends MessageAgent {
 
             if (startSolving) {
                 //System.out.println(assignedVariableName + " -> starting agent");
+                //addressBookCompleted = true;
                 solver.start();
                 startSolving = false;
             } else {

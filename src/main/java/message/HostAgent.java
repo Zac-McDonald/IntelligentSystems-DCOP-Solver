@@ -13,10 +13,8 @@ import jadex.bridge.service.search.SServiceProvider;
 import jadex.bridge.service.types.cms.CreationInfo;
 import jadex.bridge.service.types.cms.IComponentManagementService;
 import jadex.commons.SUtil;
-import jadex.micro.annotation.AgentArgument;
-import jadex.micro.annotation.AgentCreated;
-import jadex.micro.annotation.Argument;
-import jadex.micro.annotation.Arguments;
+import jadex.micro.annotation.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

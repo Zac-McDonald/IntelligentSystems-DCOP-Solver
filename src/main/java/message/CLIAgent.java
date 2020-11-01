@@ -12,7 +12,7 @@ import java.util.*;
 public class CLIAgent extends MessageAgent {
     private Scanner in;
     private String input;
-    private Data startMsg;
+    private String dcopPath;
 
     @AgentCreated
     public void created () {
@@ -21,11 +21,9 @@ public class CLIAgent extends MessageAgent {
         in = new Scanner(System.in);
         input = "Null";
 
-        DCOP dcop = loadDCOP("./yaml/graph_coloring_basic.yaml");
-        //DCOP dcop = loadDCOP("./yaml/graph_coloring_10vars.yaml");
-        //DCOP dcop = loadDCOP("./yaml/graph_coloring_5vars.yaml");
-
-        startMsg = new Data("Start.firstHost", dcop, getId());
+        dcopPath = "./yaml/graph_coloring_basic.yaml";
+        //dcopPath = "./yaml/graph_coloring_10vars.yaml";
+        //dcopPath = "./yaml/graph_coloring_5vars.yaml";
     }
 
     @Override
@@ -39,14 +37,27 @@ public class CLIAgent extends MessageAgent {
             if (in.hasNextLine())
                 input = in.nextLine();
 
-            if (input.equals("start")) {
-                //just send the start message to the first host the CLI Agent is aware of
-                System.out.print("Start message sent to: " + hosts.get(0));
-                sendMessage(startMsg, hosts.get(0));
-            } else if (input.equals("list")) {
-                System.out.println("Known agents:");
-                for (IComponentIdentifier id : addressBook.keySet()) {
-                    System.out.println("\t" + id + ",");
+            String[] inputParams = input.split(" ");
+
+            if (inputParams.length > 0) {
+                if (inputParams[0].equals("start")) {
+                    if (inputParams.length == 2) {
+                        dcopPath = inputParams[1];
+                    }
+
+                    //just send the start message to the first host the CLI Agent is aware of
+                    System.out.print("Start message sent to: " + hosts.get(0));
+
+                    DCOP dcop = loadDCOP(dcopPath);
+                    if (dcop != null) {
+                        Data startMsg = new Data("Start.firstHost", dcop, getId());
+                        sendMessage(startMsg, hosts.get(0));
+                    }
+                } else if (inputParams[0].equals("list")) {
+                    System.out.println("Known agents:");
+                    for (IComponentIdentifier id : addressBook.keySet()) {
+                        System.out.println("\t" + id + ",");
+                    }
                 }
             }
         }
