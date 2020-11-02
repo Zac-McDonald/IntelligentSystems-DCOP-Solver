@@ -99,14 +99,17 @@ public class MessageAgent implements IMessageService{
             receiveMessage(content, content.getTypeTree());
             pendingMessages.remove();
         }
+
     }
 
     @Override
     public Future<Void> message (Data content) {
+        //receiveMessage(content, content.getTypeTree());
+
         if (!pendingMessages.contains(content)) {
             pendingMessages.add(content);
-            //receiveMessage(content, content.getTypeTree());
         }
+
         return null;
     }
 
@@ -116,7 +119,7 @@ public class MessageAgent implements IMessageService{
         //if (content.type.startsWith("Adopt.") || content.type.equals("DCOP.startSolving"))
         // This is the filter I have been using...
         //if (content.type.startsWith("Adopt."))
-            content = new Data("Debug.trace", content, getId());
+        //    content = new Data("Debug.trace", content, getId());
 
         // Send to agent, regardless of which addressBook they are in
         if (addressBook.containsKey(id)) {
@@ -139,7 +142,7 @@ public class MessageAgent implements IMessageService{
                         String them = content.source.toString();
                         them = them.substring(0, them.indexOf("@"));
 
-                        System.out.println(me + " received messaged from " + them + ", content: " + content.value.toString());
+                        System.out.println(me + " received message from " + them + ", content: " + content.value.toString());
 
                         // Unwrap any remaining content
                         // Case-by-case -- message was enclosed, so need to re-evaluate it

@@ -21,9 +21,10 @@ public class CLIAgent extends MessageAgent {
         in = new Scanner(System.in);
         input = "Null";
 
-        dcopPath = "./yaml/graph_coloring_basic.yaml";
+        //dcopPath = "./yaml/graph_coloring_basic.yaml";
         //dcopPath = "./yaml/graph_coloring_10vars.yaml";
         //dcopPath = "./yaml/graph_coloring_5vars.yaml";
+        dcopPath = "./yaml/graph_coloring_basic2.yaml";
     }
 
     @Override

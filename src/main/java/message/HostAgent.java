@@ -15,6 +15,8 @@ import jadex.bridge.service.types.cms.IComponentManagementService;
 import jadex.commons.SUtil;
 import jadex.micro.annotation.*;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +36,9 @@ public class HostAgent extends MessageAgent {
 
     long nextCheckResultDelay = 5000;
     long nextCheckResult;
+
+    Instant start;
+    Instant end;
 
     @AgentCreated
     public void created () {
@@ -98,6 +103,7 @@ public class HostAgent extends MessageAgent {
             //if the list is done send out the message to start solving
             if (solversChecked != null && solversChecked.isEmpty()) {
                 System.out.println("all agents ready!");
+                start = Instant.now();
 
                 for (IComponentIdentifier solver : solvers) {
                     sendMessage(new Data("DCOP.startSolving", null, getId()), solver);
@@ -127,7 +133,9 @@ public class HostAgent extends MessageAgent {
 
                     // Print result
                     if (solved) {
-                        StringBuilder sb = new StringBuilder("Solved dcop:\n");
+                        end = Instant.now();
+                        StringBuilder sb = new StringBuilder("Solved dcop in ");
+                        sb.append(Duration.between(start, end).toMinutes()).append(" minutes:\n");
                         float totalCost = 0f;
                         for (String variable : solverInfo.keySet()) {
                             InfoMessage info = solverInfo.get(variable);

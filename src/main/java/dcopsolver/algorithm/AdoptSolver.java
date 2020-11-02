@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class AdoptSolver {
@@ -28,6 +26,11 @@ public class AdoptSolver {
     private HashMap<String, Integer> currentContext;
     private Boolean receivedTerminate;
     private Boolean terminated;
+
+    private Float minLowerBounds;   // optimiseLowerBoundsCost()
+    private Integer minLowerBoundsValue;
+    private Float minUpperBounds;    // optimiseUpperBoundsCost()
+    private Integer minUpperBoundsValue;
 
     // Mappings of our possible values to child node information
     private HashMap<Integer, HashMap<String, Float>> childLowerBounds;
@@ -75,16 +78,20 @@ public class AdoptSolver {
         }
 
         // Get the value that minimises LB
-        currentValue = optimiseLowerBoundsValue();
+        optimiseLowerBounds();
+        optimiseUpperBounds();
+        currentValue = minLowerBoundsValue;
     }
 
     public void start () {
         System.out.println("Starting ADOPT for " + assignedVariable.getName());
 
-        // Only root backtracks?
+        // Root only
         if (parent == null) {
-            backtrack();
+            receivedTerminate = true;
         }
+
+        backtrack();
     }
 
     public InfoMessage getInfo () {
@@ -104,6 +111,11 @@ public class AdoptSolver {
     public void onTerminate (HashMap<String, Integer> context) {
         receivedTerminate = true;
         currentContext = context;
+
+        // TODO: Does thresholdInvariant cause problems here, or is it safe?
+        //optimiseLowerBounds();
+        //optimiseUpperBounds();
+        maintainThresholdInvariant();
         backtrack();
     }
 
@@ -169,21 +181,20 @@ public class AdoptSolver {
                 childLowerBounds.get(valueInOtherContext).put(other, otherLB);
                 childUpperBounds.get(valueInOtherContext).put(other, otherUB);
                 childContexts.get(valueInOtherContext).put(other, otherContext);
-            }
 
-            maintainChildThresholdInvariant();
-            maintainThresholdInvariant();
+                maintainChildThresholdInvariant();
+                maintainThresholdInvariant();
+            }
         }
 
         backtrack();
     }
 
     public void backtrack () {
-        float ub = optimiseUpperBoundsCost();
-        if (threshold == ub) {
-            currentValue = optimiseUpperBoundsValue();
+        if (threshold == minUpperBounds) {
+            currentValue = minUpperBoundsValue;
         } else if (lowerBounds(currentValue) > threshold) {
-            currentValue = optimiseLowerBoundsValue();
+            currentValue = minLowerBoundsValue;
         }
 
         // Send value messages
@@ -194,8 +205,7 @@ public class AdoptSolver {
 
         maintainAllocationInvariant();
 
-        ub = optimiseUpperBoundsCost();
-        if (threshold == ub) {
+        if (threshold == minUpperBounds) {
             // If we have terminated or am root
             if (receivedTerminate || parent == null) {
                 // Send terminate message
@@ -221,34 +231,36 @@ public class AdoptSolver {
 
         // Send cost message
         Data costMsg = new Data("Adopt.cost", new CostMessage(assignedVariable.getName(), currentContext,
-                optimiseLowerBoundsCost(), optimiseUpperBoundsCost()), null);
+                minLowerBounds, minUpperBounds), null);
         solverAgent.sendMessage(costMsg, parent);
-
+        /*
         // Delay for console spam
         try {
             TimeUnit.MILLISECONDS.sleep(100);
         } catch (InterruptedException e) {
             //
         }
-
+        */
     }
 
     public void maintainThresholdInvariant () {
-        // TODO: Cache bounds
         // Maintain that: lb <= threshold <= ub
-        float lb = optimiseLowerBoundsCost();
-        if (threshold < lb) {
-            threshold = lb;
+        optimiseLowerBounds();
+        optimiseUpperBounds();
+        if (threshold < minLowerBounds) {
+            threshold = minLowerBounds;
         }
 
-        float ub = optimiseUpperBoundsCost();
-        if (threshold > ub) {
-            threshold = ub;
+        if (threshold > minUpperBounds) {
+            threshold = minUpperBounds;
         }
     }
 
+    // TODO: All our problems lie here -- threshold doesn't equal thresholdCost()
     public void maintainAllocationInvariant () {
-        // Maintain that: -----
+        maintainThresholdInvariant();
+
+        // Maintain that: threshold = thresholdCost()
         while (threshold > thresholdCost()) {
             Optional<String> c = directChildren.stream().filter(child -> {
                 return childUpperBounds.get(currentValue).get(child) > childThresholds.get(currentValue).get(child);
@@ -257,6 +269,14 @@ public class AdoptSolver {
             if (c.isPresent()) {
                 // Increment threshold
                 childThresholds.get(currentValue).put(c.get(), childThresholds.get(currentValue).get(c.get()) + 1);
+            } else {
+                // Probably will break invariant
+                System.out.println(assignedVariable.getName() + " alloc (>) -> " +  threshold + " should equal " + thresholdCost() + "\n" +
+                        "\tLB(" + minLowerBoundsValue + " -> " + minLowerBounds + "), UB(" + minUpperBoundsValue + " -> " + minUpperBounds + ")\n" +
+                        "\tlb -> " + childLowerBounds.get(currentValue) + "\n" +
+                        "\tt -> " + childThresholds.get(currentValue) + "\n" +
+                        "\tub -> " + childUpperBounds.get(currentValue) + "\n");
+                break;
             }
         }
 
@@ -268,6 +288,14 @@ public class AdoptSolver {
             if (c.isPresent()) {
                 // Decrement threshold
                 childThresholds.get(currentValue).put(c.get(), childThresholds.get(currentValue).get(c.get()) - 1);
+            } else {
+                // Probably will break invariant
+                System.out.println(assignedVariable.getName() + " alloc (<) -> " +  threshold + " should equal " + thresholdCost() + "\n" +
+                        "\tLB(" + minLowerBoundsValue + " -> " + minLowerBounds + "), UB(" + minUpperBoundsValue + " -> " + minUpperBounds + ")\n" +
+                        "\tlb -> " + childLowerBounds.get(currentValue) + "\n" +
+                        "\tt -> " + childThresholds.get(currentValue) + "\n" +
+                        "\tub -> " + childUpperBounds.get(currentValue) + "\n");
+                break;
             }
         }
 
@@ -335,26 +363,16 @@ public class AdoptSolver {
         return total;
     }
 
-    public float optimiseLowerBounds (AtomicInteger bestD) {
+    public void optimiseLowerBounds () {
         float min = Float.POSITIVE_INFINITY;
         for (Integer d : assignedVariable.getDomain().getValues()) {
             float lb = lowerBounds(d);
             if (lb < min) {
                 min = lb;
-                bestD.set(d);
+                minLowerBoundsValue = d;
             }
         }
-        return min;
-    }
-
-    public int optimiseLowerBoundsValue () {
-        AtomicInteger minValue = new AtomicInteger();
-        optimiseLowerBounds(minValue);
-        return minValue.get();
-    }
-
-    public float optimiseLowerBoundsCost () {
-        return optimiseLowerBounds(new AtomicInteger(0));
+        minLowerBounds = min;
     }
 
     public float upperBounds (Integer d) {
@@ -365,26 +383,16 @@ public class AdoptSolver {
         return total;
     }
 
-    public float optimiseUpperBounds (AtomicInteger bestD) {
+    public void optimiseUpperBounds () {
         float min = Float.POSITIVE_INFINITY;
         for (Integer d : assignedVariable.getDomain().getValues()) {
             float ub = upperBounds(d);
             if (ub < min) {
                 min = ub;
-                bestD.set(d);
+                minUpperBoundsValue = d;
             }
         }
-        return min;
-    }
-
-    public int optimiseUpperBoundsValue () {
-        AtomicInteger minValue = new AtomicInteger();
-        optimiseUpperBounds(minValue);
-        return minValue.get();
-    }
-
-    public float optimiseUpperBoundsCost () {
-        return optimiseUpperBounds(new AtomicInteger(0));
+        minUpperBounds = min;
     }
 
     public Boolean compatibleContexts (HashMap<String, Integer> c1, HashMap<String, Integer> c2) {
