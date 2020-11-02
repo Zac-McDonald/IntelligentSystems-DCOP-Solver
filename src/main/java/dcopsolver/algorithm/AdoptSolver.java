@@ -95,7 +95,8 @@ public class AdoptSolver {
     }
 
     public InfoMessage getInfo () {
-        return new InfoMessage(assignedVariable.name, currentValue, currentCost(), terminated);
+        return new InfoMessage(assignedVariable.name, currentValue, currentCost(), terminated,
+                minLowerBounds, minLowerBoundsValue, minUpperBounds, minUpperBoundsValue, threshold);
     }
 
     // Handle early threshold change from parent
@@ -183,10 +184,9 @@ public class AdoptSolver {
                 childContexts.get(valueInOtherContext).put(other, otherContext);
 
                 maintainChildThresholdInvariant();
-                maintainThresholdInvariant();
             }
         }
-
+        maintainThresholdInvariant();
         backtrack();
     }
 
@@ -203,29 +203,34 @@ public class AdoptSolver {
             solverAgent.sendMessage(valueMsg, child);
         }
 
-        maintainAllocationInvariant();
+        if (maintainAllocationInvariant()) {
+            if (threshold == minUpperBounds) {
+                // If we have terminated or am root
+                if (receivedTerminate || parent == null) {
+                    // Send terminate message
+                    HashMap<String, Integer> context = new HashMap<>(currentContext);
+                    context.put(assignedVariable.getName(), currentValue);
+                    Data terminateMsg = new Data("Adopt.terminate", new TerminateMessage(context), null);
 
-        if (threshold == minUpperBounds) {
-            // If we have terminated or am root
-            if (receivedTerminate || parent == null) {
-                // Send terminate message
-                HashMap<String, Integer> context = new HashMap<>(currentContext);
-                context.put(assignedVariable.getName(), currentValue);
-                Data terminateMsg = new Data("Adopt.terminate", new TerminateMessage(context), null);
+                    for (String child : directChildren) {
+                        //System.out.println("Sending terminate to " + child);
+                        solverAgent.sendMessage(terminateMsg, child);
+                    }
 
-                for (String child : directChildren) {
-                    //System.out.println("Sending terminate to " + child);
-                    solverAgent.sendMessage(terminateMsg, child);
+                    // TODO: Stop execution
+
+                    if (!terminated) {
+                        System.out.println(assignedVariable.getName() + " terminated -> currentValue: " + currentValue + ", costing: " + currentCost() + "\n" +
+                                "\tThreshold: " + threshold + ", thresholdCost: " + thresholdCost() + "\n" +
+                                "\tLB(" + minLowerBoundsValue + " -> " + minLowerBounds + "), UB(" + minUpperBoundsValue + " -> " + minUpperBounds + ")\n" +
+                                "\tlb -> " + childLowerBounds + "\n" +
+                                "\tt -> " + childThresholds + "\n" +
+                                "\tub -> " + childUpperBounds + "\n");
+                    }
+
+                    terminated = true;
+                    return;
                 }
-
-                // TODO: Stop execution
-                /*
-                System.out.println(solverAgent.getId() + " finished solving: " +
-                        assignedVariable.getName() + " = " + currentValue +
-                        " costing " + currentCost());
-                */
-                terminated = true;
-                return;
             }
         }
 
@@ -233,14 +238,6 @@ public class AdoptSolver {
         Data costMsg = new Data("Adopt.cost", new CostMessage(assignedVariable.getName(), currentContext,
                 minLowerBounds, minUpperBounds), null);
         solverAgent.sendMessage(costMsg, parent);
-        /*
-        // Delay for console spam
-        try {
-            TimeUnit.MILLISECONDS.sleep(100);
-        } catch (InterruptedException e) {
-            //
-        }
-        */
     }
 
     public void maintainThresholdInvariant () {
@@ -257,8 +254,9 @@ public class AdoptSolver {
     }
 
     // TODO: All our problems lie here -- threshold doesn't equal thresholdCost()
-    public void maintainAllocationInvariant () {
+    public boolean maintainAllocationInvariant () {
         maintainThresholdInvariant();
+        boolean maintained = true;
 
         // Maintain that: threshold = thresholdCost()
         while (threshold > thresholdCost()) {
@@ -295,6 +293,7 @@ public class AdoptSolver {
                         "\tlb -> " + childLowerBounds.get(currentValue) + "\n" +
                         "\tt -> " + childThresholds.get(currentValue) + "\n" +
                         "\tub -> " + childUpperBounds.get(currentValue) + "\n");
+                maintained = false;
                 break;
             }
         }
@@ -305,6 +304,8 @@ public class AdoptSolver {
                     childThresholds.get(currentValue).get(child), currentContext), null);
             solverAgent.sendMessage(thresholdMsg, child);
         }
+
+        return maintained;
     }
 
     public void maintainChildThresholdInvariant () {
@@ -327,14 +328,18 @@ public class AdoptSolver {
     }
 
     public float currentCost () {
+        return getCost(currentValue);
+    }
+
+    public float getCost (Integer d) {
         // TODO: Cost of assigning the currentValue. Q: Do we include the constraints on children, or just parents?
         //       I think we only do parent, pseudoparents, pseudochildren?, as direct children are part of the lower subtree
         //       causing them to add those constraints to lower/upper/threshold
 
-        float totalCost = assignedVariable.evaluate(currentValue);
+        float totalCost = assignedVariable.evaluate(d);
 
         HashMap<String, Integer> context = new HashMap<>(currentContext);
-        context.put(assignedVariable.getName(), currentValue);
+        context.put(assignedVariable.getName(), d);
 
         for (Constraint c : constraints) {
             // For only constraints covered by our currentContext
@@ -356,7 +361,7 @@ public class AdoptSolver {
     }
 
     public float lowerBounds (Integer d) {
-        float total = currentCost();
+        float total = getCost(d);
         for (String child : directChildren) {
             total += childLowerBounds.get(d).get(child);
         }
@@ -376,7 +381,7 @@ public class AdoptSolver {
     }
 
     public float upperBounds (Integer d) {
-        float total = currentCost();
+        float total = getCost(d);
         for (String child : directChildren) {
             total += childUpperBounds.get(d).get(child);
         }

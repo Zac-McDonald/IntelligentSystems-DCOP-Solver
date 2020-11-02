@@ -48,8 +48,11 @@ public class SolverAgent extends MessageAgent {
         parentsChecked = dfsTree.GetAllParents(assignedVariable);
         psuedosChecked = dfsTree.GetParents(assignedVariable, true);
 
+        //List<Variable> children = dfsTree.GetAllChildren(assignedVariable);
+
+        // Filter constraints to constraints on our variable and its parents
         List<Constraint> constraints = dcop.getConstraints().values().stream().filter(c -> {
-            return c.getVariables().contains(assignedVariable);
+            return c.getVariables().contains(assignedVariable);// && !c.getVariables().stream().anyMatch(children::contains);
         }).collect(Collectors.toList());
 
         solver = new AdoptSolver(assignedVariable, dfsTree, constraints, this);

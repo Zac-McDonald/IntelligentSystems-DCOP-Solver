@@ -23,8 +23,8 @@ public class CLIAgent extends MessageAgent {
 
         //dcopPath = "./yaml/graph_coloring_basic.yaml";
         //dcopPath = "./yaml/graph_coloring_10vars.yaml";
-        //dcopPath = "./yaml/graph_coloring_5vars.yaml";
-        dcopPath = "./yaml/graph_coloring_basic2.yaml";
+        dcopPath = "./yaml/graph_coloring_5vars.yaml";
+        //dcopPath = "./yaml/graph_coloring_basic2.yaml";
     }
 
     @Override
@@ -46,11 +46,11 @@ public class CLIAgent extends MessageAgent {
                         dcopPath = inputParams[1];
                     }
 
-                    //just send the start message to the first host the CLI Agent is aware of
-                    System.out.print("Start message sent to: " + hosts.get(0));
-
                     DCOP dcop = loadDCOP(dcopPath);
                     if (dcop != null) {
+                        //just send the start message to the first host the CLI Agent is aware of
+                        System.out.print("Start message sent to: " + hosts.get(0));
+
                         Data startMsg = new Data("Start.firstHost", dcop, getId());
                         sendMessage(startMsg, hosts.get(0));
                     }

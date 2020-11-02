@@ -34,7 +34,7 @@ constraints:
   - name: "diff_v1_v2"
     type: "functional"
     expression: "(v1 == v2) ? 10 : 0"
-  - name: "diff_v2_v5"
+  - name: "diff_v3_v4"
     type: "functional"
     expression: "(v3 == v4) ? 10 : 0"
   - name: "diff_v4_v5"
