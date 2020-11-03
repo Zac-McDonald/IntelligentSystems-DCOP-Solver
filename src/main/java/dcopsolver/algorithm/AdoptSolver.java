@@ -32,6 +32,11 @@ public class AdoptSolver {
     private Float minUpperBounds;    // optimiseUpperBoundsCost()
     private Integer minUpperBoundsValue;
 
+    // Dirty flags
+    private boolean updatesSent;
+    private boolean costSent;
+    private boolean thresholdSent;
+
     // Mappings of our possible values to child node information
     private HashMap<Integer, HashMap<String, Float>> childLowerBounds;
     private HashMap<Integer, HashMap<String, Float>> childUpperBounds;
@@ -77,9 +82,12 @@ public class AdoptSolver {
             }
         }
 
+        updatesSent = false;
+        costSent = false;
+        thresholdSent = false;
+
         // Get the value that minimises LB
-        optimiseLowerBounds();
-        optimiseUpperBounds();
+        maintainThresholdInvariant();
         currentValue = minLowerBoundsValue;
     }
 
@@ -113,9 +121,6 @@ public class AdoptSolver {
         receivedTerminate = true;
         currentContext = context;
 
-        // TODO: Does thresholdInvariant cause problems here, or is it safe?
-        //optimiseLowerBounds();
-        //optimiseUpperBounds();
         maintainThresholdInvariant();
         backtrack();
     }
@@ -193,28 +198,34 @@ public class AdoptSolver {
     public void backtrack () {
         if (threshold == minUpperBounds) {
             currentValue = minUpperBoundsValue;
+            updatesSent = false;
         } else if (lowerBounds(currentValue) > threshold) {
             currentValue = minLowerBoundsValue;
+            updatesSent = false;
         }
 
         // Send value messages
-        Data valueMsg = new Data("Adopt.value", new ValueMessage(assignedVariable.getName(), currentValue), null);
-        for (String child : allChildren) {
-            solverAgent.sendMessage(valueMsg, child);
+        if (!updatesSent) {
+            Data valueMsg = new Data("Adopt.value", new ValueMessage(assignedVariable.getName(), currentValue), null);
+            for (String child : allChildren) {
+                solverAgent.sendMessage(valueMsg, child);
+            }
         }
 
         if (maintainAllocationInvariant()) {
             if (threshold == minUpperBounds) {
                 // If we have terminated or am root
                 if (receivedTerminate || parent == null) {
-                    // Send terminate message
-                    HashMap<String, Integer> context = new HashMap<>(currentContext);
-                    context.put(assignedVariable.getName(), currentValue);
-                    Data terminateMsg = new Data("Adopt.terminate", new TerminateMessage(context), null);
+                    if (!updatesSent) {
+                        // Send terminate message
+                        HashMap<String, Integer> context = new HashMap<>(currentContext);
+                        context.put(assignedVariable.getName(), currentValue);
+                        Data terminateMsg = new Data("Adopt.terminate", new TerminateMessage(context), null);
 
-                    for (String child : directChildren) {
-                        //System.out.println("Sending terminate to " + child);
-                        solverAgent.sendMessage(terminateMsg, child);
+                        for (String child : directChildren) {
+                            //System.out.println("Sending terminate to " + child);
+                            solverAgent.sendMessage(terminateMsg, child);
+                        }
                     }
 
                     // TODO: Stop execution
@@ -235,15 +246,23 @@ public class AdoptSolver {
         }
 
         // Send cost message
-        Data costMsg = new Data("Adopt.cost", new CostMessage(assignedVariable.getName(), currentContext,
-                minLowerBounds, minUpperBounds), null);
-        solverAgent.sendMessage(costMsg, parent);
+        if (!costSent) {
+            Data costMsg = new Data("Adopt.cost", new CostMessage(assignedVariable.getName(), currentContext,
+                    minLowerBounds, minUpperBounds), null);
+            solverAgent.sendMessage(costMsg, parent);
+            costSent = true;
+        }
+
+        updatesSent = true;
     }
 
     public void maintainThresholdInvariant () {
-        // Maintain that: lb <= threshold <= ub
         optimiseLowerBounds();
         optimiseUpperBounds();
+        costSent = false;
+        thresholdSent = false;
+
+        // Maintain that: lb <= threshold <= ub
         if (threshold < minLowerBounds) {
             threshold = minLowerBounds;
         }
@@ -299,10 +318,13 @@ public class AdoptSolver {
         }
 
         // Send threshold message
-        for (String child : directChildren) {
-            Data thresholdMsg = new Data("Adopt.threshold", new ThresholdMessage(
-                    childThresholds.get(currentValue).get(child), currentContext), null);
-            solverAgent.sendMessage(thresholdMsg, child);
+        if (!thresholdSent) {
+            for (String child : directChildren) {
+                Data thresholdMsg = new Data("Adopt.threshold", new ThresholdMessage(
+                        childThresholds.get(currentValue).get(child), currentContext), null);
+                solverAgent.sendMessage(thresholdMsg, child);
+            }
+            thresholdSent = true;
         }
 
         return maintained;
