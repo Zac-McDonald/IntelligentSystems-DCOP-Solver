@@ -23,7 +23,7 @@ public class CLIAgent extends MessageAgent {
 
         //dcopPath = "./yaml/graph_coloring_basic.yaml";
         //dcopPath = "./yaml/graph_coloring_10vars.yaml";
-        dcopPath = "./yaml/graph_coloring_5vars.yaml";
+        dcopPath = "./yaml/graph_coloring_6vars.yaml";
         //dcopPath = "./yaml/graph_coloring_basic2.yaml";
     }
 

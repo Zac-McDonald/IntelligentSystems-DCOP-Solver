@@ -1,5 +1,5 @@
 name: Graph Colouring
-description: A graph colouring problem with 5 vertices
+description: A graph colouring problem with 6 vertices
 objectiveIsMin: true
 
 domains:
