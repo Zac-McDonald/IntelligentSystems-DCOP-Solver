@@ -32,7 +32,9 @@ public class HostAgent extends MessageAgent {
     private ArrayList<Variable> solversChecked;
 
     private Boolean shownSolution = false;
+    boolean solved;
     private HashMap<String, InfoMessage> solverInfo;
+    private HashMap<String, Boolean> solverMessaged;
 
     long nextCheckResultDelay = 5000;
     long nextCheckResult;
@@ -76,9 +78,12 @@ public class HostAgent extends MessageAgent {
 
         // Setup for catching solution
         shownSolution = false;
+        solved = false;
         solverInfo = new HashMap<>();
+        solverMessaged = new HashMap<>();
         for (Variable v : dcop.getVariables().values()) {
             solverInfo.put(v.getName(), null);
+            solverMessaged.put(v.getName(), false);
         }
     }
 
@@ -113,7 +118,7 @@ public class HostAgent extends MessageAgent {
             }
 
             long currentTime = System.currentTimeMillis();
-            if (currentTime > nextCheckResult && solverInfo != null) {
+            if (currentTime > nextCheckResult && solverInfo != null && !solved) {
                 nextCheckResult = currentTime + nextCheckResultDelay;
 
                 // Display solver info for debugging
@@ -127,7 +132,7 @@ public class HostAgent extends MessageAgent {
 
                 // Check if solvers have finished
                 if (!shownSolution) {
-                    boolean solved = solverInfo.entrySet().stream().allMatch(i -> {
+                    solved = solverInfo.entrySet().stream().allMatch(i -> {
                         return (i.getValue() != null && i.getValue().getTerminated());
                     });
 
@@ -138,9 +143,12 @@ public class HostAgent extends MessageAgent {
                         sb.append(Duration.between(start, end).toMinutes()).append(" minutes:\n");
                         float totalCost = 0f;
                         for (String variable : solverInfo.keySet()) {
-                            InfoMessage info = solverInfo.get(variable);
-                            totalCost += info.getCost();
-                            sb.append("\t").append(info.getName()).append("=").append(info.getValue()).append(", costing ").append(info.getCost()).append("\n");
+                            if (!solverMessaged.get(variable)) {
+                                InfoMessage info = solverInfo.get(variable);
+                                totalCost += info.getCost();
+                                sb.append("\t").append(info.getName()).append("=").append(info.getValue()).append(", costing ").append(info.getCost()).append("\n");
+                                solverMessaged.put(variable, true);
+                            }
                         }
                         sb.append("\tTotal cost: ").append(totalCost);
                         System.out.println(sb.toString());
@@ -222,6 +230,7 @@ public class HostAgent extends MessageAgent {
                             if (solverInfo != null) {
                                 InfoMessage response = (InfoMessage) content.value;
                                 solverInfo.put(response.getName(), response);
+                                solverMessaged.put(response.getName(), false);
                             }
                         }
                         break;

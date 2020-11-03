@@ -118,8 +118,8 @@ public class MessageAgent implements IMessageService{
         // Wrap all messages in a Debug.trace to output them to the console
         //if (content.type.startsWith("Adopt.") || content.type.equals("DCOP.startSolving"))
         // This is the filter I have been using...
-        //if (content.type.startsWith("Adopt."))
-        //    content = new Data("Debug.trace", content, getId());
+        if (!content.type.equals("Adopt.tellInfo") && !content.type.equals("Adopt.askInfo") && content.type.startsWith("Adopt."))
+            content = new Data("Debug.trace", content, getId());
 
         // Send to agent, regardless of which addressBook they are in
         if (addressBook.containsKey(id)) {

@@ -86,6 +86,12 @@ public class AdoptSolver {
         costSent = false;
         thresholdSent = false;
 
+        // Initialise variables -- values will be overwritten in maintainThresholdInvariant()
+        minLowerBounds = 0f;
+        minUpperBounds = 0f;
+        minLowerBoundsValue = 0;
+        minUpperBoundsValue = 0;
+
         // Get the value that minimises LB
         maintainThresholdInvariant();
         currentValue = minLowerBoundsValue;
@@ -120,6 +126,7 @@ public class AdoptSolver {
     public void onTerminate (HashMap<String, Integer> context) {
         receivedTerminate = true;
         currentContext = context;
+        costSent = false;
 
         maintainThresholdInvariant();
         backtrack();
@@ -128,8 +135,11 @@ public class AdoptSolver {
     // Handle value message from (psuedo)parent
     public void onValue (String other, Integer otherValue) {
         if (!receivedTerminate) {
-            // Add the variable assignment to our context
-            currentContext.put(other, otherValue);
+            if (!otherValue.equals(currentContext.getOrDefault(other, null))) {
+                // Add the variable assignment to our context
+                currentContext.put(other, otherValue);
+                costSent = false;
+            }
 
             // Reset any incompatible children
             for (Integer d : assignedVariable.getDomain().getValues()) {
@@ -173,6 +183,8 @@ public class AdoptSolver {
                         childUpperBounds.get(d).put(child, Float.POSITIVE_INFINITY);
                         childThresholds.get(d).put(child, 0f);
                         childContexts.get(d).put(child, new HashMap<>());
+
+                        thresholdSent = false;
                     }
                 }
             }
@@ -259,16 +271,16 @@ public class AdoptSolver {
     public void maintainThresholdInvariant () {
         optimiseLowerBounds();
         optimiseUpperBounds();
-        costSent = false;
-        thresholdSent = false;
 
         // Maintain that: lb <= threshold <= ub
         if (threshold < minLowerBounds) {
             threshold = minLowerBounds;
+            thresholdSent = false;
         }
 
         if (threshold > minUpperBounds) {
             threshold = minUpperBounds;
+            thresholdSent = false;
         }
     }
 
@@ -286,6 +298,7 @@ public class AdoptSolver {
             if (c.isPresent()) {
                 // Increment threshold
                 childThresholds.get(currentValue).put(c.get(), childThresholds.get(currentValue).get(c.get()) + 1);
+                thresholdSent = false;
             } else {
                 // Probably will break invariant
                 System.out.println(assignedVariable.getName() + " alloc (>) -> " +  threshold + " should equal " + thresholdCost() + "\n" +
@@ -305,6 +318,7 @@ public class AdoptSolver {
             if (c.isPresent()) {
                 // Decrement threshold
                 childThresholds.get(currentValue).put(c.get(), childThresholds.get(currentValue).get(c.get()) - 1);
+                thresholdSent = false;
             } else {
                 // Probably will break invariant
                 System.out.println(assignedVariable.getName() + " alloc (<) -> " +  threshold + " should equal " + thresholdCost() + "\n" +
@@ -338,12 +352,14 @@ public class AdoptSolver {
                 while (childLowerBounds.get(d).get(child) > childThresholds.get(d).get(child)) {
                     // Increment child threshold
                     childThresholds.get(d).put(child, childThresholds.get(d).get(child) + 1);
+                    thresholdSent = false;
                 }
 
                 // Enforce t <= ub
                 while (childThresholds.get(d).get(child) > childUpperBounds.get(d).get(child)) {
                     // Decrement child threshold
                     childThresholds.get(d).put(child, childThresholds.get(d).get(child) - 1);
+                    thresholdSent = false;
                 }
             }
         }
@@ -391,6 +407,7 @@ public class AdoptSolver {
     }
 
     public void optimiseLowerBounds () {
+        float prevLB = minLowerBounds;
         float min = Float.POSITIVE_INFINITY;
         for (Integer d : assignedVariable.getDomain().getValues()) {
             float lb = lowerBounds(d);
@@ -400,6 +417,9 @@ public class AdoptSolver {
             }
         }
         minLowerBounds = min;
+        if (min != prevLB) {
+            costSent = false;
+        }
     }
 
     public float upperBounds (Integer d) {
@@ -411,6 +431,7 @@ public class AdoptSolver {
     }
 
     public void optimiseUpperBounds () {
+        float prevUB = minLowerBounds;
         float min = Float.POSITIVE_INFINITY;
         for (Integer d : assignedVariable.getDomain().getValues()) {
             float ub = upperBounds(d);
@@ -420,6 +441,9 @@ public class AdoptSolver {
             }
         }
         minUpperBounds = min;
+        if (min != prevUB) {
+            costSent = false;
+        }
     }
 
     public Boolean compatibleContexts (HashMap<String, Integer> c1, HashMap<String, Integer> c2) {
