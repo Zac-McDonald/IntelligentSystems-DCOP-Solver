@@ -6,9 +6,11 @@ Our program uses a connected network of JadeX agents who work together on the sa
 
 
 # Contributers:
-- Matthew Jackson (`102381833`)
-- Angus Maude (`101100419`
-- Zac McDonald (`102580465`)
+This project was completed at Swinburne University of Technology in 2020 by:
+
+- Matthew Jackson
+- Angus Maude
+- Zac McDonald
 
 Report: https://docs.google.com/document/d/1UkAKT9iV3LL1P_ZZDHAq61tvT3aJzpFyhA6i3zfweO4/edit?usp=sharing
 Github: https://github.com/Zac-McDonald/IntelligentSystems-DCOP-Solver <br />
